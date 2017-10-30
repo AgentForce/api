@@ -1,0 +1,16 @@
+{
+    "database": {
+        "connectionString": "mongodb://manulife:manulife!!!@103.48.191.254:27017/manulife"
+    },
+    "server": {
+        "port": 5000,
+        "jwtSecret": "random-secret-password",
+        "jwtExpiration": "1h",
+        "routePrefix": "/api",
+        "plugins": [
+            "logger",
+            "jwt-auth",
+            "swagger"
+        ]
+    }
+}
