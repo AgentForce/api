@@ -3,12 +3,12 @@ import * as path from "path";
 
 //Read Configurations
 const configs = new nconf.Provider({
-  env: true,
-  argv: true,
-  store: {
-    type: 'file',
-    file: path.join(__dirname, `./config.${process.env.NODE_ENV || "dev"}.json`)
-  }
+    env: true,
+    argv: true,
+    store: {
+        type: 'file',
+        file: path.join(__dirname, `./config.${process.env.NODE_ENV || "dev"}.json`)
+    }
 });
 
 export interface IServerConfigurations {
@@ -19,7 +19,7 @@ export interface IServerConfigurations {
     routePrefix: string;
 }
 
-export interface  IDataPgConfiguration{
+export interface IDataPgConfiguration {
     username: string;
     password: string;
     database: string;
