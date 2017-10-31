@@ -12,7 +12,7 @@ const database = Database.init(configDb);
 const assert = chai.assert;
 const serverConfig = Configs.getServerConfigs();
 
-describe("TastController Tests", () => {
+describe("TestController Tests", () => {
 
     let server;
 

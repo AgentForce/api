@@ -24,9 +24,9 @@ export default class CampaignController {
         try {
             // 2. Checking permision create camp : start join and end of year (after finish 12 months)
             let currentCamps = await db.Language
-            .findAll()
-            .catch((error) => {throw('CreateCamp Step 2:' + JSON.stringify(error));});
-            if(currentCamps.length === 0){
+                .findAll()
+                .catch((error) => { throw ('CreateCamp Step 2:' + JSON.stringify(error)); });
+            if (currentCamps.length === 0) {
                 // 3. Accouting Số khách hàng tiềm năng phải có (x10), hẹn gặp (x5) , Tư vấn trực tiếp (x3), chốt HD (x1)
                 dataInput.contracts = Math.ceil((dataInput.monthly * 100 / dataInput.commission) / dataInput.loan);
                 // (Thu nhập x 100 / tỉ lệ hoa hồng)/loan
@@ -40,14 +40,23 @@ export default class CampaignController {
                 const months = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
                 await Promise.all(
                     months.map(async (index) => {
-                        await listCamps.push({name: "Camp ", ownerid: '0057F000000eEkSQAU', policy_amount__c:dataInput.loan, commission_rate__c: dataInput.commission, actual_collected__c:dataInput.monthly, startdate:moment().add(index, 'M').format('MM/DD/YYYY'), enddate:moment().add(index + 1, 'M').format('MM/DD/YYYY'), target_contacts__c:dataInput.maxCustomers, leads__c:dataInput.meetingCustomers, opportunities__c:dataInput.callCustomers, number_of_contracts_closed_in_period__c:dataInput.contracts});  
+                        await listCamps.push({
+                            name: "Camp ",
+                            ownerid: '0057F000000eEkSQAU', policy_amount__c: dataInput.loan,
+                            commission_rate__c: dataInput.commission,
+                            actual_collected__c: dataInput.monthly,
+                            startdate: moment().add(index, 'M').format('MM/DD/YYYY'),
+                            enddate: moment().add(index + 1, 'M').format('MM/DD/YYYY'),
+                            target_contacts__c: dataInput.maxCustomers, leads__c: dataInput.meetingCustomers,
+                            opportunities__c: dataInput.callCustomers, number_of_contracts_closed_in_period__c: dataInput.contracts
+                        });
                     })
-                );                
+                );
                 return reply(listCamps).code(201);
-            }else{
+            } else {
                 return reply('Campaigns exist!!!').code(200);
             }
-        }catch (error) {
+        } catch (error) {
             return reply(Boom.badImplementation(error));
         }
     }
