@@ -1,20 +1,23 @@
 {
   "development": {
-    "username": "das",
-    "password": "da$AgriT3ch",
-    "database": "postgres",
-    "host": "103.48.191.251",
+    "username": "cympkcbyfpapfz",
+    "password": "7a55bb1fb79fd098b1b6e940d582535fe1ee0ff91284358d254dc70a6cd89327",
+    "database": "d3oe6olpfbra0j",
+    "host": "ec2-54-243-185-123.compute-1.amazonaws.com",
     "port": 5432,
     "dialect": "postgres",
     "logging": true,
     "force": true,
+    "dialectOptions": {
+      "ssl": true
+    },
     "timezone": "+00:00"
   },
   "test": {
-    "username": "das",
-    "password": "da$AgriT3ch",
-    "database": "postgres",
-    "host": "103.48.191.251",
+    "username": "postgres",
+    "password": "admin$123",
+    "database": "migrate_manulife",
+    "host": "127.0.0.1",
     "port": 5432,
     "dialect": "postgres",
     "logging": true,
@@ -22,10 +25,10 @@
     "timezone": "+00:00"
   },
   "production": {
-    "username": "das",
-    "password": "da$AgriT3ch",
-    "database": "postgres",
-    "host": "103.48.191.251",
+    "username": "postgres",
+    "password": "admin$123",
+    "database": "migrate_manulife",
+    "host": "127.0.0.1",
     "port": 5432,
     "dialect": "postgres",
     "logging": true,

@@ -38,7 +38,16 @@ class CampaignController {
                     const currentDate = moment().format('DD-MM-YYYY');
                     const months = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
                     yield Promise.all(months.map((index) => __awaiter(this, void 0, void 0, function* () {
-                        yield listCamps.push({ name: "Camp ", ownerid: '0057F000000eEkSQAU', policy_amount__c: dataInput.loan, commission_rate__c: dataInput.commission, actual_collected__c: dataInput.monthly, startdate: moment().add(index, 'M').format('MM/DD/YYYY'), enddate: moment().add(index + 1, 'M').format('MM/DD/YYYY'), target_contacts__c: dataInput.maxCustomers, leads__c: dataInput.meetingCustomers, opportunities__c: dataInput.callCustomers, number_of_contracts_closed_in_period__c: dataInput.contracts });
+                        yield listCamps.push({
+                            name: "Camp ",
+                            ownerid: '0057F000000eEkSQAU', policy_amount__c: dataInput.loan,
+                            commission_rate__c: dataInput.commission,
+                            actual_collected__c: dataInput.monthly,
+                            startdate: moment().add(index, 'M').format('MM/DD/YYYY'),
+                            enddate: moment().add(index + 1, 'M').format('MM/DD/YYYY'),
+                            target_contacts__c: dataInput.maxCustomers, leads__c: dataInput.meetingCustomers,
+                            opportunities__c: dataInput.callCustomers, number_of_contracts_closed_in_period__c: dataInput.contracts
+                        });
                     })));
                     return reply(listCamps).code(201);
                 }

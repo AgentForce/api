@@ -10,7 +10,6 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
 
     const userController = new UserController(serverConfigs, database);
     server.bind(userController);
-
     /*server.route({
         method: 'GET',
         path: '/users/info',
