@@ -46,8 +46,13 @@ export default class UserController {
 
     public async createUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let user: any = await this.database.userModel.create(request.payload);
-            return reply({ token: this.generateToken(user)}).code(201);
+            let user: any = await this.database
+                .userModel
+                .create(request.payload);
+            return reply({
+                token: this.generateToken(user)
+            })
+                .code(201);
         } catch (error) {
             return reply(Boom.badImplementation(error));
         }

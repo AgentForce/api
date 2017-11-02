@@ -51,7 +51,7 @@ module.exports = {
       },
       reportTo: {
         allowNull: false,
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER
       },
       reportToFather: {
         allowNull: false,
