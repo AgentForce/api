@@ -19,7 +19,11 @@
     "start": "node build/src/index.js",
     "setup": "npm install & typings install",
     "test": "gulp test",
-    "watch": "nodemon --watch build/src build/src/index.js"
+    "watch": "tsc-w&&nodemon build/src/index.js",
+    "compile": "tsc & ENV_PORT 3000 node build/src/index.js ",
+    "dev": "nodemon -e ts  --exec \"npm run compile\"",
+    "runtime": "set PORT=3000&&ts-node src/index.ts",
+    "serve": "nodemon -e ts -w .src -x \"npm run runtime\""
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -68,6 +72,7 @@
     "mocha": "^3.4.1",
     "node": "0.0.0",
     "sinon": "^2.2.0",
+    "ts-node": "^3.3.0",
     "tslint": "^5.2.0",
     "typescript": "^2.3.2"
   },

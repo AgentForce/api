@@ -53,8 +53,7 @@ gulp.task('compile', shell.task([
 gulp.task('start', function () {
   let stream = nodemon({
     script: 'build/src/index.js',
-    env: {
-    },
+    env: {},
   })
 
 })
@@ -69,13 +68,22 @@ gulp.task('configs', (cb) => {
 /**
  * Build the project.
  */
-gulp.task('build', ['tslint', 'compile', 'configs'], () => {
+gulp.task('build', ['tslint', 'compile', 'configs'], (cb) => {
   console.log('Building the project ...');
+  cb();
 });
 
-gulp.task('serve', ['start'], function () {
-  gulp.watch('src/**/*.ts', ['build']);
+gulp.task('build-nodemon', ['build'], (cb) => {
+  let stream = nodemon({
+    script: 'build/src/index.js',
+    ext:    'js json',
+    env: {},
+  });
+  cb();
+});
 
+gulp.task('serve', ['build-nodemon'], function (cb) {
+  gulp.watch('src/**/*.ts', ['build']);
 })
 
 /**
