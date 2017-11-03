@@ -17,5 +17,4 @@ export const CampaignSchema = new Mongoose.Schema({
 }, {
     timestamps: true
   });
- 
 export const CampaignModel = Mongoose.model<ICampaign>('Campaign', CampaignSchema);

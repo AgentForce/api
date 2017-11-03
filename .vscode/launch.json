@@ -17,7 +17,8 @@
     "sourceMaps": true,
     "outFiles": ["${workspaceRoot}/build/src/*.js"],
     "env": {
-      "PORT": 3000
+      "PORT": 3000,
+      "TS_NODE_CACHE_DIRECTORY": "${workspaceRoot}/.ts-node"
     }
   }]
 }

@@ -50,7 +50,9 @@ export default class UserController {
         return new Promise(async (resolve, reject) => {
             let user: IUser = await this.database
                 .userModel
-                .findOne({ email: email });
+                .findOne({
+                    email: email
+                });
             resolve(user);
         });
     }

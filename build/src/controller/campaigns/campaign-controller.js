@@ -24,7 +24,9 @@ class CampaignController {
                 // 2. Checking permision create camp : start join and end of year (after finish 12 months)
                 let currentCamps = yield _index_1.default.Language
                     .findAll()
-                    .catch((error) => { throw ('CreateCamp Step 2:' + JSON.stringify(error)); });
+                    .catch((error) => {
+                    throw ('CreateCamp Step 2:' + JSON.stringify(error));
+                });
                 if (currentCamps.length === 0) {
                     // 3. Accouting Số khách hàng tiềm năng phải có (x10), hẹn gặp (x5) , Tư vấn trực tiếp (x3), chốt HD (x1)
                     dataInput.contracts = Math.ceil((dataInput.monthly * 100 / dataInput.commission) / dataInput.loan);
@@ -45,8 +47,10 @@ class CampaignController {
                             actual_collected__c: dataInput.monthly,
                             startdate: moment().add(index, 'M').format('MM/DD/YYYY'),
                             enddate: moment().add(index + 1, 'M').format('MM/DD/YYYY'),
-                            target_contacts__c: dataInput.maxCustomers, leads__c: dataInput.meetingCustomers,
-                            opportunities__c: dataInput.callCustomers, number_of_contracts_closed_in_period__c: dataInput.contracts
+                            target_contacts__c: dataInput.maxCustomers,
+                            leads__c: dataInput.meetingCustomers,
+                            opportunities__c: dataInput.callCustomers,
+                            number_of_contracts_closed_in_period__c: dataInput.contracts
                         });
                     })));
                     return reply(listCamps).code(201);
@@ -65,7 +69,16 @@ class CampaignController {
             let userId = request.auth.credentials.id;
             let id = request.params["id"];
             try {
-                let campaign = yield this.database.campaignModel.findByIdAndUpdate({ _id: id, userId: userId }, { $set: request.payload }, { new: true });
+                let campaign = yield this.database
+                    .campaignModel
+                    .findByIdAndUpdate({
+                    _id: id,
+                    userId: userId
+                }, {
+                    $set: request.payload
+                }, {
+                    new: true
+                });
                 if (campaign) {
                     reply(campaign);
                 }
@@ -82,7 +95,10 @@ class CampaignController {
         return __awaiter(this, void 0, void 0, function* () {
             let userId = request.auth.credentials.id;
             let id = request.params["id"];
-            let campaign = yield this.database.campaignModel.findOne({ _id: id, userId: userId }).lean(true);
+            let campaign = yield this.database
+                .campaignModel
+                .findOne({ _id: id, userId: userId })
+                .lean(true);
             if (campaign) {
                 reply(campaign);
             }

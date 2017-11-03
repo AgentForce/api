@@ -82,7 +82,7 @@ gulp.task('build-nodemon', ['build'], (cb) => {
   cb();
 });
 
-gulp.task('serve', ['build-nodemon'], function (cb) {
+gulp.task('serve', ['build'], function (cb) {
   gulp.watch('src/**/*.ts', ['build']);
 })
 

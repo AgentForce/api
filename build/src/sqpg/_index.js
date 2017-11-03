@@ -34,6 +34,5 @@ Object.keys(db).forEach(function (modelName) {
     }
 });
 db['sequelize'] = sequelize;
-db['Sequelize'] = Sequelize;
 exports.default = db;
 //# sourceMappingURL=_index.js.map
