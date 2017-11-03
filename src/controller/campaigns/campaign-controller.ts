@@ -8,6 +8,7 @@ import * as uuid from 'uuid';
 import db from '../../sqpg/_index';
 import { LanguageInstance } from './../../sqpg/language';
 
+
 export default class CampaignController {
 
     private database: IDatabase;
@@ -18,14 +19,16 @@ export default class CampaignController {
         this.database = database;
     }
 
-    public async createCampaign(request: Hapi.Request, reply: Hapi.ReplyNoContinue) { 
+    public async createCampaign(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         // 1. Router Checking data input : commission > 0, loan > 0, monthly > 0
         const dataInput = request.payload;
         try {
             // 2. Checking permision create camp : start join and end of year (after finish 12 months)
             let currentCamps = await db.Language
                 .findAll()
-                .catch((error) => { throw ('CreateCamp Step 2:' + JSON.stringify(error)); });
+                .catch((error) => {
+                    throw ('CreateCamp Step 2:' + JSON.stringify(error));
+                });
             if (currentCamps.length === 0) {
                 // 3. Accouting Số khách hàng tiềm năng phải có (x10), hẹn gặp (x5) , Tư vấn trực tiếp (x3), chốt HD (x1)
                 dataInput.contracts = Math.ceil((dataInput.monthly * 100 / dataInput.commission) / dataInput.loan);
@@ -47,8 +50,10 @@ export default class CampaignController {
                             actual_collected__c: dataInput.monthly,
                             startdate: moment().add(index, 'M').format('MM/DD/YYYY'),
                             enddate: moment().add(index + 1, 'M').format('MM/DD/YYYY'),
-                            target_contacts__c: dataInput.maxCustomers, leads__c: dataInput.meetingCustomers,
-                            opportunities__c: dataInput.callCustomers, number_of_contracts_closed_in_period__c: dataInput.contracts
+                            target_contacts__c: dataInput.maxCustomers,
+                            leads__c: dataInput.meetingCustomers,
+                            opportunities__c: dataInput.callCustomers,
+                            number_of_contracts_closed_in_period__c: dataInput.contracts
                         });
                     })
                 );
@@ -65,11 +70,16 @@ export default class CampaignController {
         let userId = request.auth.credentials.id;
         let id = request.params["id"];
         try {
-            let campaign: ICampaign = await this.database.campaignModel.findByIdAndUpdate(
-                { _id: id, userId: userId },
-                { $set: request.payload },
-                { new: true }
-            );
+            let campaign: ICampaign = await this.database
+                .campaignModel
+                .findByIdAndUpdate({
+                    _id: id,
+                    userId: userId
+                }, {
+                    $set: request.payload
+                }, {
+                    new: true
+                });
             if (campaign) {
                 reply(campaign);
             } else {
@@ -83,7 +93,10 @@ export default class CampaignController {
     public async getCampaignById(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         let userId = request.auth.credentials.id;
         let id = request.params["id"];
-        let campaign = await this.database.campaignModel.findOne({ _id: id, userId: userId }).lean(true);
+        let campaign = await this.database
+            .campaignModel
+            .findOne({ _id: id, userId: userId })
+            .lean(true);
         if (campaign) {
             reply(campaign);
         } else {

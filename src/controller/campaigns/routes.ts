@@ -10,7 +10,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
 
     const campaignController = new CampaignController(configs, database);
     server.bind(campaignController);
- 
+
     server.route({
         method: 'GET',
         path: '/campaigns/{id}',

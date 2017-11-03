@@ -6,15 +6,16 @@ import * as Sequelize from 'sequelize';
 
 // Import model specification from its own definition file.
 import { LanguageInstance, LanguageAttributes } from './language';
+import { UserInstance, UserAttributes } from './user';
 //import { AppUserInstance, AppUserAttributes } from './appuser';
 
 interface DbConnection {
   Language: Sequelize.Model<LanguageInstance, LanguageAttributes>;
-  //AppUser: Sequelize.Model<AppUserInstance, AppUserAttributes>;
+  User: Sequelize.Model<UserInstance, UserAttributes>;
 }
 let db = {};
 
-const dbConfig =  {
+const dbConfig = {
   "username": "das",
   "password": "da$AgriT3ch",
   "database": "das",
@@ -35,23 +36,22 @@ const sequelize = new Sequelize(
 const basename = path.basename(module.filename);
 fs
   .readdirSync(__dirname)
-  .filter(function(file) {
+  .filter(function (file) {
     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
   })
-  .forEach(function(file) {
+  .forEach(function (file) {
     const model = sequelize['import'](path.join(__dirname, file));
     // NOTE: you have to change from the original property notation to
     // index notation or tsc will complain about undefined property.
     db[model['name']] = model;
   });
 
-Object.keys(db).forEach(function(modelName) {
+Object.keys(db).forEach(function (modelName) {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 });
 
 db['sequelize'] = sequelize;
-db['Sequelize'] = Sequelize;
 
 export default <DbConnection>db;

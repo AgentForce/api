@@ -3,8 +3,8 @@ import * as Boom from "boom";
 import * as Jwt from "jsonwebtoken";
 import { IUser } from "./user";
 import { IDatabase } from "../../database";
+import db from '../../sqpg/_index';
 import { IServerConfigurations } from "../../configurations";
-
 
 export default class UserController {
 
@@ -29,7 +29,9 @@ export default class UserController {
         const email = request.payload.email;
         const password = request.payload.password;
 
-        let user: IUser = await this.database.userModel.findOne({ email: email });
+        let user: IUser = await this.database
+            .userModel
+            .findOne({ email: email });
 
         if (!user) {
             return reply(Boom.unauthorized("User does not exists."));
@@ -44,17 +46,30 @@ export default class UserController {
         });
     }
 
+    private async findUser(email: string) {
+        return new Promise(async (resolve, reject) => {
+            let user: IUser = await this.database
+                .userModel
+                .findOne({ email: email });
+            resolve(user);
+        });
+    }
+
     public async createUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        try {
+        const dataInput = request.payload;
+        const eUser = await this.findUser(dataInput.email);
+        if (eUser === null) {
             let user: any = await this.database
                 .userModel
                 .create(request.payload);
+            let userPsql = await db.User
+                .create(dataInput);
             return reply({
                 token: this.generateToken(user)
             })
                 .code(201);
-        } catch (error) {
-            return reply(Boom.badImplementation(error));
+        } else {
+            return reply('user exists').code(200);
         }
     }
 

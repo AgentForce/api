@@ -20,7 +20,7 @@ export default function defineUser(sequelize: Sequelize.Sequelize, DataTypes) {
     name: DataTypes.STRING(50)
   }, {
       classMethods: {
-        associate: function(models) {
+        associate: function (models) {
           Language.hasMany(models.AppUser, {
             foreignKey: 'languageId',
             as: 'appUsers'

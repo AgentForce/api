@@ -1,6 +1,6 @@
 import * as Sequelize from 'sequelize';
 
-export interface CampaignAttributes {
+export interface UserAttributes {
   ownerid?: string;
   policy_amount__c?: number;
   name?: string;
@@ -14,7 +14,7 @@ export interface CampaignAttributes {
   enddate?: Date;
 }
 
-export interface CampaignInstance extends Sequelize.Instance<CampaignAttributes> {
+export interface UserInstance extends Sequelize.Instance<UserAttributes> {
   ownerid: string;
   policy_amount__c: number;
   name: string;
@@ -29,18 +29,45 @@ export interface CampaignInstance extends Sequelize.Instance<CampaignAttributes>
 }
 
 export default function defineUser(sequelize: Sequelize.Sequelize, DataTypes) {
-  const Language = sequelize.define('Language', {
+  const User = sequelize.define('manulife_users', {
     label: DataTypes.STRING(255),
-    name: DataTypes.STRING(50)
+    fullname: DataTypes.STRING(50),
+    code: {
+      type: Sequelize.STRING(255)
+    },
+    password: {
+      type: Sequelize.STRING(255)
+    },
+    email: {
+      type: Sequelize.STRING(255)
+    },
+    phone: { type: DataTypes.STRING(50) },
+    groupid: {
+      type: DataTypes.INTEGER
+    },
+    reportToFather: {
+      type: DataTypes.ARRAY(DataTypes.INTEGER)
+    },
+    address: {
+      type: DataTypes.STRING(255)
+    },
+    city: {
+      type: DataTypes.STRING(255)
+    },
+    district: {
+      type: DataTypes.INTEGER
+    },
+    isStatus: {
+      type: DataTypes.INTEGER
+    },
+    reportTo: {
+      type: DataTypes.INTEGER
+    }
   }, {
       classMethods: {
-        associate: function(models) {
-          Language.hasMany(models.AppUser, {
-            foreignKey: 'languageId',
-            as: 'appUsers'
-          });
+        associate: function (models) {
         }
       }
     });
-  return Language;
+  return User;
 }

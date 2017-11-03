@@ -11,6 +11,10 @@
     "runtimeExecutable": "ts-node",
     "cwd": "${workspaceRoot}",
     "protocol": "inspector",
+    "runtimeArgs": [
+      "--nolazy"
+    ],
+    "sourceMaps": true,
     "outFiles": ["${workspaceRoot}/build/src/*.js"],
     "env": {
       "PORT": 3000
