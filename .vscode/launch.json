@@ -20,5 +20,19 @@
       "PORT": 3000,
       "TS_NODE_CACHE_DIRECTORY": "${workspaceRoot}/.ts-node"
     }
+  }, {
+    "type": "node",
+    "request": "launch",
+    "name": "Launch typescript",
+    "program": "${workspaceFolder}/src/index.ts",
+    "outFiles": [
+      "${workspaceRoot}/build/src/**/*.js"
+    ],
+    "console": "integratedTerminal",
+    "sourceMaps": true,
+    "env": {
+      "PORT": 3000,
+      "TS_NODE_CACHE_DIRECTORY": "${workspaceRoot}/.ts-node"
+    }
   }]
 }

@@ -4,6 +4,7 @@ import * as Jwt from "jsonwebtoken";
 import { IUser } from "./user";
 import { IDatabase } from "../../database";
 import db from '../../sqpg/_index';
+import { IIUser, User } from '../../bll/userbll';
 import { IServerConfigurations } from "../../configurations";
 
 export default class UserController {
@@ -61,11 +62,16 @@ export default class UserController {
         const dataInput = request.payload;
         const eUser = await this.findUser(dataInput.email);
         if (eUser === null) {
+            let pgUser: IIUser = request.payload;
             let user: any = await this.database
                 .userModel
                 .create(request.payload);
-            let userPsql = await db.User
-                .create(dataInput);
+                let currentCamps = await db.Language
+                .findAll()
+                .catch((error) => {
+                    throw ('CreateCamp Step 2:' + JSON.stringify(error));
+                });
+            console.log(currentCamps);
             return reply({
                 token: this.generateToken(user)
             })
