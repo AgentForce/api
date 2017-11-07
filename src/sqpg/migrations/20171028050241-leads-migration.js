@@ -47,7 +47,7 @@ module.exports = {
       age_c: {
         allowNull: false,
         type: Sequelize.INTEGER,
-       },
+      },
       gender: {
         allowNull: false,
         type: Sequelize.STRING(50)
@@ -59,7 +59,7 @@ module.exports = {
       marital_status__c: {
         allowNull: true,
         type: Sequelize.STRING(50),
-       },
+      },
       address: {
         allowNull: false,
         type: Sequelize.STRING,
@@ -72,24 +72,24 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
-      relationship__c: { 
+      relationship__c: {
         allowNull: false,
         type: Sequelize.STRING(50),
       },
-      source: { 
+      source: {
         allowNull: false,
         type: Sequelize.STRING(50),
         //Owner, Customer, Networking event
       },
-      job: { 
+      job: {
         allowNull: false,
         type: Sequelize.STRING(250),
       },
-      lead_type: { 
+      lead_type: {
         allowNull: false,
         type: Sequelize.STRING(50),
       },
-      processStep: { 
+      processStep: {
         allowNull: false,
         type: Sequelize.STRING(50),
         /*customer
@@ -114,7 +114,7 @@ module.exports = {
       },
       reportTo: {
         allowNull: false,
-        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        type: Sequelize.INTEGER,
       },
       isStatus: {
         allowNull: false,

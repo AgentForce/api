@@ -64,6 +64,7 @@ const User = db.define('manulife_users', {
   isStatus: {
     allowNull: false,
     type: Sequelize.INTEGER,
+    defaultValue: 1
   },
   createdAt: {
     allowNull: false,
@@ -77,7 +78,7 @@ const User = db.define('manulife_users', {
     // tableName: 'campaign',
     // schema: 'testmanulife',
     // freezeTableName: true,
-    timestamps: false
+    timestamps: true
   });
 
 export { User };

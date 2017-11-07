@@ -1,5 +1,5 @@
 import { User as UserDao } from '../postgres';
-
+import * as _ from 'lodash';
 interface IIUser {
     id: string;
     code: string;
@@ -8,21 +8,14 @@ interface IIUser {
     phone: string;
     fullName: string;
     groupId: string;
+    reportToFather: number[];
     address: string;
     city: number;
+    district: number;
+    isStatus: number;
+    reportTo: number;
 }
-class User implements IIUser {
-    id: string;
-    code: string;
-    password: string;
-    email: string;
-    phone: string;
-    fullName: string;
-    groupId: string;
-    address: string;
-    city: number;
-
-
+class User {
     static validate() {
     }
     /**
@@ -46,12 +39,52 @@ class User implements IIUser {
 
 
     /**
+     * find User
+     * @param id userid
+     */
+    static findByCode(code: string) {
+        return UserDao
+            .findOne({
+                where: {
+                    code: code
+                }
+            })
+            .then(result => {
+                return result;
+            })
+            .catch(ex => {
+                throw ex;
+            });
+    }
+
+    /**
+     * find User by id
+     * @param id 
+     */
+    static findById(id: number) {
+        return UserDao.findOne({
+            where: {
+                id: id
+            }
+        })
+            .then(result => {
+                return result;
+            })
+            .catch(ex => {
+                throw ex;
+            });
+    }
+
+    /**
      * create new user
      * @param user IUser
      */
-    static create(user: IIUser) {
-        return UserDao
-            .create(user)
+    static async create(user: IIUser) {
+        user.reportToFather = [];
+        let parent = await this.findById(user.reportTo);
+        if (parent == null) {
+        }
+        return UserDao.create(user)
             .then(result => {
                 return result;
             })

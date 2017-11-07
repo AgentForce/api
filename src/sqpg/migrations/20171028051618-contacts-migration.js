@@ -54,7 +54,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING(255),
       },
-      processStep: { 
+      processStep: {
         allowNull: false,
         type: Sequelize.STRING(50),
         /*call
@@ -69,7 +69,7 @@ module.exports = {
       },
       reportTo: {
         allowNull: false,
-        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        type: Sequelize.INTEGER,
       },
       isStatus: {
         allowNull: false,

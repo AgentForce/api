@@ -2,7 +2,7 @@ import * as Mongoose from "mongoose";
 import * as Bcrypt from "bcryptjs";
 
 export interface IUser extends Mongoose.Document {
-  name: string;
+  fullName: string;
   email: string;
   password: string;
   createdAt: Date;
@@ -17,7 +17,7 @@ export const UserSchema = new Mongoose.Schema({
     unique: true,
     required: true
   },
-  name: {
+  fullName: {
     type: String,
     required: true
   },

@@ -68,29 +68,30 @@ export default class UserController {
             // const result = Joi.validate(request.request.body, createUserModel, {
             //     abortEarly: false
             // });
-            const user = await UserBll.findByEmail(dataInput.email)
+            const user = await UserBll.findByCode(dataInput.code)
                 .catch(ex => {
                     throw ex;
                 });
-            console.log(user);
             if (user == null) {
-                // let newUser: any = await this.database.userModel
-                //     .create(request.payload);
+                let newUser: any = await this.database.userModel.create(request.payload);
                 let iUser: IIUser = dataInput;
                 let newUserPg = await UserBll.create(iUser)
                     .then()
                     .catch((error) => {
                         reply({
-                            status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+                            status: HTTP_STATUS.BAD_REQUEST,
                             errors: error
-                        }).code(HTTP_STATUS.BAD_GATEWAY);
+                        }).code(HTTP_STATUS.BAD_REQUEST);
                     });
-                // return reply({
-                //     token: this.generateToken(newUser)
-                // })
-                //     .code(201);
+                return reply({
+                    token: this.generateToken(newUser)
+                })
+                    .code(201);
             } else {
-                return reply('user exists').code(200);
+                return reply({
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    error: 'this code exist'
+                }).code(HTTP_STATUS.BAD_REQUEST);
 
             }
         } catch (error) {
