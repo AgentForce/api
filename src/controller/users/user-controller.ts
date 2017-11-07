@@ -2,11 +2,14 @@ import * as Hapi from "hapi";
 import * as Boom from "boom";
 import * as Jwt from "jsonwebtoken";
 import { IUser } from "./user";
+import { } from 'module';
 import { IDatabase } from "../../database";
-import db from '../../sqpg/_index';
-import { IIUser, User } from '../../bll/userbll';
+// import db from '../../sqpg/_index';
+import { IIUser, User as UserBll } from '../../bll/userbll';
 import { IServerConfigurations } from "../../configurations";
-
+import { Campaign as CampDAO } from '../../postgres';
+import * as Joi from 'joi';
+import * as HTTP_STATUS from 'http-status';
 export default class UserController {
 
     private database: IDatabase;
@@ -59,25 +62,39 @@ export default class UserController {
     }
 
     public async createUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        const dataInput = request.payload;
-        const eUser = await this.findUser(dataInput.email);
-        if (eUser === null) {
-            let pgUser: IIUser = request.payload;
-            let user: any = await this.database
-                .userModel
-                .create(request.payload);
-                let currentCamps = await db.Language
-                .findAll()
-                .catch((error) => {
-                    throw ('CreateCamp Step 2:' + JSON.stringify(error));
+
+        try {
+            const dataInput = request.payload;
+            // const result = Joi.validate(request.request.body, createUserModel, {
+            //     abortEarly: false
+            // });
+            const user = await UserBll.findByEmail(dataInput.email)
+                .catch(ex => {
+                    throw ex;
                 });
-            console.log(currentCamps);
-            return reply({
-                token: this.generateToken(user)
-            })
-                .code(201);
-        } else {
-            return reply('user exists').code(200);
+            console.log(user);
+            if (user == null) {
+                // let newUser: any = await this.database.userModel
+                //     .create(request.payload);
+                let iUser: IIUser = dataInput;
+                let newUserPg = await UserBll.create(iUser)
+                    .then()
+                    .catch((error) => {
+                        reply({
+                            status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+                            errors: error
+                        }).code(HTTP_STATUS.BAD_GATEWAY);
+                    });
+                // return reply({
+                //     token: this.generateToken(newUser)
+                // })
+                //     .code(201);
+            } else {
+                return reply('user exists').code(200);
+
+            }
+        } catch (error) {
+            return reply(error).code(200);
         }
     }
 

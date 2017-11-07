@@ -5,7 +5,7 @@ import { ICampaign } from "./campaign";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as uuid from 'uuid';
-import db from '../../sqpg/_index';
+// import db from '../../sqpg/_index';
 import { LanguageInstance } from './../../sqpg/language';
 
 

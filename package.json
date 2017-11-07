@@ -26,6 +26,8 @@
     "serve": "nodemon -e ts -w ./src -x \"npm run runtime\""
   },
   "dependencies": {
+    "@types/http-status": "^0.2.30",
+    "@types/sequelize": "^4.0.78",
     "bcryptjs": "^2.4.3",
     "boom": "^4.3.1",
     "fs": "0.0.1-security",
@@ -45,7 +47,7 @@
     "path": "^0.12.7",
     "pg": "^7.3.0",
     "pg-hstore": "^2.3.2",
-    "sequelize": "^4.22.0",
+    "sequelize": "^4.22.5",
     "sequelize-cli": "^3.0.0",
     "vision": "^4.1.1"
   },
