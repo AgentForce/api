@@ -15,6 +15,8 @@ interface IIUser {
     isStatus: number;
     reportTo: number;
 }
+
+
 class User {
     static validate() {
     }

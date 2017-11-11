@@ -37,7 +37,7 @@ module.exports = {
       period: {
         allowNull: false,
         type: Sequelize.INTEGER,
-       },
+      },
       startDate: {
         allowNull: false,
         type: Sequelize.DATE
@@ -49,20 +49,20 @@ module.exports = {
       numberofleads: {
         allowNull: true,
         type: Sequelize.INTEGER,
-       },
-       targetCall: { 
+      },
+      targetCall: {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
-      targetMetting: { 
+      targetMetting: {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
-      targetPresentation: { 
+      targetPresentation: {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
-      targetContract: { 
+      targetContract: {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
@@ -83,25 +83,25 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
-      currentCall: { 
+      currentCall: {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
-      currentMetting: { 
+      currentMetting: {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
-      currentPresentation: { 
+      currentPresentation: {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
-      currentContract: { 
+      currentContract: {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
       reportTo: {
         allowNull: false,
-        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        type: Sequelize.INTEGER,
       },
       isStatus: {
         allowNull: false,

@@ -3,7 +3,7 @@ import * as Boom from "boom";
 import { IPlugin } from "./plugins/interfaces";
 import { IServerConfigurations } from "./configurations";
 import * as Users from "./controller/users";
-// import * as Campaigns from "./controller/campaigns";
+import * as Campaigns from "./controller/campaigns";
 import { IDatabase } from "./database";
 
 
@@ -45,7 +45,7 @@ export function init(configs: IServerConfigurations, database: IDatabase): Promi
 
             console.log('Register Routes');
             Users.init(server, configs, database);
-            // Campaigns.init(server, configs, database);
+            Campaigns.init(server, configs, database);
             console.log('Routes registered sucessfully.');
 
             resolve(server);
