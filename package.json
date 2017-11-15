@@ -26,6 +26,7 @@
     "serve": "nodemon -e ts -w ./src -x \"npm run runtime\""
   },
   "dependencies": {
+    "@types/bluebird": "^3.5.18",
     "@types/http-status": "^0.2.30",
     "@types/sequelize": "^4.0.78",
     "bcryptjs": "^2.4.3",

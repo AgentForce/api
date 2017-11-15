@@ -7,7 +7,7 @@ const createCampaignFAModel = Joi.object().keys({
     UserId: Joi.number().required(),
     StartDate: Joi.date().required(),
     EndDate: Joi.date().required(),
-    CaseSize: Joi.number().required(),
+    CaseSize: Joi.number().min(1).required(),
     IncomeMonthly: Joi.number().required(),
     CommissionRate: Joi.number().required()
 });

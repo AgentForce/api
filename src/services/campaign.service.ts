@@ -1,8 +1,9 @@
 import { Campaign as CampDao } from '../postgres';
-import { UserService } from '../services/user.service';
+import { UserService, IIUser } from '../services/user.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
-
+import { Promise as Bluebird } from 'bluebird';
+import { use } from 'nconf';
 interface ICampaign {
     UserId: number;
     Period: number;
@@ -57,11 +58,15 @@ class CampaignService {
      * find campaign
      * @param id userid
      */
-    static findByEmail(email: string) {
+    static findByUserId(id: number, date: Date) {
         return CampDao
             .findOne({
                 where: {
-                    email: email
+                    UserId: id,
+                    IsDeleted: false,
+                    StartDate: {
+                        $gte: date
+                    }
                 }
             }).then(result => {
                 return result;
@@ -72,27 +77,37 @@ class CampaignService {
     }
 
 
+
     /**
      * create new user
      * @param user IUser
      */
     static createOfFA(campaign: ICampaign) {
-        return new Promise(async (resolve, reject) => {
-            let user = await UserService.findById(campaign.UserId);
-            if (user == null) {
-                reject('userId not found');
-            }
-            let camps = <Array<ICampaign>>await this.prepareCamp(campaign);
-            try {
-                let campsPostgres = await CampDao.bulkCreate(camps);
-            } catch (error) {
-                reject(error);
-            }
-            resolve(camps);
-        }).catch(ex => {
-            console.log('object');
-            throw ex;
-        });
+        return Bluebird
+            .all([
+                UserService.findById(campaign.UserId),
+                this.findByUserId(campaign.UserId, campaign.StartDate)
+            ])
+            .spread(async (user: IIUser, camps) => {
+                if (user == null) {
+                    throw (['UserId not found', 1]);
+                }
+                if (_.size(camps) > 0) {
+                    throw ([2, `this user have campaign in ${campaign.StartDate}.`]);
+                }
+                let campPrepare = <Array<ICampaign>>await this.prepareCamp(campaign, user)
+                    .catch(ex => {
+                        throw ex;
+                    });
+                let campsPostgres = await CampDao.bulkCreate(campPrepare)
+                    .catch(ex => {
+                        throw ex;
+                    });
+            })
+            .catch(ex => {
+                throw ex;
+            });
+
         // dataInput.contracts = Math.ceil((dataInput.monthly * 100 / dataInput.commission) / dataInput.loan);
         // // (Thu nhập x 100 / tỉ lệ hoa hồng)/loan
         // dataInput.maxCustomers = dataInput.contracts * 10;
@@ -122,42 +137,31 @@ class CampaignService {
         // );
     }
 
-    private static prepareCamp(campaign: ICampaign) {
+    private static prepareCamp(campaign: ICampaign, user: IIUser) {
+
         return new Promise((resolve, reject) => {
-            const months = [1];
-            // const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+            campaign.ReportTo = user.ReportTo;
+            campaign.ReportToList = user.ReportToList;
             let camps = [];
-            camps = _.map(months, (val) => {
-                let camp: ICampaign = campaign;
-                let numContract = Math.ceil((campaign.IncomeMonthly * 100 / campaign.CommissionRate) / campaign.CaseSize);
-                // // (Thu nhập x 100 / tỉ lệ hoa hồng)/loan
-                let maxCustomers = numContract * 10;
+            console.log(campaign);
+            let numContract = Math.ceil((campaign.IncomeMonthly * 100 / campaign.CommissionRate) / campaign.CaseSize);
+            // // (Thu nhập x 100 / tỉ lệ hoa hồng)/loan
+            let maxCustomers = numContract * 10;
+            camps = _.times(12, (val) => {
+                let camp: ICampaign = _.clone(campaign);
+                camp.StartDate = moment(campaign.StartDate).add(val, 'M').toDate();
+                camp.EndDate = moment(campaign.StartDate).add(val + 1, 'M').endOf('d').toDate();
                 camp.TargetCallSale = numContract * 5;
                 // dataInput.meetingCustomers = dataInput.contracts * 3;
                 camp.TargetMetting = numContract * 3;
-                // 4. Insert DB (12 months ~ 12 new camps)
-                camp.Name = `Camp ${val}`;
+                camp.Name = `Camp ${val + 1}`;
                 return camp;
-                // await Promise.all(
-                //     months.map(async (index) => {
-                //         await listCamps.push({
-                //             name: "Camp ",
-                //             ownerid: '0057F000000eEkSQAU',
-                //             policy_amount__c: dataInput.loan,
-                //             commission_rate__c: dataInput.commission,
-                //             actual_collected__c: dataInput.monthly,
-                //             startdate: moment().add(index, 'M').format('MM/DD/YYYY'),
-                //             enddate: moment().add(index + 1, 'M').format('MM/DD/YYYY'),
-                //             target_contacts__c: dataInput.maxCustomers,
-                //             leads__c: dataInput.meetingCustomers,
-                //             opportunities__c: dataInput.callCustomers,
-                //             number_of_contracts_closed_in_period__c: dataInput.contracts
-                //         });
-                //     })
-                // );
             });
             resolve(camps);
-        });
+        })
+            .catch(ex => {
+                throw ex;
+            });
     }
 }
 export { ICampaign, CampaignService };
