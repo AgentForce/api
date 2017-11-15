@@ -49,7 +49,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             tags: ['api', 'campaigns'],
             description: 'Create a campaign.',
             validate: {
-                payload: CampaignValidator.createCampaignModel,
+                payload: CampaignValidator.createCampaignFAModel,
                 // headers: jwtValidator
             },
             plugins: {

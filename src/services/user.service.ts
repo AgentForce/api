@@ -1,23 +1,27 @@
 import { User as UserDao } from '../postgres';
 import * as _ from 'lodash';
 interface IIUser {
-    id: string;
-    code: string;
-    password: string;
-    email: string;
-    phone: string;
-    fullName: string;
-    groupId: string;
-    reportToFather: number[];
-    address: string;
-    city: number;
-    district: number;
-    isStatus: number;
-    reportTo: number;
+    Id: string;
+    Code: string;
+    Password: string;
+    Email: string;
+    Phone: string;
+    FullName: string;
+    Gender: string;
+    Birthday: Date;
+    GroupId: string;
+    ReportToList: number[];
+    Address: string;
+    City: number;
+    District: number;
+    Status: number;
+    ReportTo: number;
+    CreatedAt: Date;
+    UpdatedAt: Date;
 }
 
 
-class User {
+class UserService {
     static validate() {
     }
     /**
@@ -28,7 +32,7 @@ class User {
         return UserDao
             .findOne({
                 where: {
-                    email: email
+                    Email: email
                 }
             })
             .then(result => {
@@ -44,11 +48,11 @@ class User {
      * find User
      * @param id userid
      */
-    static findByCode(code: string) {
+    static findByCode(username: string) {
         return UserDao
             .findOne({
                 where: {
-                    code: code
+                    UserName: username
                 }
             })
             .then(result => {
@@ -64,11 +68,12 @@ class User {
      * @param id 
      */
     static findById(id: number) {
-        return UserDao.findOne({
-            where: {
-                id: id
-            }
-        })
+        return UserDao
+            .findOne({
+                where: {
+                    Id: id
+                }
+            })
             .then(result => {
                 return result;
             })
@@ -82,8 +87,8 @@ class User {
      * @param user IUser
      */
     static async create(user: IIUser) {
-        user.reportToFather = [];
-        let parent = await this.findById(user.reportTo);
+        user.ReportToList = [];
+        let parent = await this.findById(user.ReportTo);
         if (parent == null) {
         }
         return UserDao.create(user)
@@ -95,4 +100,4 @@ class User {
             });
     }
 }
-export { User, IIUser };
+export { UserService, IIUser };

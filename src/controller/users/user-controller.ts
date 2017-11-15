@@ -4,10 +4,8 @@ import * as Jwt from "jsonwebtoken";
 import { IUser } from "./user";
 import { } from 'module';
 import { IDatabase } from "../../database";
-// import db from '../../sqpg/_index';
-import { IIUser, User as UserBll } from '../../bll/userbll';
+import { IIUser, UserService as UserBll } from '../../services/user.service';
 import { IServerConfigurations } from "../../configurations";
-import { Campaign as CampDAO } from '../../postgres';
 import * as Joi from 'joi';
 import * as HTTP_STATUS from 'http-status';
 export default class UserController {
@@ -50,30 +48,27 @@ export default class UserController {
         });
     }
 
-    private async findUser(email: string) {
-        return new Promise(async (resolve, reject) => {
-            let user: IUser = await this.database
-                .userModel
-                .findOne({
-                    email: email
-                });
-            resolve(user);
-        });
-    }
+
 
     public async createUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
 
         try {
+
             const dataInput = request.payload;
             // const result = Joi.validate(request.request.body, createUserModel, {
             //     abortEarly: false
             // });
-            const user = await UserBll.findByCode(dataInput.code)
+            const user = await UserBll.findByCode(dataInput.UserName)
                 .catch(ex => {
                     throw ex;
                 });
+
             if (user == null) {
-                let newUser: any = await this.database.userModel.create(request.payload);
+                let newUser: any = await this.database.userModel.create({
+                    email: dataInput.Email,
+                    fullName: dataInput.FullName,
+                    password: dataInput.Password
+                });
                 let iUser: IIUser = dataInput;
                 let newUserPg = await UserBll.create(iUser)
                     .then()
@@ -88,14 +83,22 @@ export default class UserController {
                 })
                     .code(201);
             } else {
-                return reply({
-                    status: HTTP_STATUS.BAD_REQUEST,
-                    error: 'this code exist'
-                }).code(HTTP_STATUS.BAD_REQUEST);
-
+                throw 'this code exist';
             }
         } catch (error) {
-            return reply(error).code(200);
+            this.database.logModel.create({
+                dataInput: request.payload,
+                error: error,
+                meta: {
+                    // header: request.headers,
+                    params: request.params,
+                    auth: request.auth
+                }
+            });
+            return reply({
+                status: HTTP_STATUS.BAD_REQUEST,
+                error: error
+            }).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
 

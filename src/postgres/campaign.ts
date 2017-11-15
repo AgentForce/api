@@ -1,109 +1,237 @@
 import { db } from './db';
 // const Sequelize = require('sequelize');
 import * as Sequelize from 'sequelize';
-const Campaign = db.define('manulife_camps_sale', {
-  id: {
+const Campaign = db.define('manulife_campaigns', {
+  Id: {
     allowNull: false,
     type: Sequelize.INTEGER,
     autoIncrement: true,
-    primaryKey: true
+    primaryKey: true,
   },
-  campType: {
-    allowNull: false,
-    type: Sequelize.STRING(50),
-  },
-  name: {
-    allowNull: true,
-    type: Sequelize.STRING(255),
-  },
-  userId: {
+  UserId: {
     type: Sequelize.INTEGER,
     allowNull: false,
     onDelete: 'CASCADE',
     references: {
       model: 'manulife_users',
-      key: 'id',
-      as: 'userId',
+      key: 'Id',
+      as: 'camp_userId'
     }
   },
-  period: {
-    allowNull: false,
+  Period: {
     type: Sequelize.INTEGER,
-  },
-  startDate: {
     allowNull: false,
-    type: Sequelize.DATE
+    defaultValue: 1
   },
-  endDate: {
-    allowNull: false,
-    type: Sequelize.DATE
-  },
-  numberofleads: {
-    allowNull: true,
+  CampType: {
     type: Sequelize.INTEGER,
+    allowNull: false
   },
-  targetCall: {
-    allowNull: false,
+  Name: {
+    type: Sequelize.STRING(255),
+    allowNull: false
+  },
+  Label: {
+    type: Sequelize.STRING(50),
+    allowNull: false
+  },
+  Experience: {
+    type: Sequelize.STRING(50),
+    allowNull: false
+  },
+  StartDate: {
+    type: Sequelize.DATE,
+    allowNull: false
+  },
+  EndDate: {
+    type: Sequelize.DATE,
+    allowNull: false
+  },
+  TargetCallSale: {
     type: Sequelize.INTEGER,
-  },
-  targetMetting: {
     allowNull: false,
+    defaultValue: 0
+  },
+  TargetMetting: {
     type: Sequelize.INTEGER,
-  },
-  targetPresentation: {
     allowNull: false,
+    defaultValue: 0
+  },
+  TargetPresentation: {
     type: Sequelize.INTEGER,
-  },
-  targetContract: {
     allowNull: false,
+    defaultValue: 0
+  },
+  TargetContractSale: {
     type: Sequelize.INTEGER,
-  },
-  description: {
     allowNull: false,
-    type: Sequelize.STRING(1024),
-    unique: true
+    defaultValue: 0
   },
-  commission_rate__c: {
-    allowNull: false,
+  CommissionRate: {
     type: Sequelize.INTEGER,
-  },
-  policy_amount__c: {
     allowNull: false,
+    defaultValue: 0
+  },
+  CaseSize: {
     type: Sequelize.INTEGER,
-  },
-  income_Monthly__c: {
     allowNull: false,
+    defaultValue: 0
+  },
+  IncomeMonthly: {
     type: Sequelize.INTEGER,
-  },
-  currentCall: {
     allowNull: false,
+    defaultValue: 0
+  },
+  CurrentCallSale: {
     type: Sequelize.INTEGER,
-  },
-  currentMetting: {
     allowNull: false,
+    defaultValue: 0
+  },
+  CurrentMetting: {
     type: Sequelize.INTEGER,
-  },
-  currentPresentation: {
     allowNull: false,
+    defaultValue: 0
+  },
+  CurrentPresentation: {
     type: Sequelize.INTEGER,
-  },
-  currentContract: {
     allowNull: false,
+    defaultValue: 0
+  },
+  CurentContract: {
     type: Sequelize.INTEGER,
-  },
-  reportTo: {
     allowNull: false,
+    defaultValue: 0
+  },
+  TargetCallReCruit: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  TargetSurvey: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  TargetPamphlet: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  TargetCop: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  TargetTest: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  TargetInterview: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  TargetMit: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  TargetAgentCode: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  Description: {
+    type: Sequelize.STRING(500)
+  },
+  CurrentCallRecruit: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  CurrentSurvey: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  CurrentPamphlet: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  CurrentCop: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  CurrentTest: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  CurrentInterview: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  CurrentMit: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  CurentTer: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  AgentTer: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  ActiveRaito: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  M3AARaito: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  AverageCC: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  M3AA: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  FypRaito: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  Results: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0 //0 chưa đặt, 1 đạt
+  },
+  ReportTo: {
+    type: Sequelize.INTEGER
+  },
+  ReportToList: {
     type: Sequelize.ARRAY(Sequelize.INTEGER),
+    allowNull: true
   },
-  isStatus: {
-    allowNull: false,
-    type: Sequelize.INTEGER,
-  },
-  createdAt: {
+  CreatedAt: {
     allowNull: false,
     type: Sequelize.DATE
   },
-  updatedAt: {
+  UpdatedAt: {
     allowNull: false,
     type: Sequelize.DATE
   }
@@ -111,6 +239,7 @@ const Campaign = db.define('manulife_camps_sale', {
     // tableName: 'campaign',
     // schema: 'testmanulife',
     // freezeTableName: true,
-    timestamps: false
+    createdAt: 'CreatedAt',
+    updatedAt: 'UpdatedAt'
   });
 export { Campaign };

@@ -1,14 +1,11 @@
 import * as Hapi from "hapi";
 import * as Boom from "boom";
 import * as moment from "moment";
-// import { ICampaign } from "./campaign";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
-import * as uuid from 'uuid';
-// import db from '../../sqpg/_index';
-// import { LanguageInstance } from './../../sqpg/language';
-import { CampaignBLL, ICampaign } from '../../bll/campaignbll';
+import { CampaignService, ICampaign } from '../../services/campaign.service';
 import * as HTTP_STATUS from 'http-status';
+import { createCampaignFAModel } from './campaign-validator';
 export default class CampaignController {
 
     private database: IDatabase;
@@ -21,10 +18,9 @@ export default class CampaignController {
 
     public async createCampaign(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         // 1. Router Checking data input : commission > 0, loan > 0, monthly > 0
-
         try {
-            const dataInput: ICampaign = request.payload;
-            const camps = await CampaignBLL.create(dataInput);
+            let iCamp: ICampaign = request.payload;
+            const camps = await CampaignService.createOfFA(iCamp);
             reply(camps).code(200);
             // 2. Checking permision create camp : start join and end of year (after finish 12 months)
             // let currentCamps = await db.Language

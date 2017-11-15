@@ -1,84 +1,115 @@
 import { db } from './db';
 // const Sequelize = require('sequelize');
+import { IDatabase } from '../database';
 import * as Sequelize from 'sequelize';
 const User = db.define('manulife_users', {
-  id: {
+  Id: {
     allowNull: false,
     type: Sequelize.INTEGER,
+    primaryKey: true,
     autoIncrement: true,
-    primaryKey: true
-  },
-  code: {
-    allowNull: false,
-    type: Sequelize.STRING(255),
     unique: true
   },
-  label: {
-    allowNull: true,
-    type: Sequelize.STRING(255),
-  },
-  password: {
+  UserName: {
     allowNull: false,
-    type: Sequelize.STRING(255),
-    unique: true
+    type: Sequelize.STRING(50)
   },
-  email: {
+  Password: {
     allowNull: false,
-    type: Sequelize.STRING(255),
-    unique: true
+    type: Sequelize.STRING(255)
   },
-  phone: {
+  GroupId: {
+    type: Sequelize.INTEGER,
     allowNull: false,
+    onDelete: 'CASCADE',
+    references: {
+      model: 'manulife_groups',
+      key: 'Id'
+    }
+  },
+  Email: {
+    type: Sequelize.STRING(255),
+    allowNull: false
+  },
+  Phone: {
     type: Sequelize.STRING(50),
-    unique: true
+    allowNull: false
   },
-  fullName: {
-    allowNull: false,
+  FullName: {
     type: Sequelize.STRING(255),
-    unique: true
+    allowNull: false
   },
-  groupId: {
-    allowNull: false,
+  Address: {
+    type: Sequelize.STRING(255),
+    allowNull: false
+  },
+  City: {
     type: Sequelize.INTEGER,
+    allowNull: false
   },
-  reportTo: {
-    allowNull: false,
-    type: Sequelize.INTEGER
+  District: {
+    type: Sequelize.INTEGER,
+    allowNull: false
   },
-  reportToFather: {
+  Gender: {
+    type: Sequelize.INTEGER,
     allowNull: false,
+    defaultValue: 0
+  },
+
+  Birthday: {
+    type: Sequelize.DATE,
+    allowNull: false
+  },
+  ReportTo: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
+  ReportToList: {
     type: Sequelize.ARRAY(Sequelize.INTEGER),
+    allowNull: true
   },
-  address: {
-    allowNull: false,
-    type: Sequelize.STRING,
-  },
-  city: {
-    allowNull: false,
+  Label: {
     type: Sequelize.INTEGER,
-  },
-  district: {
     allowNull: false,
-    type: Sequelize.INTEGER,
-  },
-  isStatus: {
-    allowNull: false,
-    type: Sequelize.INTEGER,
     defaultValue: 1
   },
-  createdAt: {
+  IsDeleted: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: 0
+  },
+  Status: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: true // 1= active, 0 = deactive
+  },
+  CreatedAt: {
     allowNull: false,
     type: Sequelize.DATE
   },
-  updatedAt: {
+  UpdatedAt: {
     allowNull: false,
     type: Sequelize.DATE
   }
 }, {
+    hooks: {
+      afterCreate: (user, options) => {
+        // database.logModel.create({
+        //   type: 'create user',
+        //   meta: {
+        //     options: options,
+        //     user: user
+        //   }
+        // });
+      }
+    },
     // tableName: 'campaign',
     // schema: 'testmanulife',
     // freezeTableName: true,
-    timestamps: true
+    timestamps: true,
+    createdAt: 'CreatedAt',
+    updatedAt: 'UpdatedAt'
   });
 
 export { User };

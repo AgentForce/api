@@ -1,29 +1,30 @@
 import * as Joi from "joi";
 
 const createUserModel = Joi.object().keys({
-    email: Joi.string().email().trim().required(),
-    fullName: Joi.string().required(),
-    password: Joi.string().trim().required(),
-    phone: Joi.string().required(),
-    code: Joi.string().required(),
-    groupId: Joi.number().required(),
-    address: Joi.string().required().max(255),
-    city: Joi.number().integer(),
-    district: Joi.number().integer(),
-    reportTo: Joi.number().integer()
+    Email: Joi.string().email().trim().required(),
+    FullName: Joi.string().required(),
+    Password: Joi.string().trim().required(),
+    Phone: Joi.string().required(),
+    UserName: Joi.string().required(),
+    Birthday: Joi.date().required(),
+    GroupId: Joi.number().required(),
+    Address: Joi.string().required().max(255),
+    City: Joi.number().integer(),
+    District: Joi.number().integer(),
+    ReportTo: Joi.number().integer()
 
 });
 
-export const updateUserModel = Joi.object().keys({
+ const updateUserModel = Joi.object().keys({
     email: Joi.string().email().trim(),
     name: Joi.string(),
     password: Joi.string().trim()
 });
 
-export const loginUserModel = Joi.object().keys({
+ const loginUserModel = Joi.object().keys({
     email: Joi.string().email().required(),
     password: Joi.string().trim().required()
 });
 
-export const jwtValidator = Joi.object({ 'authorization': Joi.string().required() }).unknown();
-export { createUserModel };
+ const jwtValidator = Joi.object({ 'authorization': Joi.string().required() }).unknown();
+export { createUserModel, updateUserModel, loginUserModel, jwtValidator };
