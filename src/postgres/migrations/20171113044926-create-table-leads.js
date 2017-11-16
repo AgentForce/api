@@ -50,17 +50,17 @@ module.exports = {
       Gender: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        default: 0
+        defaultValue: 0
       },
       IncomeMonthly: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        default: 0
+        defaultValue: 0
       },
       MaritalStatus: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        default: 0
+        defaultValue: 0
       },
       Address: {
         type: Sequelize.STRING(255)
@@ -68,22 +68,22 @@ module.exports = {
       City: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        default: 0
+        defaultValue: 0
       },
       District: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        default: 0
+        defaultValue: 0
       },
       Relationship: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        default: 0
+        defaultValue: 0
       },
       Source: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        default: 0
+        defaultValue: 0
       },
       Job: {
         type: Sequelize.STRING(255)
@@ -91,12 +91,12 @@ module.exports = {
       LeadType: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        default: 0
+        defaultValue: 0
       },
       ProcessStep: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        default: 0
+        defaultValue: 0
       },
       Description: {
         type: Sequelize.STRING(500)
@@ -104,12 +104,12 @@ module.exports = {
       IsDeleted: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        default: 0
+        defaultValue: false
       },
       Status: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        default: 1 // 1= active, 0 = deactive
+        defaultValue: 1 // 1= active, 0 = deactive
       },
       CreatedAt: {
         allowNull: false,

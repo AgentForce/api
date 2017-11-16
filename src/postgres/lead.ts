@@ -1,122 +1,113 @@
 import { db } from './db';
 // const Sequelize = require('sequelize');
 import * as Sequelize from 'sequelize';
-const Campaign = db.define('manulife_camps_sale', {
-  id: {
+const Lead = db.define('manulife_leads', {
+  Id: {
     allowNull: false,
     type: Sequelize.INTEGER,
     autoIncrement: true,
     primaryKey: true
   },
-  userId: {
+  UserId: {
     type: Sequelize.INTEGER,
     allowNull: false,
     onDelete: 'CASCADE',
     references: {
       model: 'manulife_users',
-      key: 'id',
-      as: 'userId',
+      key: 'Id',
+      as: 'leads_users'
     }
   },
-  campId: {
+  CampId: {
     type: Sequelize.INTEGER,
     allowNull: false,
     onDelete: 'CASCADE',
     references: {
-      model: 'manulife_camps_sales',
-      key: 'id',
-      as: 'campId',
+      model: 'manulife_campaigns',
+      key: 'Id',
+      as: 'leads_campaigns'
     }
   },
-  phone: {
-    allowNull: false,
+  Phone: {
     type: Sequelize.STRING(50),
+    allowNull: false
   },
-  name: {
-    allowNull: true,
+  Name: {
     type: Sequelize.STRING(255),
+    allowNull: false
   },
-  age_c: {
-    allowNull: false,
-    type: Sequelize.INTEGER,
-  },
-  gender: {
-    allowNull: false,
-    type: Sequelize.STRING(50)
-  },
-  income_monthly__c: {
-    allowNull: false,
+  Age: {
     type: Sequelize.INTEGER
   },
-  marital_status__c: {
-    allowNull: true,
-    type: Sequelize.STRING(50),
-  },
-  address: {
-    allowNull: false,
-    type: Sequelize.STRING,
-  },
-  city: {
-    allowNull: false,
+  Gender: {
     type: Sequelize.INTEGER,
-  },
-  district: {
     allowNull: false,
+    defaultValue: 0
+  },
+  IncomeMonthly: {
     type: Sequelize.INTEGER,
-  },
-  relationship__c: {
     allowNull: false,
-    type: Sequelize.STRING(50),
+    defaultValue: 0
   },
-  source: {
-    allowNull: false,
-    type: Sequelize.STRING(50),
-    //Owner, Customer, Networking event
-  },
-  job: {
-    allowNull: false,
-    type: Sequelize.STRING(250),
-  },
-  lead_type: {
-    allowNull: false,
-    type: Sequelize.STRING(50),
-  },
-  processStep: {
-    allowNull: false,
-    type: Sequelize.STRING(50),
-    /*customer
-      call
-      metting
-      presentation
-      contract
-    staff
-      7 loại
-        call
-        metting
-        survey
-        cop
-        test
-        interview
-        MIT*/
-  },
-  description: {
-    allowNull: false,
-    type: Sequelize.STRING(1024),
-    unique: true
-  },
-  reportTo: {
-    allowNull: false,
+  MaritalStatus: {
     type: Sequelize.INTEGER,
-  },
-  isStatus: {
     allowNull: false,
-    type: Sequelize.INTEGER,
+    defaultValue: 0
   },
-  createdAt: {
+  Address: {
+    type: Sequelize.STRING(255)
+  },
+  City: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  District: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  Relationship: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  Source: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  Job: {
+    type: Sequelize.STRING(255)
+  },
+  LeadType: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  ProcessStep: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
+  Description: {
+    type: Sequelize.STRING(500)
+  },
+  IsDeleted: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: 0
+  },
+  Status: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: 1 // 1= active, 0 = deactive
+  },
+  CreatedAt: {
     allowNull: false,
     type: Sequelize.DATE
   },
-  updatedAt: {
+  UpdatedAt: {
     allowNull: false,
     type: Sequelize.DATE
   }
@@ -124,6 +115,8 @@ const Campaign = db.define('manulife_camps_sale', {
     // tableName: 'campaign',
     // schema: 'testmanulife',
     // freezeTableName: true,
-    timestamps: false
+    // timestamps: false
+    createdAt: 'CreatedAt',
+    updatedAt: 'UpdatedAt'
   });
-export { Campaign };
+export { Lead };

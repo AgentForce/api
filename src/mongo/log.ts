@@ -16,7 +16,7 @@ const LogSchema = new Schema({
     dataInput: {
         type: Object
     },
-    error: {
+    msg: {
         type: Object,
         default: ''
     },
@@ -26,6 +26,8 @@ const LogSchema = new Schema({
 }, {
         timestamps: true
     });
-const LogModel = model<ILog>('log', LogSchema);
+const LogModel = (nameCollection) => {
+    return model<ILog>(nameCollection, LogSchema);
+};
 
 export { LogModel };

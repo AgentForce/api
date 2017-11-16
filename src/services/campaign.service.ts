@@ -103,6 +103,7 @@ class CampaignService {
                     .catch(ex => {
                         throw ex;
                     });
+                return campsPostgres;
             })
             .catch(ex => {
                 throw ex;
