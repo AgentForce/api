@@ -6,12 +6,14 @@ const tslint = require('gulp-tslint');
 const mocha = require('gulp-mocha');
 const shell = require('gulp-shell');
 const env = require('gulp-env');
-
+const nodemon = require('gulp-nodemon');
 /**
  * Remove build directory.
  */
 gulp.task('clean', function () {
-  return gulp.src(outDir, { read: false })
+  return gulp.src(outDir, {
+      read: false
+    })
     .pipe(rimraf());
 });
 
@@ -20,7 +22,7 @@ gulp.task('clean', function () {
  */
 gulp.task('tslint', () => {
   return gulp.src('src/**/*.ts')
-    .pipe(tslint( { 
+    .pipe(tslint({
       formatter: 'prose'
     }))
     .pipe(tslint.report());
@@ -48,9 +50,13 @@ gulp.task('compile', shell.task([
 /**
  * Watch for changes in TypeScript
  */
-gulp.task('watch', shell.task([
-  'npm run tsc-watch',
-]))
+gulp.task('start', function () {
+  let stream = nodemon({
+    script: 'build/src/index.js',
+    env: {},
+  })
+
+})
 /**
  * Copy config files
  */
@@ -62,9 +68,23 @@ gulp.task('configs', (cb) => {
 /**
  * Build the project.
  */
-gulp.task('build', ['tslint', 'compile', 'configs'], () => {
+gulp.task('build', ['tslint', 'compile', 'configs'], (cb) => {
   console.log('Building the project ...');
+  cb();
 });
+
+gulp.task('build-nodemon', ['build'], (cb) => {
+  let stream = nodemon({
+    script: 'build/src/index.js',
+    ext:    'js json',
+    env: {},
+  });
+  cb();
+});
+
+gulp.task('serve', ['build'], function (cb) {
+  gulp.watch('src/**/*.ts', ['build']);
+})
 
 /**
  * Run tests.

@@ -27,6 +27,6 @@ const serverConfigs = Configs.getServerConfigs();
 
 Server.init(serverConfigs, database).then((server) => {
     server.start(() => {
-        console.log('Server running at:', server.info.uri);
+        console.log('Server running at: ', server.info.uri);
     });
 });

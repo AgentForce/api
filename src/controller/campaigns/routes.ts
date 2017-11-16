@@ -45,12 +45,12 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/campaigns',
         config: {
             handler: campaignController.createCampaign,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'campaigns'],
             description: 'Create a campaign.',
             validate: {
-                payload: CampaignValidator.createCampaignModel,
-                headers: jwtValidator
+                payload: CampaignValidator.createCampaignFAModel,
+                // headers: jwtValidator
             },
             plugins: {
                 'hapi-swagger': {

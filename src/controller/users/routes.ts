@@ -5,12 +5,11 @@ import { UserModel } from "./user";
 import * as UserValidator from "./user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
-
+import * as HTTP_STATUS from 'http-status';
 export default function (server: Hapi.Server, serverConfigs: IServerConfigurations, database: IDatabase) {
 
     const userController = new UserController(serverConfigs, database);
     server.bind(userController);
-
     /*server.route({
         method: 'GET',
         path: '/users/info',
@@ -98,12 +97,15 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             tags: ['api', 'users'],
             description: 'Create a user.',
             validate: {
-                payload: UserValidator.createUserModel
+                payload: UserValidator.createUserModel,
+                failAction: (request, reply, source, error) => {
+                    return reply({ status: HTTP_STATUS.BAD_REQUEST, error });
+                }
             },
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '201': {
+                        201: {
                             'description': 'User created.'
                         }
                     }
@@ -125,7 +127,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
+                        200: {
                             'description': 'User logged in.'
                         }
                     }

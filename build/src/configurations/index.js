@@ -2,8 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const nconf = require("nconf");
 const path = require("path");
-console.log('=======');
-console.log(process.env.NODE_ENV);
 //Read Configurations
 const configs = new nconf.Provider({
     env: true,

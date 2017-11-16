@@ -2,11 +2,12 @@ import * as Mongoose from "mongoose";
 import { IDataConfiguration } from "./configurations";
 import { IUser, UserModel } from "./controller/users/user";
 import { ICampaign, CampaignModel } from "./controller/campaigns/campaign";
-
+import { ILog, LogModel } from './mongo/log';
 export interface IDatabase {
     userModel: Mongoose.Model<IUser>;
     campaignModel: Mongoose.Model<ICampaign>;
-
+    logModel: Mongoose.Model<ILog>;
+    logLead: Mongoose.Model<ILog>;
 }
 
 export function init(config: IDataConfiguration): IDatabase {
@@ -26,6 +27,8 @@ export function init(config: IDataConfiguration): IDatabase {
 
     return {
         userModel: UserModel,
-        campaignModel: CampaignModel
+        campaignModel: CampaignModel,
+        logModel: LogModel('log'),
+        logLead: LogModel('log_lead')
     };
 }

@@ -36,7 +36,7 @@ module.exports = {
           as: 'leadId',
         }
       },
-      processStep: { 
+      processStep: {
         allowNull: false,
         type: Sequelize.STRING(50),
         /*xem lại*/
@@ -48,7 +48,7 @@ module.exports = {
       },
       reportTo: {
         allowNull: false,
-        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        type: Sequelize.INTEGER,
       },
       isStatus: {
         allowNull: false,

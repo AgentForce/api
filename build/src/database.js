@@ -5,15 +5,13 @@ const user_1 = require("./controller/users/user");
 const campaign_1 = require("./controller/campaigns/campaign");
 function init(config) {
     Mongoose.Promise = Promise;
-    console.log('hello');
-    //console.log(process.env.MONGO_URL);
-    Mongoose.connect('mongodb://manulife:manulife!!!@103.48.191.254:27017/manulife');
+    Mongoose.connect(process.env.MONGO_URL || config.connectionString);
     let mongoDb = Mongoose.connection;
     mongoDb.on('error', () => {
-        console.log(`Unable to connect to database mongo`);
+        console.log(`Unable to connect to database: ${config.connectionString}`);
     });
     mongoDb.once('open', () => {
-        console.log(`Connected to database mongo`);
+        console.log(`Connected to database: ${config.connectionString}`);
     });
     return {
         userModel: user_1.UserModel,

@@ -1,13 +1,11 @@
 {
   "development": {
-    "username": "das",
-    "password": "da$AgriT3ch",
-    "database": "postgres",
-    "host": "103.48.191.251",
-    "port": 5432,
+    "username": "tunguyene",
+    "password": "admin$123",
+    "database": "manulife",
+    "host": "127.0.0.1",
+    "port": 5433,
     "dialect": "postgres",
-    "logging": true,
-    "force": true,
     "timezone": "+00:00"
   },
   "test": {
@@ -17,8 +15,6 @@
     "host": "103.48.191.251",
     "port": 5432,
     "dialect": "postgres",
-    "logging": true,
-    "force": true,
     "timezone": "+00:00"
   },
   "production": {
@@ -28,8 +24,6 @@
     "host": "103.48.191.251",
     "port": 5432,
     "dialect": "postgres",
-    "logging": true,
-    "force": true,
     "timezone": "+00:00"
   }
 }

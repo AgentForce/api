@@ -4,8 +4,8 @@
     "target": "es6",
     "module": "commonjs",
     "moduleResolution": "node",
-    "sourceMap": true,
-    "typeRoots": ["node_modules/@types"]
+    "sourceMap": true
+    
   },
   "include": [
     "src/**/**.ts",

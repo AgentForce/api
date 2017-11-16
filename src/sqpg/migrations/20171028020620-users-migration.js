@@ -51,14 +51,14 @@ module.exports = {
       },
       reportTo: {
         allowNull: false,
-        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        type: Sequelize.INTEGER
       },
       reportToFather: {
         allowNull: false,
         type: Sequelize.ARRAY(Sequelize.INTEGER),
       },
       address: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING,
       },
       city: {

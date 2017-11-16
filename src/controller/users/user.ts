@@ -1,8 +1,8 @@
 import * as Mongoose from "mongoose";
 import * as Bcrypt from "bcryptjs";
 
-export interface IUser extends Mongoose.Document {
-  name: string;
+interface IUser extends Mongoose.Document {
+  fullName: string;
   email: string;
   password: string;
   createdAt: Date;
@@ -11,14 +11,22 @@ export interface IUser extends Mongoose.Document {
 }
 
 
-export const UserSchema = new Mongoose.Schema(
-  {
-    email: { type: String, unique: true, required: true },
-    name: { type: String, required: true },
-    password: { type: String, required: true }
+const UserSchema = new Mongoose.Schema({
+  email: {
+    type: String,
+    unique: true,
+    required: true
   },
-  {
-    timestamps: true
+  fullName: {
+    type: String,
+    required: true
+  },
+  password: {
+    type: String,
+    required: true
+  }
+}, {
+    timestamps: true,
   });
 
 function hashPassword(password: string): string {
@@ -55,4 +63,5 @@ UserSchema.pre('findOneAndUpdate', function () {
   this.findOneAndUpdate({}, { password: password });
 });
 
-export const UserModel = Mongoose.model<IUser>('User', UserSchema);
+const UserModel = Mongoose.model<IUser>('User', UserSchema);
+export { IUser, UserModel, UserSchema };

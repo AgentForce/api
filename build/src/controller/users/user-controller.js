@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const Boom = require("boom");
 const Jwt = require("jsonwebtoken");
+const _index_1 = require("../../sqpg/_index");
 class UserController {
     constructor(configs, database) {
         this.database = database;
@@ -25,7 +26,9 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             const email = request.payload.email;
             const password = request.payload.password;
-            let user = yield this.database.userModel.findOne({ email: email });
+            let user = yield this.database
+                .userModel
+                .findOne({ email: email });
             if (!user) {
                 return reply(Boom.unauthorized("User does not exists."));
             }
@@ -37,14 +40,35 @@ class UserController {
             });
         });
     }
+    findUser(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                let user = yield this.database
+                    .userModel
+                    .findOne({
+                    email: email
+                });
+                resolve(user);
+            }));
+        });
+    }
     createUser(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                let user = yield this.database.userModel.create(request.payload);
-                return reply({ token: this.generateToken(user) }).code(201);
+            const dataInput = request.payload;
+            const eUser = yield this.findUser(dataInput.email);
+            if (eUser === null) {
+                let user = yield this.database
+                    .userModel
+                    .create(request.payload);
+                let userPsql = yield _index_1.default.User
+                    .create(dataInput);
+                return reply({
+                    token: this.generateToken(user)
+                })
+                    .code(201);
             }
-            catch (error) {
-                return reply(Boom.badImplementation(error));
+            else {
+                return reply('user exists').code(200);
             }
         });
     }

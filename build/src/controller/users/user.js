@@ -3,9 +3,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Mongoose = require("mongoose");
 const Bcrypt = require("bcryptjs");
 exports.UserSchema = new Mongoose.Schema({
-    email: { type: String, unique: true, required: true },
-    name: { type: String, required: true },
-    password: { type: String, required: true }
+    email: {
+        type: String,
+        unique: true,
+        required: true
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    }
 }, {
     timestamps: true
 });
