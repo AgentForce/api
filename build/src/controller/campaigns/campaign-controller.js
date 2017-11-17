@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Boom = require("boom");
 const campaign_service_1 = require("../../services/campaign.service");
 const HTTP_STATUS = require("http-status");
 class CampaignController {
@@ -23,44 +22,6 @@ class CampaignController {
                 let iCamp = request.payload;
                 const camps = yield campaign_service_1.CampaignService.createOfFA(iCamp);
                 reply(camps).code(200);
-                // 2. Checking permision create camp : start join and end of year (after finish 12 months)
-                // let currentCamps = await db.Language
-                //     .findAll()
-                //     .catch((error) => {
-                //         throw ('CreateCamp Step 2:' + JSON.stringify(error));
-                //     });
-                // if (currentCamps.length === 0) {
-                //     // 3. Accouting Số khách hàng tiềm năng phải có (x10), hẹn gặp (x5) , Tư vấn trực tiếp (x3), chốt HD (x1)
-                //     dataInput.contracts = Math.ceil((dataInput.monthly * 100 / dataInput.commission) / dataInput.loan);
-                //     // (Thu nhập x 100 / tỉ lệ hoa hồng)/loan
-                //     dataInput.maxCustomers = dataInput.contracts * 10;
-                //     dataInput.callCustomers = dataInput.contracts * 5;
-                //     dataInput.meetingCustomers = dataInput.contracts * 3;
-                //     // 4. Insert DB (12 months ~ 12 new camps)
-                //     let listCamps = [];
-                //     // Xử lý date
-                //     const currentDate = moment().format('DD-MM-YYYY');
-                //     const months = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-                //     await Promise.all(
-                //         months.map(async (index) => {
-                //             await listCamps.push({
-                //                 name: "Camp ",
-                //                 ownerid: '0057F000000eEkSQAU', policy_amount__c: dataInput.loan,
-                //                 commission_rate__c: dataInput.commission,
-                //                 actual_collected__c: dataInput.monthly,
-                //                 startdate: moment().add(index, 'M').format('MM/DD/YYYY'),
-                //                 enddate: moment().add(index + 1, 'M').format('MM/DD/YYYY'),
-                //                 target_contacts__c: dataInput.maxCustomers,
-                //                 leads__c: dataInput.meetingCustomers,
-                //                 opportunities__c: dataInput.callCustomers,
-                //                 number_of_contracts_closed_in_period__c: dataInput.contracts
-                //             });
-                //         })
-                //     );
-                //     return reply(listCamps).code(201);
-                // } else {
-                //     return reply('Campaigns exist!!!').code(200);
-                // }
             }
             catch (error) {
                 return reply({
@@ -135,19 +96,75 @@ class CampaignController {
             // }
         });
     }
-    getCampaignById(request, reply) {
+    getByCampaignId(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
-            let userId = request.auth.credentials.id;
-            let id = request.params["id"];
-            let campaign = yield this.database
-                .campaignModel
-                .findOne({ _id: id, userId: userId })
-                .lean(true);
-            if (campaign) {
-                reply(campaign);
+            try {
+                let campid = request.params.id;
+                let campaign = yield campaign_service_1.CampaignService.findById(campid);
+                if (campaign == null) {
+                    return reply({
+                        status: HTTP_STATUS.NOT_FOUND,
+                        data: campaign
+                    }).code(HTTP_STATUS.NOT_FOUND);
+                }
+                else {
+                    return reply({
+                        status: HTTP_STATUS.OK,
+                        data: campaign
+                    }).code(HTTP_STATUS.OK);
+                }
             }
-            else {
-                reply(Boom.notFound());
+            catch (error) {
+                // log mongo create fail
+                this.database.logModel
+                    .create({
+                    type: 'getByCampaignId',
+                    msg: 'fail',
+                    dataInput: request.payload,
+                    meta: {
+                        error
+                    }
+                });
+                return reply({
+                    status: 400,
+                    error: error
+                }).code(HTTP_STATUS.BAD_REQUEST);
+            }
+        });
+    }
+    getByUserId(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let UserId = request.params.userid;
+                let campaigns = yield campaign_service_1.CampaignService.findByUserId(UserId);
+                if (campaigns == null) {
+                    return reply({
+                        status: HTTP_STATUS.NOT_FOUND,
+                        data: campaigns
+                    }).code(HTTP_STATUS.NOT_FOUND);
+                }
+                else {
+                    return reply({
+                        status: HTTP_STATUS.OK,
+                        data: campaigns
+                    }).code(HTTP_STATUS.OK);
+                }
+            }
+            catch (error) {
+                // log mongo create fail
+                this.database.logModel
+                    .create({
+                    type: 'getByCampaignId',
+                    msg: 'fail',
+                    dataInput: request.payload,
+                    meta: {
+                        error
+                    }
+                });
+                return reply({
+                    status: 400,
+                    error: error
+                }).code(HTTP_STATUS.BAD_REQUEST);
             }
         });
     }

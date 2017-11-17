@@ -8,6 +8,7 @@ export interface IDatabase {
     campaignModel: Mongoose.Model<ICampaign>;
     logModel: Mongoose.Model<ILog>;
     logLead: Mongoose.Model<ILog>;
+    logEvent: Mongoose.Model<ILog>;
 }
 
 export function init(config: IDataConfiguration): IDatabase {
@@ -29,6 +30,7 @@ export function init(config: IDataConfiguration): IDatabase {
         userModel: UserModel,
         campaignModel: CampaignModel,
         logModel: LogModel('log'),
-        logLead: LogModel('log_lead')
+        logLead: LogModel('log_lead'),
+        logEvent: LogModel('log_event'),
     };
 }

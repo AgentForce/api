@@ -15,10 +15,10 @@ const moment = require("moment");
 const bluebird_1 = require("bluebird");
 class CampaignService {
     /**
-     * find campaign
+     * find campaign by
      * @param id userid
      */
-    static findByUserId(id, date) {
+    static findByUserIdAndDate(id, date) {
         return postgres_1.Campaign
             .findOne({
             where: {
@@ -35,6 +35,33 @@ class CampaignService {
             throw ex;
         });
     }
+    static findByUserId(userId) {
+        return postgres_1.Campaign
+            .findAll({
+            where: {
+                UserId: userId,
+                IsDeleted: false
+            }
+        })
+            .catch(ex => {
+            throw ex;
+        });
+    }
+    /**
+     * Find one campaign by campaignid
+     * @param campaignId number
+     */
+    static findById(campaignId) {
+        return postgres_1.Campaign.findOne({
+            where: {
+                Id: campaignId,
+                IsDeleted: false
+            }
+        })
+            .catch(ex => {
+            throw ex;
+        });
+    }
     /**
      * create new user
      * @param user IUser
@@ -43,7 +70,7 @@ class CampaignService {
         return bluebird_1.Promise
             .all([
             user_service_1.UserService.findById(campaign.UserId),
-            this.findByUserId(campaign.UserId, campaign.StartDate)
+            this.findByUserIdAndDate(campaign.UserId, campaign.StartDate)
         ])
             .spread((user, camps) => __awaiter(this, void 0, void 0, function* () {
             if (user == null) {
