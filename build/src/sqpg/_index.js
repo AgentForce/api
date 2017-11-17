@@ -5,7 +5,7 @@ const path = require("path");
 const Sequelize = require("sequelize");
 let db = {};
 const dbConfig = {
-    "username": "das",
+    "username": "das v",
     "password": "da$AgriT3ch",
     "database": "das",
     "host": "103.48.191.251",
@@ -34,5 +34,6 @@ Object.keys(db).forEach(function (modelName) {
     }
 });
 db['sequelize'] = sequelize;
+db['Sequelize'] = Sequelize;
 exports.default = db;
 //# sourceMappingURL=_index.js.map

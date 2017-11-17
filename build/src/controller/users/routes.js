@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_controller_1 = require("./user-controller");
 const UserValidator = require("./user-validator");
+const HTTP_STATUS = require("http-status");
 function default_1(server, serverConfigs, database) {
     const userController = new user_controller_1.default(serverConfigs, database);
     server.bind(userController);
@@ -91,12 +92,15 @@ function default_1(server, serverConfigs, database) {
             tags: ['api', 'users'],
             description: 'Create a user.',
             validate: {
-                payload: UserValidator.createUserModel
+                payload: UserValidator.createUserModel,
+                failAction: (request, reply, source, error) => {
+                    return reply({ status: HTTP_STATUS.BAD_REQUEST, error });
+                }
             },
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '201': {
+                        201: {
                             'description': 'User created.'
                         }
                     }
@@ -117,7 +121,7 @@ function default_1(server, serverConfigs, database) {
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
+                        200: {
                             'description': 'User logged in.'
                         }
                     }

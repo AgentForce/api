@@ -65,7 +65,7 @@ class UserService {
 
     /**
      * find User by id
-     * @param id 
+     * @param id
      */
     static findById(id: number) {
         return UserDao

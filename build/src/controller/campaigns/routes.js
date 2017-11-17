@@ -40,12 +40,11 @@ function default_1(server, configs, database) {
         path: '/campaigns',
         config: {
             handler: campaignController.createCampaign,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'campaigns'],
             description: 'Create a campaign.',
             validate: {
-                payload: CampaignValidator.createCampaignModel,
-                headers: user_validator_1.jwtValidator
+                payload: CampaignValidator.createCampaignFAModel,
             },
             plugins: {
                 'hapi-swagger': {
