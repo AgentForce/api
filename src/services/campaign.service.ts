@@ -1,4 +1,4 @@
-import { Campaign as CampDao } from '../postgres';
+import { Campaign } from '../postgres';
 import { UserService, IIUser } from '../services/user.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -55,11 +55,11 @@ interface ICampaign {
 
 class CampaignService {
     /**
-     * find campaign
+     * find campaign by
      * @param id userid
      */
-    static findByUserId(id: number, date: Date) {
-        return CampDao
+    static findByUserIdAndDate(id: number, date: Date) {
+        return Campaign
             .findOne({
                 where: {
                     UserId: id,
@@ -78,6 +78,35 @@ class CampaignService {
 
 
 
+    static findByUserId(userId) {
+        return Campaign
+            .findAll({
+                where: {
+                    UserId: userId,
+                    IsDeleted: false
+                }
+            })
+            .catch(ex => {
+                throw ex;
+            });
+    }
+    /**
+     * Find one campaign by campaignid
+     * @param campaignId number
+     */
+    static findById(campaignId) {
+        return Campaign.findOne({
+            where: {
+                Id: campaignId,
+                IsDeleted: false
+            }
+        })
+            .catch(ex => {
+                throw ex;
+            });
+
+    }
+
     /**
      * create new user
      * @param user IUser
@@ -86,7 +115,7 @@ class CampaignService {
         return Bluebird
             .all([
                 UserService.findById(campaign.UserId),
-                this.findByUserId(campaign.UserId, campaign.StartDate)
+                this.findByUserIdAndDate(campaign.UserId, campaign.StartDate)
             ])
             .spread(async (user: IIUser, camps) => {
                 if (user == null) {
@@ -99,7 +128,7 @@ class CampaignService {
                     .catch(ex => {
                         throw ex;
                     });
-                let campsPostgres = await CampDao.bulkCreate(campPrepare)
+                let campsPostgres = await Campaign.bulkCreate(campPrepare)
                     .catch(ex => {
                         throw ex;
                     });

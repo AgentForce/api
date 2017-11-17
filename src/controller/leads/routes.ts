@@ -11,34 +11,34 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     const leadController = new LeadController(configs, database);
     server.bind(leadController);
 
-    server.route({
-        method: 'GET',
-        path: '/leads/{id}',
-        config: {
-            handler: leadController.getCampaignById,
-            auth: "jwt",
-            tags: ['api', 'campaigns'],
-            description: 'Get campaigns by id.',
-            validate: {
-                params: {
-                    id: Joi.string().required()
-                },
-                headers: jwtValidator
-            },
-            plugins: {
-                'hapi-swagger': {
-                    responses: {
-                        '200': {
-                            'description': 'Campaign founded.'
-                        },
-                        '404': {
-                            'description': 'Campaign does not exists.'
-                        }
-                    }
-                }
-            }
-        }
-    });
+    // server.route({
+    //     method: 'GET',
+    //     path: '/leads/{id}',
+    //     config: {
+    //         handler: leadController.getCampaignById,
+    //         auth: "jwt",
+    //         tags: ['api', 'campaigns'],
+    //         description: 'Get campaigns by id.',
+    //         validate: {
+    //             params: {
+    //                 id: Joi.string().required()
+    //             },
+    //             headers: jwtValidator
+    //         },
+    //         plugins: {
+    //             'hapi-swagger': {
+    //                 responses: {
+    //                     '200': {
+    //                         'description': 'Campaign founded.'
+    //                     },
+    //                     '404': {
+    //                         'description': 'Campaign does not exists.'
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // });
 
     server.route({
         method: 'POST',

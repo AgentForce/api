@@ -9,7 +9,7 @@ const createUserModel = Joi.object().keys({
     Birthday: Joi.date().required(),
     GroupId: Joi.number().required(),
     Address: Joi.string().required().max(255),
-    City: Joi.number().integer(),
+    City: Joi.number().integer().description('Info get from table metatype'),
     District: Joi.number().integer(),
     ReportTo: Joi.number().integer()
 

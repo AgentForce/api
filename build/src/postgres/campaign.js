@@ -229,6 +229,11 @@ const Campaign = db_1.db.define('manulife_campaigns', {
         type: Sequelize.ARRAY(Sequelize.INTEGER),
         allowNull: true
     },
+    IsDeleted: {
+        allowNull: false,
+        defaultValue: false,
+        type: Sequelize.BOOLEAN
+    },
     CreatedAt: {
         allowNull: false,
         type: Sequelize.DATE

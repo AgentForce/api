@@ -18,7 +18,8 @@ function init(config) {
         userModel: user_1.UserModel,
         campaignModel: campaign_1.CampaignModel,
         logModel: log_1.LogModel('log'),
-        logLead: log_1.LogModel('log_lead')
+        logLead: log_1.LogModel('log_lead'),
+        logEvent: log_1.LogModel('log_event'),
     };
 }
 exports.init = init;

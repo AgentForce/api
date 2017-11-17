@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 const campaign_controller_1 = require("./campaign-controller");
 const CampaignValidator = require("./campaign-validator");
-const user_validator_1 = require("../users/user-validator");
 function default_1(server, configs, database) {
     const campaignController = new campaign_controller_1.default(configs, database);
     server.bind(campaignController);
@@ -11,15 +10,41 @@ function default_1(server, configs, database) {
         method: 'GET',
         path: '/campaigns/{id}',
         config: {
-            handler: campaignController.getCampaignById,
-            auth: "jwt",
+            handler: campaignController.getByCampaignId,
+            // auth: "jwt",
             tags: ['api', 'campaigns'],
-            description: 'Get campaigns by id.',
+            description: 'Get campaign by campaignid.',
             validate: {
                 params: {
                     id: Joi.string().required()
                 },
-                headers: user_validator_1.jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'Campaign founded.'
+                        },
+                        '404': {
+                            'description': 'Campaign does not exists.'
+                        }
+                    }
+                }
+            }
+        }
+    });
+    server.route({
+        method: 'GET',
+        path: '/campaigns/userid/{userid}',
+        config: {
+            handler: campaignController.getByUserId,
+            // auth: "jwt",
+            tags: ['api', 'campaigns'],
+            description: 'Get all campaigns by userid.',
+            validate: {
+                params: {
+                    userid: Joi.string().required()
+                },
             },
             plugins: {
                 'hapi-swagger': {
