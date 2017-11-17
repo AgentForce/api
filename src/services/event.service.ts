@@ -30,6 +30,24 @@ class EventService {
         }
     }
 
+    /**
+     * get event by id
+     * @param id number
+     */
+    static async findById(id) {
+        try {
+            let events = await Event.findAll({
+                where: {
+                    Id: id,
+                    IsDeleted: false
+                }
+            });
+            return events;
+        } catch (error) {
+            throw error;
+        }
+    }
+
 
     /**
      * Tạo mới event

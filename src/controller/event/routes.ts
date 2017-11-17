@@ -39,6 +39,35 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             }
         }
     });
+    server.route({
+        method: 'GET',
+        path: '/events/{id}',
+        config: {
+            handler: eventController.findById,
+            // auth: "jwt",
+            tags: ['api', 'events'],
+            description: 'Get events by id',
+            validate: {
+                params: {
+                    userid: Joi.string().required()
+                },
+                // headers: jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'event founded.'
+                        },
+                        '404': {
+                            'description': 'events not found.'
+                        }
+                    }
+                }
+            }
+        }
+    });
+
 
     server.route({
         method: 'POST',
