@@ -128,7 +128,7 @@ describe("UserController Tests", () => {
             }, (res) => {
                 assert.equal(200, res.statusCode);
                 var responseBody = JSON.parse(res.payload);
-                assert.equal("New Name", responseBody.name);
+                assert.equal("New Name", responseBody.fullName);
                 done();
             });
         });

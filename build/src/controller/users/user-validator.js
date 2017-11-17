@@ -1,19 +1,31 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
-exports.createUserModel = Joi.object().keys({
-    email: Joi.string().email().trim().required(),
-    name: Joi.string().required(),
-    password: Joi.string().trim().required()
+const createUserModel = Joi.object().keys({
+    Email: Joi.string().email().trim().required(),
+    FullName: Joi.string().required(),
+    Password: Joi.string().trim().required(),
+    Phone: Joi.string().required(),
+    UserName: Joi.string().required(),
+    Birthday: Joi.date().required(),
+    GroupId: Joi.number().required(),
+    Address: Joi.string().required().max(255),
+    City: Joi.number().integer(),
+    District: Joi.number().integer(),
+    ReportTo: Joi.number().integer()
 });
-exports.updateUserModel = Joi.object().keys({
+exports.createUserModel = createUserModel;
+const updateUserModel = Joi.object().keys({
     email: Joi.string().email().trim(),
     name: Joi.string(),
     password: Joi.string().trim()
 });
-exports.loginUserModel = Joi.object().keys({
+exports.updateUserModel = updateUserModel;
+const loginUserModel = Joi.object().keys({
     email: Joi.string().email().required(),
     password: Joi.string().trim().required()
 });
-exports.jwtValidator = Joi.object({ 'authorization': Joi.string().required() }).unknown();
+exports.loginUserModel = loginUserModel;
+const jwtValidator = Joi.object({ 'authorization': Joi.string().required() }).unknown();
+exports.jwtValidator = jwtValidator;
 //# sourceMappingURL=user-validator.js.map

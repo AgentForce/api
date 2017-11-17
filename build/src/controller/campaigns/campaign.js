@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Mongoose = require("mongoose");
-exports.CampaignSchema = new Mongoose.Schema({
+const CampaignSchema = new Mongoose.Schema({
     userId: { type: String, required: true },
     name: { type: String, required: true },
     description: String,
@@ -9,5 +9,7 @@ exports.CampaignSchema = new Mongoose.Schema({
 }, {
     timestamps: true
 });
-exports.CampaignModel = Mongoose.model('Campaign', exports.CampaignSchema);
+exports.CampaignSchema = CampaignSchema;
+const CampaignModel = Mongoose.model('Campaign', CampaignSchema);
+exports.CampaignModel = CampaignModel;
 //# sourceMappingURL=campaign.js.map

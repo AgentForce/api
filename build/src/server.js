@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Hapi = require("hapi");
 const Users = require("./controller/users");
 const Campaigns = require("./controller/campaigns");
+const Leads = require("./controller/leads");
 function init(configs, database) {
     return new Promise(resolve => {
         const port = process.env.PORT;
@@ -33,6 +34,7 @@ function init(configs, database) {
             console.log('Register Routes');
             Users.init(server, configs, database);
             Campaigns.init(server, configs, database);
+            Leads.init(server, configs, database);
             console.log('Routes registered sucessfully.');
             resolve(server);
         });

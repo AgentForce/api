@@ -61,6 +61,8 @@ gulp.task('start', function () {
  * Copy config files
  */
 gulp.task('configs', (cb) => {
+  gulp.src("src/postgres/config/*.json")
+    .pipe(gulp.dest('./build/src/postgres/config'));
   return gulp.src("src/configurations/*.json")
     .pipe(gulp.dest('./build/src/configurations'));
 });
@@ -76,7 +78,7 @@ gulp.task('build', ['tslint', 'compile', 'configs'], (cb) => {
 gulp.task('build-nodemon', ['build'], (cb) => {
   let stream = nodemon({
     script: 'build/src/index.js',
-    ext:    'js json',
+    ext: 'js json',
     env: {},
   });
   cb();

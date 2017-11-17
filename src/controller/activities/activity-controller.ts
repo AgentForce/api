@@ -5,7 +5,7 @@ import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import { CampaignService, ICampaign } from '../../services/campaign.service';
 import * as HTTP_STATUS from 'http-status';
-import { createCampaignFAModel } from './campaign-validator';
+import { createCampaignFAModel } from './activity-validator';
 export default class CampaignController {
 
     private database: IDatabase;
