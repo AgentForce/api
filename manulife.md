@@ -7,4 +7,12 @@
     còn 16/11 thì tính tháng 12
     nếu set ngày bắt đầu là 14/11 hay 15/11  thì: period =11, start date = 14/11, end date = cách tính lich của lịch tây
     nếu set ngày bắt đầu là 16/11 thì : period = 12, start date = 16/11 và end date = cách tính lịch của lịch tây
+##res: 
+    moment + từng tháng, không quan tâm ngày
 
+#4. Tạo lead
+
+#7. Tạo event
+#8. Tạo invite
+
+#9. update event

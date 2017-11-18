@@ -7,7 +7,9 @@ import * as Campaigns from "./controller/campaigns";
 import * as Events from './controller/event';
 import * as Leads from "./controller/leads";
 import * as Metatypes from './controller/metatype';
+import * as Invites from './controller/invites';
 import { IDatabase } from "./database";
+import { Invite } from "./postgres/invite";
 
 
 export function init(configs: IServerConfigurations, database: IDatabase): Promise<Hapi.Server> {
@@ -52,6 +54,7 @@ export function init(configs: IServerConfigurations, database: IDatabase): Promi
             Leads.init(server, configs, database);
             Events.init(server, configs, database);
             Metatypes.init(server, configs, database);
+            Invites.init(server, configs, database);
             console.log('Routes registered sucessfully.');
 
             resolve(server);
