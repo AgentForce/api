@@ -45,6 +45,24 @@ export default class EventController {
     }
 
 
+    public async findById(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let idEvent = request.params.id;
+            let events: any = await EventService.findById(idEvent);
+            if (events == null) {
+                return reply(events).code(HTTP_STATUS.NOT_FOUND);
+            } else {
+                return reply(events).code(HTTP_STATUS.OK);
+            }
+        } catch (error) {
+            return reply({
+                status: 400,
+                error: error
+            }).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
+
+
     public async create(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let iEvent: IEvent = <IEvent>request.payload;

@@ -1,6 +1,6 @@
 import * as Joi from "joi";
 const createCampaignFAModel = Joi.object().keys({
-    CampType: Joi.number().valid([1, 2]).required(),
+    CampType: Joi.number().required().description('metatypes: type=camp-camptype'),
     Name: Joi.string().required(),
     Label: Joi.string().valid(['fc', 'fa']).required(),
     Experience: Joi.string().valid(['old', 'new']).required(),
