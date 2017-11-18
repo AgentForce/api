@@ -5,6 +5,7 @@ const Users = require("./controller/users");
 const Campaigns = require("./controller/campaigns");
 const Events = require("./controller/event");
 const Leads = require("./controller/leads");
+const Metatypes = require("./controller/metatype");
 function init(configs, database) {
     return new Promise(resolve => {
         const port = process.env.PORT;
@@ -37,6 +38,7 @@ function init(configs, database) {
             Campaigns.init(server, configs, database);
             Leads.init(server, configs, database);
             Events.init(server, configs, database);
+            Metatypes.init(server, configs, database);
             console.log('Routes registered sucessfully.');
             resolve(server);
         });

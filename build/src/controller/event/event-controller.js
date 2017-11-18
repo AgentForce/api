@@ -45,6 +45,26 @@ class EventController {
             }
         });
     }
+    findById(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let idEvent = request.params.id;
+                let events = yield event_service_1.EventService.findById(idEvent);
+                if (events == null) {
+                    return reply(events).code(HTTP_STATUS.NOT_FOUND);
+                }
+                else {
+                    return reply(events).code(HTTP_STATUS.OK);
+                }
+            }
+            catch (error) {
+                return reply({
+                    status: 400,
+                    error: error
+                }).code(HTTP_STATUS.BAD_REQUEST);
+            }
+        });
+    }
     create(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

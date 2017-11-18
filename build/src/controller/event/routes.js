@@ -34,6 +34,33 @@ function default_1(server, configs, database) {
         }
     });
     server.route({
+        method: 'GET',
+        path: '/events/{id}',
+        config: {
+            handler: eventController.findById,
+            // auth: "jwt",
+            tags: ['api', 'events'],
+            description: 'Get events by id',
+            validate: {
+                params: {
+                    userid: Joi.string().required()
+                },
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'event founded.'
+                        },
+                        '404': {
+                            'description': 'events not found.'
+                        }
+                    }
+                }
+            }
+        }
+    });
+    server.route({
         method: 'POST',
         path: '/events',
         config: {
