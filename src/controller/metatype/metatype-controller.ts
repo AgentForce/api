@@ -22,7 +22,7 @@ export default class MetatypeController {
         try {
             let type = request.params.type;
             let rows: any = await MetatypeService.findByType(type);
-            if (rows == null || _.size(rows) == 0) {
+            if (rows == null || _.size(rows) === 0) {
                 return reply({
                     status: HTTP_STATUS.NOT_FOUND,
                     data: rows

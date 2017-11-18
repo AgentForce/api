@@ -6,4 +6,6 @@ var user_1 = require("./user");
 exports.User = user_1.User;
 var event_1 = require("./event");
 exports.Event = event_1.Event;
+var metatype_1 = require("./metatype");
+exports.MetaType = metatype_1.MetaType;
 //# sourceMappingURL=index.js.map

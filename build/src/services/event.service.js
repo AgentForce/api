@@ -32,6 +32,26 @@ class EventService {
         });
     }
     /**
+     * get event by id
+     * @param id number
+     */
+    static findById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let events = yield postgres_1.Event.findAll({
+                    where: {
+                        Id: id,
+                        IsDeleted: false
+                    }
+                });
+                return events;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    /**
      * Tạo mới event
      * @param lead IEvent
      */
