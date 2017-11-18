@@ -8,4 +8,6 @@ var event_1 = require("./event");
 exports.Event = event_1.Event;
 var metatype_1 = require("./metatype");
 exports.MetaType = metatype_1.MetaType;
+var invite_1 = require("./invite");
+exports.Invite = invite_1.Invite;
 //# sourceMappingURL=index.js.map
