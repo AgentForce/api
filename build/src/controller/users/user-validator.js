@@ -15,12 +15,12 @@ const createUserModel = Joi.object().keys({
     ReportTo: Joi.number().integer()
 });
 exports.createUserModel = createUserModel;
-const updateUserModel = Joi.object().keys({
+const updateProfileModel = Joi.object().keys({
     email: Joi.string().email().trim(),
     name: Joi.string(),
     password: Joi.string().trim()
 });
-exports.updateUserModel = updateUserModel;
+exports.updateProfileModel = updateProfileModel;
 const loginUserModel = Joi.object().keys({
     email: Joi.string().email().required(),
     password: Joi.string().trim().required()

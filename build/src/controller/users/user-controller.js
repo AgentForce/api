@@ -41,6 +41,11 @@ class UserController {
             });
         });
     }
+    updateProfile(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            reply('hello');
+        });
+    }
     createUser(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
