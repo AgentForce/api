@@ -40,6 +40,36 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         }
     });
 
+    // server.route({
+    //     method: 'PUT',
+    //     path: '/campaigns/{id}',
+    //     config: {
+    //         handler: campaignController.getByCampaignId,
+    //         // auth: "jwt",
+    //         tags: ['api', 'campaigns'],
+    //         description: 'Update a campaign',
+    //         validate: {
+    //             params: {
+    //                 id: Joi.string().required()
+    //             },
+    //             // headers: jwtValidator
+    //         },
+    //         plugins: {
+    //             'hapi-swagger': {
+    //                 responses: {
+    //                     200: {
+    //                         'description': 'Campaign founded.'
+    //                     },
+    //                     404: {
+    //                         'description': 'Campaign does not exists.'
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // });
+
+
 
     server.route({
         method: 'GET',

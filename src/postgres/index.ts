@@ -3,3 +3,4 @@ export { User } from './user';
 export { Event } from './event';
 export { MetaType } from './metatype';
 export { Invite } from './invite';
+export { Activity } from './activity';

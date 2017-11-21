@@ -15,16 +15,16 @@ const createUserModel = Joi.object().keys({
 
 });
 
- const updateUserModel = Joi.object().keys({
+const updateProfileModel = Joi.object().keys({
     email: Joi.string().email().trim(),
     name: Joi.string(),
     password: Joi.string().trim()
 });
 
- const loginUserModel = Joi.object().keys({
+const loginUserModel = Joi.object().keys({
     email: Joi.string().email().required(),
     password: Joi.string().trim().required()
 });
 
- const jwtValidator = Joi.object({ 'authorization': Joi.string().required() }).unknown();
-export { createUserModel, updateUserModel, loginUserModel, jwtValidator };
+const jwtValidator = Joi.object({ 'authorization': Joi.string().required() }).unknown();
+export { createUserModel, updateProfileModel, loginUserModel, jwtValidator };

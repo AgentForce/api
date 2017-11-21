@@ -60,19 +60,19 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 }
             }
         }
-    });
+    });*/
 
     server.route({
         method: 'PUT',
-        path: '/users',
+        path: '/users/profile',
         config: {
-            handler: userController.updateUser,
-            auth: "jwt",
+            handler: userController.updateProfile,
+            // auth: "jwt",
             tags: ['api', 'users'],
-            description: 'Update current user info.',
+            description: 'Update user profile.',
             validate: {
-                payload: UserValidator.updateUserModel,
-                headers: UserValidator.jwtValidator
+                payload: UserValidator.updateProfileModel,
+                // headers: UserValidator.jwtValidator
             },
             plugins: {
                 'hapi-swagger': {
@@ -87,7 +87,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 }
             }
         }
-    });*/
+    });
 
     server.route({
         method: 'POST',

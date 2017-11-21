@@ -10,7 +10,18 @@
 ##res: 
     moment + từng tháng, không quan tâm ngày
 
-#4. Tạo lead
+#4. Tạo lead + activity
+    thông tin input theo tạo lead
+    + type là khách hàng tiềm năng hay hẹn gặp, hợp đồng, …
+    trong đây api em mới xử lý chưa có lead thì tạo
+    có rồi thì thôi
+    chú ý nhỏ là tạo lead với type là khách hàng tiềm năng
+    còn lead chưa có mà type là ký hợp đồng thì báo fail đi
+    còn chỗ app ( thằng app gọi api nó sẽ tùy layout mà lấy thông tin ví dụ ở layout khách hàng tiềm năng thì thông tin lead là do thằng user điền vào
+    còn ở layout còn lại
+    nó đã có thông tin sẵn rồi
+    detail lead nó gọi em trước đó
+
 
 #7. Tạo event
 #8. Tạo invite
