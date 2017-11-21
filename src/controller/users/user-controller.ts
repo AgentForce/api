@@ -48,12 +48,13 @@ export default class UserController {
         });
     }
 
+    public async updateProfile(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        reply('hello');
+    }
 
 
     public async createUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-
         try {
-
             const dataInput = request.payload;
             // const result = Joi.validate(request.request.body, createUserModel, {
             //     abortEarly: false
