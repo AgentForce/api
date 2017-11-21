@@ -56,19 +56,17 @@ function default_1(server, serverConfigs, database) {
                 }
             }
         }
-    });
-
+    });*/
     server.route({
         method: 'PUT',
-        path: '/users',
+        path: '/users/profile',
         config: {
-            handler: userController.updateUser,
-            auth: "jwt",
+            handler: userController.updateProfile,
+            // auth: "jwt",
             tags: ['api', 'users'],
-            description: 'Update current user info.',
+            description: 'Update user profile.',
             validate: {
-                payload: UserValidator.updateUserModel,
-                headers: UserValidator.jwtValidator
+                payload: UserValidator.updateProfileModel,
             },
             plugins: {
                 'hapi-swagger': {
@@ -83,7 +81,7 @@ function default_1(server, serverConfigs, database) {
                 }
             }
         }
-    });*/
+    });
     server.route({
         method: 'POST',
         path: '/users',

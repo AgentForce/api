@@ -10,4 +10,6 @@ var metatype_1 = require("./metatype");
 exports.MetaType = metatype_1.MetaType;
 var invite_1 = require("./invite");
 exports.Invite = invite_1.Invite;
+var activity_1 = require("./activity");
+exports.Activity = activity_1.Activity;
 //# sourceMappingURL=index.js.map
