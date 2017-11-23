@@ -3,6 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Mongoose = require("mongoose");
 const Bcrypt = require("bcryptjs");
 const UserSchema = new Mongoose.Schema({
+    userId: {
+        type: Number,
+        required: true
+    },
     email: {
         type: String,
         unique: true,

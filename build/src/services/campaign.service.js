@@ -111,7 +111,7 @@ class CampaignService {
                 .catch(ex => {
                 throw ex;
             });
-            let campsPostgres = yield postgres_1.Campaign.bulkCreate(campPrepare)
+            let campsPostgres = yield postgres_1.Campaign.bulkCreate(campPrepare, { returning: true })
                 .catch(ex => {
                 throw ex;
             });
@@ -153,20 +153,28 @@ class CampaignService {
             campaign.ReportTo = user.ReportTo;
             campaign.ReportToList = user.ReportToList;
             let camps = [];
-            console.log(campaign);
             let numContract = Math.ceil((campaign.IncomeMonthly * 100 / campaign.CommissionRate) / campaign.CaseSize);
             // // (Thu nhập x 100 / tỉ lệ hoa hồng)/loan
             let maxCustomers = numContract * 10;
+            let campTotal = _.clone(campaign);
+            campTotal.Period = 13;
+            campTotal.Name = 'Camp 13';
+            campTotal.TargetCallSale = numContract * 5 * 12;
+            campTotal.TargetMetting = numContract * 3 * 12;
+            campTotal.TargetContractSale = numContract * 12;
             camps = _.times(12, (val) => {
                 let camp = _.clone(campaign);
+                camp.Period = val + 1;
                 camp.StartDate = moment(campaign.StartDate).add(val, 'M').toDate();
                 camp.EndDate = moment(campaign.StartDate).add(val + 1, 'M').endOf('d').toDate();
                 camp.TargetCallSale = numContract * 5;
                 // dataInput.meetingCustomers = dataInput.contracts * 3;
                 camp.TargetMetting = numContract * 3;
                 camp.Name = `Camp ${val + 1}`;
+                camp.TargetContractSale = numContract;
                 return camp;
             });
+            camps.push(campTotal);
             resolve(camps);
         })
             .catch(ex => {
