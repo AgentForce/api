@@ -55,9 +55,10 @@ export default class UserController {
             if (user !== null) {
                 let userMongo: any = await this.database.userModel
                     .update({
-                        email: dataInput.Email,
+                        userId: user.Id,
                     }, {
-                        fullName: dataInput.FullName
+                        fullName: dataInput.FullName,
+                        email: dataInput.Email
                     });
                 let userPg = await UserService
                     .updateProfile(user.Id, dataInput);
@@ -92,25 +93,30 @@ export default class UserController {
             const dataInput = request.payload;
             const user = <any>await UserService.findByCode(dataInput.UserName);
             if (user == null) {
-                let newUser: any = await this.database.userModel
-                    .create({
-                        email: dataInput.Email,
-                        fullName: dataInput.FullName,
-                        password: dataInput.Password
-                    });
+
                 let iUser: IIUser = dataInput;
-                let newUserPg = await UserService.create(iUser)
-                    .then()
+                let newUserPg = <IIUser>await UserService.create(iUser)
                     .catch((error) => {
                         reply({
                             status: HTTP_STATUS.BAD_REQUEST,
                             errors: error
                         }).code(HTTP_STATUS.BAD_REQUEST);
                     });
+                let newUser: any = await this.database.userModel
+                    .create({
+                        userId: newUserPg.Id,
+                        email: dataInput.Email,
+                        fullName: dataInput.FullName,
+                        password: dataInput.Password
+                    });
                 return reply({
-                    token: this.generateToken(newUser)
+                    status: HTTP_STATUS.OK,
+                    data: {
+                        token: this.generateToken(newUser),
+                        info: newUserPg
+                    }
                 })
-                    .code(201);
+                    .code(HTTP_STATUS.OK);
             } else {
                 throw 'this code exist';
             }
