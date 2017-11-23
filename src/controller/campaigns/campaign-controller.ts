@@ -31,6 +31,20 @@ export default class CampaignController {
         }
     }
 
+    public async leadsOfCamp(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let campId = parseInt(request.params.id, 10);
+            let type = parseInt(request.params.type, 10);
+            const leads = await CampaignService.leadsOfcampaign(campId, type);
+            reply(leads).code(200);
+        } catch (error) {
+            return reply({
+                status: 400,
+                error: error
+            }).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
+
     private bk() {
         // 2. Checking permision create camp : start join and end of year (after finish 12 months)
         // let currentCamps = await db.Language

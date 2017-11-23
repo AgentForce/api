@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Promise as Bluebird } from 'bluebird';
 import { use } from 'nconf';
+import { Lead } from '../postgres/lead';
 interface ICampaign {
     UserId: number;
     Period: number;
@@ -68,8 +69,6 @@ class CampaignService {
                         $gte: date
                     }
                 }
-            }).then(result => {
-                return result;
             })
             .catch(ex => {
                 throw ex;
@@ -95,18 +94,43 @@ class CampaignService {
      * @param campaignId number
      */
     static findById(campaignId) {
-        return Campaign.findOne({
-            where: {
-                Id: campaignId,
-                IsDeleted: false
-            }
-        })
+        return Campaign
+            .findOne({
+                where: {
+                    Id: campaignId,
+                    IsDeleted: false
+                }
+            })
             .catch(ex => {
                 throw ex;
             });
 
     }
 
+    /**
+     * List leads of campaign, filter by processtep
+     * @param campaignId campaignid
+     * @param processStep 4 step in lead
+     */
+    static async leadsOfcampaign(campaignId: number, processStep: number) {
+        try {
+            let camp = await this.findById(campaignId);
+            if (camp == null) {
+                return [];
+            } else {
+                return Lead
+                    .findAll({
+                        where: {
+                            CampId: campaignId,
+                            IsDeleted: false,
+                            ProcessStep: processStep
+                        }
+                    });
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
     /**
      * create new user
      * @param user IUser

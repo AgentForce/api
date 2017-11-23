@@ -1,4 +1,4 @@
-import { User as UserDao } from '../postgres';
+import { User } from '../postgres';
 import * as _ from 'lodash';
 interface IIUser {
     Id: string;
@@ -29,7 +29,7 @@ class UserService {
      * @param id userid
      */
     static findByEmail(email: string) {
-        return UserDao
+        return User
             .findOne({
                 where: {
                     Email: email
@@ -49,10 +49,27 @@ class UserService {
      * @param id userid
      */
     static findByCode(username: string) {
-        return UserDao
+        return User
             .findOne({
                 where: {
                     UserName: username
+                }
+            })
+            .catch(ex => {
+                console.log(ex);
+                throw ex;
+            });
+    }
+
+    /**
+     * find User by id
+     * @param id
+     */
+    static findById(id: number) {
+        return User
+            .findOne({
+                where: {
+                    Id: id
                 }
             })
             .then(result => {
@@ -63,19 +80,21 @@ class UserService {
             });
     }
 
-    /**
-     * find User by id
-     * @param id
-     */
-    static findById(id: number) {
-        return UserDao
-            .findOne({
+    static async updateProfile(id: number, user: IIUser) {
+        return User
+            .update({
+                Email: user.Email,
+                Phone: user.Phone,
+                FullName: user.FullName,
+                Gender: user.Gender,
+                Birthday: user.Birthday,
+                Address: user.Address,
+                City: user.City,
+                District: user.District,
+            }, {
                 where: {
                     Id: id
                 }
-            })
-            .then(result => {
-                return result;
             })
             .catch(ex => {
                 throw ex;
@@ -91,10 +110,8 @@ class UserService {
         let parent = await this.findById(user.ReportTo);
         if (parent == null) {
         }
-        return UserDao.create(user)
-            .then(result => {
-                return result;
-            })
+        return User
+            .create(user)
             .catch(ex => {
                 throw ex;
             });
