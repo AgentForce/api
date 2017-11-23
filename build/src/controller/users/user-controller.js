@@ -49,9 +49,10 @@ class UserController {
                 if (user !== null) {
                     let userMongo = yield this.database.userModel
                         .update({
-                        email: dataInput.Email,
+                        userId: user.Id,
                     }, {
-                        fullName: dataInput.FullName
+                        fullName: dataInput.FullName,
+                        email: dataInput.Email
                     });
                     let userPg = yield user_service_1.UserService
                         .updateProfile(user.Id, dataInput);
@@ -87,25 +88,29 @@ class UserController {
                 const dataInput = request.payload;
                 const user = yield user_service_1.UserService.findByCode(dataInput.UserName);
                 if (user == null) {
-                    let newUser = yield this.database.userModel
-                        .create({
-                        email: dataInput.Email,
-                        fullName: dataInput.FullName,
-                        password: dataInput.Password
-                    });
                     let iUser = dataInput;
                     let newUserPg = yield user_service_1.UserService.create(iUser)
-                        .then()
                         .catch((error) => {
                         reply({
                             status: HTTP_STATUS.BAD_REQUEST,
                             errors: error
                         }).code(HTTP_STATUS.BAD_REQUEST);
                     });
+                    let newUser = yield this.database.userModel
+                        .create({
+                        userId: newUserPg.Id,
+                        email: dataInput.Email,
+                        fullName: dataInput.FullName,
+                        password: dataInput.Password
+                    });
                     return reply({
-                        token: this.generateToken(newUser)
+                        status: HTTP_STATUS.OK,
+                        data: {
+                            token: this.generateToken(newUser),
+                            info: newUserPg
+                        }
                     })
-                        .code(201);
+                        .code(HTTP_STATUS.OK);
                 }
                 else {
                     throw 'this code exist';

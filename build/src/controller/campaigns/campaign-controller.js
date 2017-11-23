@@ -37,7 +37,10 @@ class CampaignController {
                 let campId = parseInt(request.params.id, 10);
                 let type = parseInt(request.params.type, 10);
                 const leads = yield campaign_service_1.CampaignService.leadsOfcampaign(campId, type);
-                reply(leads).code(200);
+                reply({
+                    status: 400,
+                    leads: leads
+                }).code(200);
             }
             catch (error) {
                 return reply({
