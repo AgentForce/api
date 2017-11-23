@@ -13,6 +13,7 @@ const user_service_1 = require("../services/user.service");
 const _ = require("lodash");
 const moment = require("moment");
 const bluebird_1 = require("bluebird");
+const lead_1 = require("../postgres/lead");
 class CampaignService {
     /**
      * find campaign by
@@ -28,8 +29,6 @@ class CampaignService {
                     $gte: date
                 }
             }
-        }).then(result => {
-            return result;
         })
             .catch(ex => {
             throw ex;
@@ -52,7 +51,8 @@ class CampaignService {
      * @param campaignId number
      */
     static findById(campaignId) {
-        return postgres_1.Campaign.findOne({
+        return postgres_1.Campaign
+            .findOne({
             where: {
                 Id: campaignId,
                 IsDeleted: false
@@ -60,6 +60,34 @@ class CampaignService {
         })
             .catch(ex => {
             throw ex;
+        });
+    }
+    /**
+     * List leads of campaign, filter by processtep
+     * @param campaignId campaignid
+     * @param processStep 4 step in lead
+     */
+    static leadsOfcampaign(campaignId, processStep) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let camp = yield this.findById(campaignId);
+                if (camp == null) {
+                    return [];
+                }
+                else {
+                    return lead_1.Lead
+                        .findAll({
+                        where: {
+                            CampId: campaignId,
+                            IsDeleted: false,
+                            ProcessStep: processStep
+                        }
+                    });
+                }
+            }
+            catch (error) {
+                throw error;
+            }
         });
     }
     /**

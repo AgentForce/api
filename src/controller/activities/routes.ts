@@ -11,6 +11,12 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     const campaignController = new CampaignController(configs, database);
     server.bind(campaignController);
 
+
+
+
+    /**
+     * lấy 1 campaign theo campaignid
+     */
     server.route({
         method: 'GET',
         path: '/campaigns/{id}',
@@ -40,6 +46,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         }
     });
 
+
+    /**
+     * Tạo mới goal
+     */
     server.route({
         method: 'POST',
         path: '/campaigns',

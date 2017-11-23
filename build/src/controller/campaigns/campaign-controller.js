@@ -31,6 +31,22 @@ class CampaignController {
             }
         });
     }
+    leadsOfCamp(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let campId = parseInt(request.params.id, 10);
+                let type = parseInt(request.params.type, 10);
+                const leads = yield campaign_service_1.CampaignService.leadsOfcampaign(campId, type);
+                reply(leads).code(200);
+            }
+            catch (error) {
+                return reply({
+                    status: 400,
+                    error: error
+                }).code(HTTP_STATUS.BAD_REQUEST);
+            }
+        });
+    }
     bk() {
         // 2. Checking permision create camp : start join and end of year (after finish 12 months)
         // let currentCamps = await db.Language

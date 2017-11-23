@@ -6,6 +6,37 @@ const CampaignValidator = require("./campaign-validator");
 function default_1(server, configs, database) {
     const campaignController = new campaign_controller_1.default(configs, database);
     server.bind(campaignController);
+    /**
+         * lấy 1 campaign theo campaignid
+         */
+    server.route({
+        method: 'GET',
+        path: '/campaigns/{id}/customers/{type}',
+        config: {
+            handler: campaignController.leadsOfCamp,
+            // auth: "jwt",
+            tags: ['api', 'campaigns'],
+            description: 'Get Customer in a campaigns by id.',
+            validate: {
+                params: {
+                    id: Joi.string().required().description('Campaignid'),
+                    type: Joi.number().required().valid([1, 2, 3, 4]).description('4 processtep in lead')
+                },
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'Campaign founded.'
+                        },
+                        '404': {
+                            'description': 'Campaign does not exists.'
+                        }
+                    }
+                }
+            }
+        }
+    });
     server.route({
         method: 'GET',
         path: '/campaigns/{id}',
@@ -16,7 +47,7 @@ function default_1(server, configs, database) {
             description: 'Get campaign by campaignid.',
             validate: {
                 params: {
-                    id: Joi.string().required()
+                    id: Joi.string().required().description('campaignid')
                 },
             },
             plugins: {

@@ -16,6 +16,7 @@ export default class CampaignController {
         this.database = database;
     }
 
+
     public async createCampaign(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         // 1. Router Checking data input : commission > 0, loan > 0, monthly > 0
         try {

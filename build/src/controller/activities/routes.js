@@ -7,6 +7,9 @@ const user_validator_1 = require("../users/user-validator");
 function default_1(server, configs, database) {
     const campaignController = new activity_controller_1.default(configs, database);
     server.bind(campaignController);
+    /**
+     * lấy 1 campaign theo campaignid
+     */
     server.route({
         method: 'GET',
         path: '/campaigns/{id}',
@@ -35,6 +38,9 @@ function default_1(server, configs, database) {
             }
         }
     });
+    /**
+     * Tạo mới goal
+     */
     server.route({
         method: 'POST',
         path: '/campaigns',

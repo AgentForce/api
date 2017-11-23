@@ -10,7 +10,38 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
 
     const campaignController = new CampaignController(configs, database);
     server.bind(campaignController);
-
+    /**
+         * lấy 1 campaign theo campaignid
+         */
+    server.route({
+        method: 'GET',
+        path: '/campaigns/{id}/customers/{type}',
+        config: {
+            handler: campaignController.leadsOfCamp,
+            // auth: "jwt",
+            tags: ['api', 'campaigns'],
+            description: 'Get Customer in a campaigns by id.',
+            validate: {
+                params: {
+                    id: Joi.string().required().description('Campaignid'),
+                    type: Joi.number().required().valid([1, 2, 3, 4]).description('4 processtep in lead')
+                },
+                // headers: jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'Campaign founded.'
+                        },
+                        '404': {
+                            'description': 'Campaign does not exists.'
+                        }
+                    }
+                }
+            }
+        }
+    });
     server.route({
         method: 'GET',
         path: '/campaigns/{id}',
@@ -21,7 +52,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             description: 'Get campaign by campaignid.',
             validate: {
                 params: {
-                    id: Joi.string().required()
+                    id: Joi.string().required().description('campaignid')
                 },
                 // headers: jwtValidator
             },

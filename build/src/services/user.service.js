@@ -41,10 +41,8 @@ class UserService {
                 UserName: username
             }
         })
-            .then(result => {
-            return result;
-        })
             .catch(ex => {
+            console.log(ex);
             throw ex;
         });
     }
@@ -66,6 +64,28 @@ class UserService {
             throw ex;
         });
     }
+    static updateProfile(id, user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return postgres_1.User
+                .update({
+                Email: user.Email,
+                Phone: user.Phone,
+                FullName: user.FullName,
+                Gender: user.Gender,
+                Birthday: user.Birthday,
+                Address: user.Address,
+                City: user.City,
+                District: user.District,
+            }, {
+                where: {
+                    Id: id
+                }
+            })
+                .catch(ex => {
+                throw ex;
+            });
+        });
+    }
     /**
      * create new user
      * @param user IUser
@@ -76,10 +96,8 @@ class UserService {
             let parent = yield this.findById(user.ReportTo);
             if (parent == null) {
             }
-            return postgres_1.User.create(user)
-                .then(result => {
-                return result;
-            })
+            return postgres_1.User
+                .create(user)
                 .catch(ex => {
                 throw ex;
             });

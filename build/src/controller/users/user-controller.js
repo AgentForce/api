@@ -43,22 +43,52 @@ class UserController {
     }
     updateProfile(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
-            reply('hello');
+            try {
+                const dataInput = request.payload;
+                const user = yield user_service_1.UserService.findByCode(dataInput.UserName);
+                if (user !== null) {
+                    let userMongo = yield this.database.userModel
+                        .update({
+                        email: dataInput.Email,
+                    }, {
+                        fullName: dataInput.FullName
+                    });
+                    let userPg = yield user_service_1.UserService
+                        .updateProfile(user.Id, dataInput);
+                    reply({
+                        status: HTTP_STATUS.OK,
+                        data: userPg
+                    }).code(HTTP_STATUS.OK);
+                }
+                else {
+                    throw 'User do not exist';
+                }
+            }
+            catch (error) {
+                this.database.logModel.create({
+                    dataInput: request.payload,
+                    error: error,
+                    meta: {
+                        // header: request.headers,
+                        params: request.params,
+                        auth: request.auth
+                    }
+                });
+                return reply({
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    error: error
+                }).code(HTTP_STATUS.BAD_REQUEST);
+            }
         });
     }
     createUser(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const dataInput = request.payload;
-                // const result = Joi.validate(request.request.body, createUserModel, {
-                //     abortEarly: false
-                // });
-                const user = yield user_service_1.UserService.findByCode(dataInput.UserName)
-                    .catch(ex => {
-                    throw ex;
-                });
+                const user = yield user_service_1.UserService.findByCode(dataInput.UserName);
                 if (user == null) {
-                    let newUser = yield this.database.userModel.create({
+                    let newUser = yield this.database.userModel
+                        .create({
                         email: dataInput.Email,
                         fullName: dataInput.FullName,
                         password: dataInput.Password

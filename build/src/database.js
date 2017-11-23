@@ -20,6 +20,7 @@ function init(config) {
         logModel: log_1.LogModel('log'),
         logLead: log_1.LogModel('log_lead'),
         logEvent: log_1.LogModel('log_event'),
+        logUser: log_1.LogModel('log_user')
     };
 }
 exports.init = init;
