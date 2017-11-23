@@ -94,7 +94,8 @@ class UserService {
             }, {
                 where: {
                     Id: id
-                }
+                },
+                returning: true
             })
             .catch(ex => {
                 throw ex;
