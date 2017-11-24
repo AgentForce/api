@@ -3,10 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Hapi = require("hapi");
 const Users = require("./controller/users");
 const Campaigns = require("./controller/campaigns");
-const Events = require("./controller/event");
 const Leads = require("./controller/leads");
 const Metatypes = require("./controller/metatype");
-const Invites = require("./controller/invites");
 function init(configs, database) {
     return new Promise(resolve => {
         const port = process.env.PORT;
@@ -15,7 +13,7 @@ function init(configs, database) {
             port: port,
             routes: {
                 cors: true
-            }
+            },
         });
         if (configs.routePrefix) {
             server.realm.modifiers.route.prefix = configs.routePrefix;
@@ -38,9 +36,9 @@ function init(configs, database) {
             Users.init(server, configs, database);
             Campaigns.init(server, configs, database);
             Leads.init(server, configs, database);
-            Events.init(server, configs, database);
+            // Events.init(server, configs, database);
             Metatypes.init(server, configs, database);
-            Invites.init(server, configs, database);
+            // Invites.init(server, configs, database);
             console.log('Routes registered sucessfully.');
             resolve(server);
         });

@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const lead_service_1 = require("../../services/lead.service");
 const HTTP_STATUS = require("http-status");
+const index_1 = require("../../mongo/index");
 class LeadController {
     constructor(configs, database) {
         this.configs = configs;
@@ -58,21 +59,30 @@ class LeadController {
                     data: lead
                 }).code(HTTP_STATUS.OK);
             }
-            catch (error) {
-                // log mongo create fail
-                this.database.logLead
-                    .create({
-                    type: 'create',
-                    msg: 'fail',
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 400,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 400,
+                        error: { code: 'ex', msg: 'Create lead have errors' }
+                    };
+                }
+                index_1.LogLead.create({
+                    type: 'createlead',
                     dataInput: request.payload,
+                    msg: 'errors',
                     meta: {
-                        error
-                    }
+                        exception: ex,
+                        response: res
+                    },
                 });
-                return reply({
-                    status: 400,
-                    error: error
-                }).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
         });
     }

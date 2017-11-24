@@ -6,18 +6,17 @@ exports.default = () => {
             return new Promise((resolve) => {
                 server.register([
                     require('inert'),
-                    require('vision'),
-                    {
+                    require('vision'), {
                         register: require('hapi-swagger'),
                         options: {
                             info: {
-                                title: 'Task Api',
-                                description: 'Task Api Documentation',
+                                title: 'Manulife Api',
+                                description: 'Manulife Api Documentation',
                                 version: '1.0'
                             },
                             tags: [
                                 {
-                                    'name': 'tasks',
+                                    'name': 'api',
                                     'description': 'Api tasks interface.'
                                 },
                                 {
@@ -25,6 +24,8 @@ exports.default = () => {
                                     'description': 'Api users interface.'
                                 }
                             ],
+                            // payloadType: 'form',
+                            // tagsGroupingFilter: 'users',
                             swaggerUI: true,
                             documentationPage: true,
                             documentationPath: '/docs'

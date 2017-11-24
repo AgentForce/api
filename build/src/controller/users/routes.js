@@ -58,15 +58,26 @@ function default_1(server, serverConfigs, database) {
         }
     });*/
     server.route({
+        method: 'GET',
+        path: '/swagger/{param*}',
+        handler: {
+            directory: {
+                path: 'swagger-ui',
+                listing: false
+            }
+        }
+    });
+    server.route({
         method: 'PUT',
         path: '/users/profile',
         config: {
             handler: userController.updateProfile,
-            // auth: "jwt",
-            tags: ['api', 'users'],
+            auth: "jwt",
+            tags: ['users', 'api'],
             description: 'Update user profile.',
             validate: {
                 payload: UserValidator.updateProfileModel,
+                headers: UserValidator.jwtValidator
             },
             plugins: {
                 'hapi-swagger': {

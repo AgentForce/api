@@ -13,6 +13,7 @@ const activity_service_1 = require("./activity.service");
 const bluebird_1 = require("bluebird");
 const moment = require("moment");
 const user_service_1 = require("./user.service");
+const campaign_service_1 = require("./campaign.service");
 class LeadService {
     /**
      * Tìm một lead dựa vào số điện thoại
@@ -60,35 +61,54 @@ class LeadService {
      */
     static create(lead) {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-            let existLead = yield this.findByPhone(lead.Phone);
-            if (existLead == null) {
-                let results = yield bluebird_1.Promise.all([
-                    lead_1.Lead.create(lead),
-                    user_service_1.UserService.findById(lead.UserId)
-                ]);
-                let leadDb = results[0];
-                let userDb = results[1];
+            let objExists = yield bluebird_1.Promise.all([
+                user_service_1.UserService.findById(lead.UserId),
+                campaign_service_1.CampaignService.findByUserIdAndDate(lead.CampId, moment().toDate()),
+                lead_1.Lead.findOne({
+                    where: {
+                        $or: [{
+                                Phone: lead.Phone,
+                                UserId: {
+                                    $ne: lead.UserId
+                                }
+                            }, {
+                                CampId: lead.CampId,
+                                Phone: lead.Phone,
+                            }
+                        ]
+                    }
+                })
+            ]);
+            let userDb = objExists[0];
+            if (userDb == null) {
+                reject({ code: 'ex_lead_1', msg: 'UserId not found' });
+            }
+            let campDb = objExists[1];
+            if (campDb == null) {
+                reject({ code: 'ex_lead_2', msg: 'Campaignid not found' });
+            }
+            let leadDb = objExists[2];
+            if (leadDb == null) {
+                lead.ProcessStep = 1;
+                let leadDb = yield lead_1.Lead.create(lead);
                 let activity = {
                     CampId: leadDb.CampId,
-                    Name: 'Call',
+                    Name: 'call',
                     Phone: leadDb.Phone,
                     LeadId: leadDb.Id,
                     UserId: leadDb.UserId,
-                    Type: 0,
+                    Type: 1,
                     Status: 0,
-                    ProcessStep: 0,
+                    ProcessStep: 1,
                     Date: moment().toDate(),
                     ReportTo: userDb.ReportTo,
                     ReportToList: userDb.ReportToList
                 };
-                let activityDb = yield activity_service_1.ActivityService.create(activity)
-                    .catch(ex => {
-                    throw ex;
-                });
+                let activityDb = yield activity_service_1.ActivityService.create(activity);
                 resolve({ lead: leadDb, activity: activityDb });
             }
             else {
-                reject([3, 'Phone exist']);
+                reject({ code: 'ex_lead_3', msg: 'This phone exist' });
             }
         }))
             .catch(ex => {

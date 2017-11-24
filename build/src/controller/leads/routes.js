@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const lead_controller_1 = require("./lead-controller");
 const CampaignValidator = require("./lead-validator");
+const HTTP_STATUS = require("http-status");
+const index_1 = require("../../mongo/index");
 function default_1(server, configs, database) {
     const leadController = new lead_controller_1.default(configs, database);
     server.bind(leadController);
@@ -40,9 +42,28 @@ function default_1(server, configs, database) {
             handler: leadController.create,
             // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'Create a leads.',
+            description: 'Create a leads',
             validate: {
                 payload: CampaignValidator.createLeadModel,
+                // headers: jwtValidator
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: 'ex_payload', msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    index_1.LogLead.create({
+                        type: 'createlead',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
             },
             plugins: {
                 'hapi-swagger': {
