@@ -4,6 +4,8 @@ import { Promise as Bluebird } from 'bluebird';
 import * as moment from 'moment';
 import { UserService, IIUser } from './user.service';
 import { IDatabase } from '../database';
+import { Campaign } from '../postgres/campaign';
+import { CampaignService, ICampaign } from './campaign.service';
 interface ILead {
     Id: number;
     UserId: number;
@@ -70,8 +72,10 @@ class LeadService {
      */
     static create(lead: ILead) {
         return new Promise(async (resolve, reject) => {
-            let existLead = await Lead
-                .findOne({
+            let objExists = await Bluebird.all([
+                UserService.findById(lead.UserId),
+                CampaignService.findByUserIdAndDate(lead.CampId, moment().toDate()),
+                Lead.findOne({
                     where: {
                         $or: [{
                             Phone: lead.Phone,
@@ -84,15 +88,20 @@ class LeadService {
                         }
                         ]
                     }
-                });
-            if (existLead == null) {
+                })
+            ]);
+            let userDb = objExists[0] as IIUser;
+            if (userDb == null) {
+                reject({ code: 'ex_lead_1', msg: 'UserId not found' });
+            }
+            let campDb = objExists[1] as ICampaign;
+            if (campDb == null) {
+                reject({ code: 'ex_lead_2', msg: 'Campaignid not found' });
+            }
+            let leadDb = objExists[2] as ILead;
+            if (leadDb == null) {
                 lead.ProcessStep = 1;
-                let results = await Bluebird.all([
-                    Lead.create(lead),
-                    UserService.findById(lead.UserId)
-                ]);
-                let leadDb = results[0] as ILead;
-                let userDb = results[1] as IIUser;
+                let leadDb = <ILead>await Lead.create(lead);
                 let activity = <IActivity>{
                     CampId: leadDb.CampId,
                     Name: 'call',
@@ -106,13 +115,10 @@ class LeadService {
                     ReportTo: userDb.ReportTo,
                     ReportToList: userDb.ReportToList
                 };
-                let activityDb = await ActivityService.create(activity)
-                    .catch(ex => {
-                        throw ex;
-                    });
+                let activityDb = await ActivityService.create(activity);
                 resolve({ lead: leadDb, activity: activityDb });
             } else {
-                reject({ code: 'mnl_3', msg: 'This phone exist' });
+                reject({ code: 'ex_lead_3', msg: 'This phone exist' });
             }
         })
             .catch(ex => {

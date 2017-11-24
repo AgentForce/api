@@ -8,6 +8,7 @@ import { IIUser, UserService } from '../../services/user.service';
 import { IServerConfigurations } from "../../configurations";
 import * as Joi from 'joi';
 import * as HTTP_STATUS from 'http-status';
+import { LogUser } from "../../mongo/index";
 export default class UserController {
 
     private database: IDatabase;
@@ -95,13 +96,7 @@ export default class UserController {
             if (user == null) {
 
                 let iUser: IIUser = dataInput;
-                let newUserPg = <IIUser>await UserService.create(iUser)
-                    .catch((error) => {
-                        reply({
-                            status: HTTP_STATUS.BAD_REQUEST,
-                            errors: error
-                        }).code(HTTP_STATUS.BAD_REQUEST);
-                    });
+                let newUserPg = <IIUser>await UserService.create(iUser);
                 let newUser: any = await this.database.userModel
                     .create({
                         userId: newUserPg.Id,
@@ -120,20 +115,29 @@ export default class UserController {
             } else {
                 throw 'this code exist';
             }
-        } catch (error) {
-            this.database.logModel.create({
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    error: { code: 'ex', msg: 'Exception occurred create user' }
+                };
+            }
+            LogUser.create({
+                type: 'createuser',
                 dataInput: request.payload,
-                error: error,
+                msg: 'errors',
                 meta: {
-                    // header: request.headers,
-                    params: request.params,
-                    auth: request.auth
-                }
+                    exception: ex,
+                    response: res
+                },
             });
-            return reply({
-                status: HTTP_STATUS.BAD_REQUEST,
-                error: error
-            }).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
 

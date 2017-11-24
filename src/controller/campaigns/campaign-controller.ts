@@ -7,6 +7,7 @@ import { CampaignService, ICampaign } from '../../services/campaign.service';
 import * as HTTP_STATUS from 'http-status';
 import { createCampaignFAModel } from './campaign-validator';
 import { Campaign } from "../../postgres/campaign";
+import { LogCamp } from "../../mongo/index";
 export default class CampaignController {
 
     private database: IDatabase;
@@ -27,17 +28,31 @@ export default class CampaignController {
                 data: camps
             }).code(200);
         } catch (ex) {
+            let res = {};
             if (ex.code) {
-                return reply({
+                res = {
                     status: 400,
                     error: ex
-                }).code(HTTP_STATUS.BAD_REQUEST);
+                };
             } else {
-                return reply({
+                res = {
                     status: 400,
-                    error: { code: 'exct', msg: 'Create campaign have errors' }
-                }).code(HTTP_STATUS.BAD_REQUEST);
+                    error: {
+                        code: 'ex_payload',
+                        msg: 'Create campaign have errors'
+                    }
+                };
             }
+            LogCamp.create({
+                type: 'createcampaign',
+                dataInput: request.payload,
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
 

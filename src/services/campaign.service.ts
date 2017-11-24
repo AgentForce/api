@@ -169,40 +169,11 @@ class CampaignService {
                 return campsPostgres;
             })
             .catch(async (ex) => {
-                let a = await LogCamp.find({});
-                console.log(a);
-                logger.info('test winton');
-                logger.log('error', 'hello');
+                // let a = await LogCamp.find({});
+                // logger.info('test winton');
+                // logger.log('error', 'hello');
                 throw ex;
             });
-
-        // dataInput.contracts = Math.ceil((dataInput.monthly * 100 / dataInput.commission) / dataInput.loan);
-        // // (Thu nhập x 100 / tỉ lệ hoa hồng)/loan
-        // dataInput.maxCustomers = dataInput.contracts * 10;
-        // dataInput.callCustomers = dataInput.contracts * 5;
-        // dataInput.meetingCustomers = dataInput.contracts * 3;
-        // // 4. Insert DB (12 months ~ 12 new camps)
-        // let listCamps = [];
-        // // Xử lý date
-        // const currentDate = moment().format('DD-MM-YYYY');
-        // const months = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-        // await Promise.all(
-        //     months.map(async (index) => {
-        //         await listCamps.push({
-        //             name: "Camp ",
-        //             ownerid: '0057F000000eEkSQAU',
-        //             policy_amount__c: dataInput.loan,
-        //             commission_rate__c: dataInput.commission,
-        //             actual_collected__c: dataInput.monthly,
-        //             startdate: moment().add(index, 'M').format('MM/DD/YYYY'),
-        //             enddate: moment().add(index + 1, 'M').format('MM/DD/YYYY'),
-        //             target_contacts__c: dataInput.maxCustomers,
-        //             leads__c: dataInput.meetingCustomers,
-        //             opportunities__c: dataInput.callCustomers,
-        //             number_of_contracts_closed_in_period__c: dataInput.contracts
-        //         });
-        //     })
-        // );
     }
 
     private static prepareCamp(campaign: ICampaign, user: IIUser) {

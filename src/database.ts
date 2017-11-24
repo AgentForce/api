@@ -15,7 +15,7 @@ export interface IDatabase {
 export function init(config: IDataConfiguration): IDatabase {
 
     (<any>Mongoose).Promise = Promise;
-    Mongoose.connect(process.env.MONGO_URL || config.connectionString,{useMongoClient: true});
+    Mongoose.connect(process.env.MONGO_URL || config.connectionString, { useMongoClient: true });
 
     let mongoDb = Mongoose.connection;
 

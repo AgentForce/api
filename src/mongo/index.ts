@@ -28,7 +28,8 @@ const LogSchema = new Schema({
         timestamps: true
     });
 const LogCamp = Connection.model<ILog>('log_camps', LogSchema);
-// const LogActivity = Connection.model<ILog>('log_activities', LogSchema);
-// const LogLead = Connection.model<ILog>('log_lead', LogSchema);
+const LogActivity = Connection.model<ILog>('log_activities', LogSchema);
+const LogLead = Connection.model<ILog>('log_leads', LogSchema);
+const LogUser = Connection.model<ILog>('log_users', LogSchema);
 
-export { LogCamp };
+export { LogCamp, LogActivity, LogLead, LogUser };
