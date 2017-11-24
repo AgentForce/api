@@ -20,7 +20,7 @@ class MetatypeController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let type = request.params.type;
-                let rows = yield metatype_service_1.MetatypeService.findByType(type);
+                let rows = yield metatype_service_1.MetatypeService.findByType(_.lowerCase(type));
                 if (rows == null || _.size(rows) === 0) {
                     return reply({
                         status: HTTP_STATUS.NOT_FOUND,

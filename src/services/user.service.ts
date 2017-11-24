@@ -72,9 +72,6 @@ class UserService {
                     Id: id
                 }
             })
-            .then(result => {
-                return result;
-            })
             .catch(ex => {
                 throw ex;
             });

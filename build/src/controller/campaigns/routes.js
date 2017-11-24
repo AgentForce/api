@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 const campaign_controller_1 = require("./campaign-controller");
 const CampaignValidator = require("./campaign-validator");
+const HTTP_STATUS = require("http-status");
 function default_1(server, configs, database) {
     const campaignController = new campaign_controller_1.default(configs, database);
     server.bind(campaignController);
@@ -27,7 +28,8 @@ function default_1(server, configs, database) {
                 'hapi-swagger': {
                     responses: {
                         '200': {
-                            'description': 'Campaign founded.'
+                            status: HTTP_STATUS.OK,
+                            'description': 'Campaign .'
                         },
                         '404': {
                             'description': 'Campaign does not exists.'
@@ -129,6 +131,15 @@ function default_1(server, configs, database) {
             description: 'Create a campaign.',
             validate: {
                 payload: CampaignValidator.createCampaignFAModel,
+                // headers: jwtValidator
+                failAction: (request, reply, source, error) => {
+                    return reply({
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: 'mnl_1', msg: 'payload dont valid',
+                            details: error
+                        }
+                    });
+                }
             },
             plugins: {
                 'hapi-swagger': {

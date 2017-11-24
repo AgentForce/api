@@ -1,6 +1,6 @@
 import * as Mongoose from "mongoose";
 
-interface ICampaign extends Mongoose.Document {
+interface ILead extends Mongoose.Document {
   userId: string;
   name: string;
   description: string;
@@ -9,7 +9,7 @@ interface ICampaign extends Mongoose.Document {
   updateAt: Date;
 }
 
-const CampaignSchema = new Mongoose.Schema({
+const LeadSchema = new Mongoose.Schema({
   userId: { type: String, required: true },
   name: { type: String, required: true },
   description: String,
@@ -17,5 +17,5 @@ const CampaignSchema = new Mongoose.Schema({
 }, {
     timestamps: true
   });
-const CampaignModel = Mongoose.model<ICampaign>('Campaign', CampaignSchema);
-export { ICampaign, CampaignSchema, CampaignModel };
+const CampaignModel = Mongoose.model<ILead>('lead', LeadSchema);
+export { ILead, LeadSchema, CampaignModel };

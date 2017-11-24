@@ -6,7 +6,7 @@ const campaign_1 = require("./controller/campaigns/campaign");
 const log_1 = require("./mongo/log");
 function init(config) {
     Mongoose.Promise = Promise;
-    Mongoose.connect(process.env.MONGO_URL || config.connectionString);
+    Mongoose.connect(process.env.MONGO_URL || config.connectionString, { useMongoClient: true });
     let mongoDb = Mongoose.connection;
     mongoDb.on('error', () => {
         console.log(`Unable to connect to database: ${config.connectionString}`);

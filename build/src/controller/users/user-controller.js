@@ -12,6 +12,7 @@ const Boom = require("boom");
 const Jwt = require("jsonwebtoken");
 const user_service_1 = require("../../services/user.service");
 const HTTP_STATUS = require("http-status");
+const index_1 = require("../../mongo/index");
 class UserController {
     constructor(configs, database) {
         this.database = database;
@@ -89,13 +90,7 @@ class UserController {
                 const user = yield user_service_1.UserService.findByCode(dataInput.UserName);
                 if (user == null) {
                     let iUser = dataInput;
-                    let newUserPg = yield user_service_1.UserService.create(iUser)
-                        .catch((error) => {
-                        reply({
-                            status: HTTP_STATUS.BAD_REQUEST,
-                            errors: error
-                        }).code(HTTP_STATUS.BAD_REQUEST);
-                    });
+                    let newUserPg = yield user_service_1.UserService.create(iUser);
                     let newUser = yield this.database.userModel
                         .create({
                         userId: newUserPg.Id,
@@ -116,20 +111,30 @@ class UserController {
                     throw 'this code exist';
                 }
             }
-            catch (error) {
-                this.database.logModel.create({
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 400,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 400,
+                        error: { code: 'ex', msg: 'Exception occurred create user' }
+                    };
+                }
+                index_1.LogUser.create({
+                    type: 'createuser',
                     dataInput: request.payload,
-                    error: error,
+                    msg: 'errors',
                     meta: {
-                        // header: request.headers,
-                        params: request.params,
-                        auth: request.auth
-                    }
+                        exception: ex,
+                        response: res
+                    },
                 });
-                return reply({
-                    status: HTTP_STATUS.BAD_REQUEST,
-                    error: error
-                }).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
         });
     }

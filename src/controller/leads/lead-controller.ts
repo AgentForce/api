@@ -6,6 +6,7 @@ import { IServerConfigurations } from "../../configurations";
 import { LeadService, ILead } from '../../services/lead.service';
 import * as HTTP_STATUS from 'http-status';
 import { createLeadModel } from './lead-validator';
+import { LogLead } from "../../mongo/index";
 export default class LeadController {
 
     private database: IDatabase;
@@ -53,21 +54,29 @@ export default class LeadController {
                 status: HTTP_STATUS.OK,
                 data: lead
             }).code(HTTP_STATUS.OK);
-        } catch (error) {
-            // log mongo create fail
-            this.database.logLead
-                .create({
-                    type: 'create',
-                    msg: 'fail',
-                    dataInput: request.payload,
-                    meta: {
-                        error
-                    }
-                });
-            return reply({
-                status: 400,
-                error: error
-            }).code(HTTP_STATUS.BAD_REQUEST);
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    error: { code: 'ex', msg: 'Create lead have errors' }
+                };
+            }
+            LogLead.create({
+                type: 'createlead',
+                dataInput: request.payload,
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
 

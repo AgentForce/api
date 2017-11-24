@@ -5,7 +5,7 @@ import * as CampaignValidator from "./campaign-validator";
 import { jwtValidator } from "../users/user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
-
+import * as HTTP_STATUS from 'http-status';
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
 
     const campaignController = new CampaignController(configs, database);
@@ -32,7 +32,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 'hapi-swagger': {
                     responses: {
                         '200': {
-                            'description': 'Campaign founded.'
+                            status: HTTP_STATUS.OK,
+                            'description': 'Campaign .'
                         },
                         '404': {
                             'description': 'Campaign does not exists.'
@@ -142,6 +143,14 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             validate: {
                 payload: CampaignValidator.createCampaignFAModel,
                 // headers: jwtValidator
+                failAction: (request, reply, source, error) => {
+                    return reply({
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: 'mnl_1', msg: 'payload dont valid',
+                            details: error
+                        }
+                    });
+                }
             },
             plugins: {
                 'hapi-swagger': {

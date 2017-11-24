@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const campaign_service_1 = require("../../services/campaign.service");
 const HTTP_STATUS = require("http-status");
+const index_1 = require("../../mongo/index");
 class CampaignController {
     constructor(configs, database) {
         this.configs = configs;
@@ -21,13 +22,38 @@ class CampaignController {
             try {
                 let iCamp = request.payload;
                 const camps = yield campaign_service_1.CampaignService.createOfFA(iCamp);
-                reply(camps).code(200);
+                reply({
+                    status: HTTP_STATUS.OK,
+                    data: camps
+                }).code(200);
             }
-            catch (error) {
-                return reply({
-                    status: 400,
-                    error: error
-                }).code(HTTP_STATUS.BAD_REQUEST);
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 400,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 400,
+                        error: {
+                            code: 'ex_payload',
+                            msg: 'Create campaign have errors'
+                        }
+                    };
+                }
+                index_1.LogCamp.create({
+                    type: 'createcampaign',
+                    dataInput: request.payload,
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
         });
     }
@@ -38,7 +64,7 @@ class CampaignController {
                 let type = parseInt(request.params.type, 10);
                 const leads = yield campaign_service_1.CampaignService.leadsOfcampaign(campId, type);
                 reply({
-                    status: 400,
+                    status: 200,
                     leads: leads
                 }).code(200);
             }

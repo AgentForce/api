@@ -8,7 +8,6 @@ const createCampaignFAModel = Joi.object().keys({
     Experience: Joi.string().valid(['old', 'new']).required(),
     UserId: Joi.number().required(),
     StartDate: Joi.date().required(),
-    EndDate: Joi.date().required(),
     CaseSize: Joi.number().min(1).required(),
     IncomeMonthly: Joi.number().required(),
     CommissionRate: Joi.number().required()

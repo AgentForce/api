@@ -21,7 +21,7 @@ export default class MetatypeController {
     public async findByType(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let type = request.params.type;
-            let rows: any = await MetatypeService.findByType(type);
+            let rows: any = await MetatypeService.findByType(_.lowerCase(type));
             if (rows == null || _.size(rows) === 0) {
                 return reply({
                     status: HTTP_STATUS.NOT_FOUND,

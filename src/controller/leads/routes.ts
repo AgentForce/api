@@ -5,7 +5,8 @@ import * as CampaignValidator from "./lead-validator";
 import { jwtValidator } from "../users/user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
-
+import * as HTTP_STATUS from 'http-status';
+import { LogLead } from "../../mongo/index";
 
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
     const leadController = new LeadController(configs, database);
@@ -47,10 +48,28 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             handler: leadController.create,
             // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'Create a leads.',
+            description: 'Create a leads',
             validate: {
                 payload: CampaignValidator.createLeadModel,
                 // headers: jwtValidator
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: 'ex_payload', msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    LogLead.create({
+                        type: 'createlead',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
             },
             plugins: {
                 'hapi-swagger': {

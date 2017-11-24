@@ -1,0 +1,727 @@
+{
+  "swagger": "2.0",
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "info": {
+    "title": "Task Api",
+    "version": "1.0",
+    "description": "Task Api Documentation"
+  },
+  "tags": [
+    {
+      "name": "campaigns",
+      "description": "Api tasks interface."
+    },
+    {
+      "name": "users",
+      "description": "Api users interface."
+    }
+  ],
+  "paths": {
+    "/api/events/{id}": {
+      "get": {
+        "summary": "Get events by id",
+        "operationId": "getApiEventsId",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "userid",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "description": "event founded.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "events not found."
+          }
+        }
+      }
+    },
+    "/api/invites/{id}": {
+      "get": {
+        "summary": "Get invites by id",
+        "operationId": "getApiInvitesId",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "tags": [
+          "campaigns"
+        ],
+        "responses": {
+          "200": {
+            "description": "invite founded.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "invite not found."
+          }
+        }
+      }
+    },
+    "/api/types/{type}": {
+      "get": {
+        "summary": "Get types by type",
+        "operationId": "getApiTypesType",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "type",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "description": "types founded.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "types not found."
+          }
+        }
+      }
+    },
+    "/api/campaigns/userid/{userid}": {
+      "get": {
+        "summary": "Get all campaigns by userid.",
+        "operationId": "getApiCampaignsUseridUserid",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "userid",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign founded.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "Campaign does not exists."
+          }
+        }
+      }
+    },
+    "/api/events/userid/{userid}": {
+      "get": {
+        "summary": "Get events by userid",
+        "operationId": "getApiEventsUseridUserid",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "userid",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "description": "event founded.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "events not found."
+          }
+        }
+      }
+    },
+    "/api/invites/userid/{userid}": {
+      "get": {
+        "summary": "Get invites by userid",
+        "operationId": "getApiInvitesUseridUserid",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "userid",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "description": "event founded.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "events not found."
+          }
+        }
+      }
+    },
+    "/api/campaigns/{id}/customers/{type}": {
+      "get": {
+        "summary": "Get Customer in a campaigns by id.",
+        "operationId": "getApiCampaignsIdCustomersType",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Campaignid",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "4 processtep in lead",
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "name": "type",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign founded.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "Campaign does not exists."
+          }
+        }
+      }
+    },
+    "/api/users/profile": {
+      "put": {
+        "summary": "Update user profile.",
+        "operationId": "putApiUsersProfile",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Model 1"
+            }
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated info.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "User does not have authorization."
+          }
+        }
+      }
+    },
+    "/api/campaigns": {
+      "post": {
+        "summary": "Create a campaign.",
+        "operationId": "postApiCampaigns",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Model 2"
+            }
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "201": {
+            "description": "Created campaign."
+          }
+        }
+      }
+    },
+    "/api/events": {
+      "post": {
+        "summary": "Create a event",
+        "operationId": "postApiEvents",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Model 3"
+            }
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "201": {
+            "description": "Created event"
+          }
+        }
+      }
+    },
+    "/api/invites": {
+      "post": {
+        "summary": "Create a invite",
+        "operationId": "postApiInvites",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Model 4"
+            }
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "201": {
+            "description": "Created invite"
+          }
+        }
+      }
+    },
+    "/api/leads": {
+      "post": {
+        "summary": "Create a leads.",
+        "operationId": "postApiLeads",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Model 5"
+            }
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "201": {
+            "description": "Created lead."
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "post": {
+        "summary": "Create a user.",
+        "operationId": "postApiUsers",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Model 6"
+            }
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "201": {
+            "description": "User created."
+          }
+        }
+      }
+    },
+    "/api/users/login": {
+      "post": {
+        "summary": "Login a user.",
+        "operationId": "postApiUsersLogin",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Model 7"
+            }
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "description": "User logged in.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Model 1": {
+      "type": "object",
+      "properties": {
+        "Email": {
+          "type": "string",
+          "x-format": {
+            "email": true
+          },
+          "x-convert": {
+            "trim": true
+          }
+        },
+        "FullName": {
+          "type": "string"
+        },
+        "Password": {
+          "type": "string",
+          "x-convert": {
+            "trim": true
+          }
+        },
+        "Phone": {
+          "type": "string"
+        },
+        "UserName": {
+          "type": "string"
+        },
+        "Birthday": {
+          "type": "string",
+          "format": "date"
+        },
+        "GroupId": {
+          "type": "number"
+        },
+        "Address": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "City": {
+          "type": "integer",
+          "description": "metatypes: type=city"
+        },
+        "District": {
+          "type": "integer",
+          "description": "metatypes: type=district"
+        },
+        "ReportTo": {
+          "type": "integer",
+          "default": 1
+        }
+      },
+      "required": [
+        "Email",
+        "FullName",
+        "Password",
+        "Phone",
+        "UserName",
+        "Birthday",
+        "GroupId",
+        "Address"
+      ]
+    },
+    "Model 2": {
+      "type": "object",
+      "properties": {
+        "CampType": {
+          "type": "number",
+          "description": "metatypes: type=camp-camptype"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Label": {
+          "type": "string",
+          "enum": [
+            "fc",
+            "fa"
+          ]
+        },
+        "Experience": {
+          "type": "string",
+          "enum": [
+            "old",
+            "new"
+          ]
+        },
+        "UserId": {
+          "type": "number"
+        },
+        "StartDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "EndDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "CaseSize": {
+          "type": "number",
+          "minimum": 1
+        },
+        "IncomeMonthly": {
+          "type": "number"
+        },
+        "CommissionRate": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "CampType",
+        "Name",
+        "Label",
+        "Experience",
+        "UserId",
+        "StartDate",
+        "EndDate",
+        "CaseSize",
+        "IncomeMonthly",
+        "CommissionRate"
+      ]
+    },
+    "Model 3": {
+      "type": "object",
+      "properties": {
+        "UserId": {
+          "type": "number"
+        },
+        "Address": {
+          "type": "string"
+        },
+        "City": {
+          "type": "number"
+        },
+        "District": {
+          "type": "number"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "UserId",
+        "City",
+        "District"
+      ]
+    },
+    "Model 4": {
+      "type": "object",
+      "properties": {
+        "UserId": {
+          "type": "number"
+        },
+        "LeadId": {
+          "type": "number"
+        },
+        "ProcessStep": {
+          "type": "number"
+        },
+        "UserIdInvite": {
+          "type": "number"
+        },
+        "Description": {
+          "type": "string"
+        }
+      }
+    },
+    "Model 5": {
+      "type": "object",
+      "properties": {
+        "UserId": {
+          "type": "number"
+        },
+        "CampId": {
+          "type": "number"
+        },
+        "Phone": {
+          "type": "string",
+          "pattern": "/[0-9]/"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Age": {
+          "type": "number"
+        },
+        "Gender": {
+          "type": "number"
+        },
+        "IncomeMonthly": {
+          "type": "number"
+        },
+        "MaritalStatus": {
+          "type": "number"
+        },
+        "Address": {
+          "type": "string"
+        },
+        "City": {
+          "type": "number"
+        },
+        "District": {
+          "type": "number"
+        },
+        "Relationship": {
+          "type": "number"
+        },
+        "Source": {
+          "type": "number"
+        },
+        "Job": {
+          "type": "string"
+        },
+        "LeadType": {
+          "type": "number"
+        },
+        "ProcessStep": {
+          "type": "number"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "UserId",
+        "CampId",
+        "Phone",
+        "Age",
+        "Gender",
+        "IncomeMonthly",
+        "MaritalStatus",
+        "City",
+        "District",
+        "Relationship",
+        "Source",
+        "LeadType",
+        "ProcessStep"
+      ]
+    },
+    "Model 6": {
+      "type": "object",
+      "properties": {
+        "Email": {
+          "type": "string",
+          "x-format": {
+            "email": true
+          },
+          "x-convert": {
+            "trim": true
+          }
+        },
+        "FullName": {
+          "type": "string"
+        },
+        "Password": {
+          "type": "string",
+          "x-convert": {
+            "trim": true
+          }
+        },
+        "Phone": {
+          "type": "string"
+        },
+        "UserName": {
+          "type": "string"
+        },
+        "Birthday": {
+          "type": "string",
+          "format": "date"
+        },
+        "GroupId": {
+          "type": "number"
+        },
+        "Address": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "City": {
+          "type": "integer",
+          "description": "metatypes: type=city"
+        },
+        "District": {
+          "type": "integer",
+          "description": "metatypes: type=district"
+        },
+        "ReportTo": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "Email",
+        "FullName",
+        "Password",
+        "Phone",
+        "UserName",
+        "Birthday",
+        "GroupId",
+        "Address"
+      ]
+    },
+    "Model 7": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "x-format": {
+            "email": true
+          }
+        },
+        "password": {
+          "type": "string",
+          "x-convert": {
+            "trim": true
+          }
+        }
+      },
+      "required": [
+        "email",
+        "password"
+      ]
+    }
+  }
+}

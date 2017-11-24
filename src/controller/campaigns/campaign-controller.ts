@@ -7,6 +7,7 @@ import { CampaignService, ICampaign } from '../../services/campaign.service';
 import * as HTTP_STATUS from 'http-status';
 import { createCampaignFAModel } from './campaign-validator';
 import { Campaign } from "../../postgres/campaign";
+import { LogCamp } from "../../mongo/index";
 export default class CampaignController {
 
     private database: IDatabase;
@@ -22,14 +23,39 @@ export default class CampaignController {
         try {
             let iCamp: ICampaign = request.payload;
             const camps = await CampaignService.createOfFA(iCamp);
-            reply(camps).code(200);
-        } catch (error) {
-            return reply({
-                status: 400,
-                error: error
-            }).code(HTTP_STATUS.BAD_REQUEST);
+            reply({
+                status: HTTP_STATUS.OK,
+                data: camps
+            }).code(200);
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    error: {
+                        code: 'ex_payload',
+                        msg: 'Create campaign have errors'
+                    }
+                };
+            }
+            LogCamp.create({
+                type: 'createcampaign',
+                dataInput: request.payload,
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
+
 
     public async leadsOfCamp(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
@@ -37,7 +63,7 @@ export default class CampaignController {
             let type = parseInt(request.params.type, 10);
             const leads = await CampaignService.leadsOfcampaign(campId, type);
             reply({
-                status: 400,
+                status: 200,
                 leads: leads
             }).code(200);
         } catch (error) {
