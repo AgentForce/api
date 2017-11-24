@@ -27,7 +27,7 @@ const updateProfileModel = Joi.object().keys({
     Address: Joi.string().required().max(255),
     City: Joi.number().integer().description('metatypes: type=city'),
     District: Joi.number().integer().description('metatypes: type=district'),
-    ReportTo: Joi.number().integer()
+    ReportTo: Joi.number().integer().default(1)
 });
 
 const loginUserModel = Joi.object().keys({

@@ -70,8 +70,23 @@ class LeadService {
      */
     static create(lead: ILead) {
         return new Promise(async (resolve, reject) => {
-            let existLead = await this.findByPhone(lead.Phone);
+            let existLead = await Lead
+                .findOne({
+                    where: {
+                        $or: [{
+                            Phone: lead.Phone,
+                            UserId: {
+                                $ne: lead.UserId
+                            }
+                        }, {
+                            CampId: lead.CampId,
+                            Phone: lead.Phone,
+                        }
+                        ]
+                    }
+                });
             if (existLead == null) {
+                lead.ProcessStep = 1;
                 let results = await Bluebird.all([
                     Lead.create(lead),
                     UserService.findById(lead.UserId)
@@ -80,17 +95,16 @@ class LeadService {
                 let userDb = results[1] as IIUser;
                 let activity = <IActivity>{
                     CampId: leadDb.CampId,
-                    Name: 'Call',
+                    Name: 'call',
                     Phone: leadDb.Phone,
                     LeadId: leadDb.Id,
                     UserId: leadDb.UserId,
-                    Type: 0,
-                    Status: 0,
-                    ProcessStep: 0,
+                    Type: 1,
+                    Status: 0, //waiting, 1 done
+                    ProcessStep: 1,
                     Date: moment().toDate(),
                     ReportTo: userDb.ReportTo,
                     ReportToList: userDb.ReportToList
-
                 };
                 let activityDb = await ActivityService.create(activity)
                     .catch(ex => {
@@ -98,7 +112,7 @@ class LeadService {
                     });
                 resolve({ lead: leadDb, activity: activityDb });
             } else {
-                reject([3, 'Phone exist']);
+                reject({ code: 'mnl_3', msg: 'This phone exist' });
             }
         })
             .catch(ex => {

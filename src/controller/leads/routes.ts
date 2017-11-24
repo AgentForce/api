@@ -5,7 +5,7 @@ import * as CampaignValidator from "./lead-validator";
 import { jwtValidator } from "../users/user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
-
+import * as HTTP_STATUS from 'http-status';
 
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
     const leadController = new LeadController(configs, database);
@@ -51,6 +51,14 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             validate: {
                 payload: CampaignValidator.createLeadModel,
                 // headers: jwtValidator
+                failAction: (request, reply, source, error) => {
+                    return reply({
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: 'mnl_1', msg: 'payload dont valid',
+                            details: error
+                        }
+                    });
+                }
             },
             plugins: {
                 'hapi-swagger': {

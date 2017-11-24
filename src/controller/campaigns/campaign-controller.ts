@@ -22,14 +22,25 @@ export default class CampaignController {
         try {
             let iCamp: ICampaign = request.payload;
             const camps = await CampaignService.createOfFA(iCamp);
-            reply(camps).code(200);
-        } catch (error) {
-            return reply({
-                status: 400,
-                error: error
-            }).code(HTTP_STATUS.BAD_REQUEST);
+            reply({
+                status: HTTP_STATUS.OK,
+                data: camps
+            }).code(200);
+        } catch (ex) {
+            if (ex.code) {
+                return reply({
+                    status: 400,
+                    error: ex
+                }).code(HTTP_STATUS.BAD_REQUEST);
+            } else {
+                return reply({
+                    status: 400,
+                    error: { code: 'exct', msg: 'Create campaign have errors' }
+                }).code(HTTP_STATUS.BAD_REQUEST);
+            }
         }
     }
+
 
     public async leadsOfCamp(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
@@ -37,7 +48,7 @@ export default class CampaignController {
             let type = parseInt(request.params.type, 10);
             const leads = await CampaignService.leadsOfcampaign(campId, type);
             reply({
-                status: 400,
+                status: 200,
                 leads: leads
             }).code(200);
         } catch (error) {

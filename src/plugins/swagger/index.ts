@@ -1,6 +1,5 @@
 import { IPlugin, IPluginInfo } from "../interfaces";
 import * as Hapi from "hapi";
-
 export default (): IPlugin => {
     return {
         register: (server: Hapi.Server): Promise<void> => {
@@ -8,18 +7,17 @@ export default (): IPlugin => {
             return new Promise<void>((resolve) => {
                 server.register([
                     require('inert'),
-                    require('vision'),
-                    {
+                    require('vision'), {
                         register: require('hapi-swagger'),
                         options: {
                             info: {
-                                title: 'Task Api',
-                                description: 'Task Api Documentation',
+                                title: 'Manulife Api',
+                                description: 'Manulife Api Documentation',
                                 version: '1.0'
                             },
                             tags: [
                                 {
-                                    'name': 'tasks',
+                                    'name': 'api',
                                     'description': 'Api tasks interface.'
                                 },
                                 {
@@ -27,19 +25,20 @@ export default (): IPlugin => {
                                     'description': 'Api users interface.'
                                 }
                             ],
+                            // payloadType: 'form',
+                            // tagsGroupingFilter: 'users',
                             swaggerUI: true,
                             documentationPage: true,
                             documentationPath: '/docs'
                         }
                     }
-                ]
-                    , (error) => {
-                        if (error) {
-                            console.log(`Error registering swagger plugin: ${error}`);
-                        }
+                ], (error) => {
+                    if (error) {
+                        console.log(`Error registering swagger plugin: ${error}`);
+                    }
 
-                        resolve();
-                    });
+                    resolve();
+                });
             });
         },
         info: () => {
