@@ -9,7 +9,9 @@ const createUserModel = Joi.object().keys({
         .required()
         .example('Tu Nguyen'),
     Password: Joi.string().trim().required(),
-    Phone: Joi.string().required(),
+    Phone: Joi.string()
+        .regex(/[0-9]/)
+        .required(),
     UserName: Joi.string()
         .required(),
     Gender: Joi.number()
@@ -38,17 +40,28 @@ const createUserModel = Joi.object().keys({
 });
 
 const updateProfileModel = Joi.object().keys({
-    // UserId: Joi.number().required(),
-    Email: Joi.string().email().trim().required(),
+    Email: Joi.string()
+        .email()
+        .trim()
+        .example('tunguyene@gmail.com')
+        .required(),
     FullName: Joi.string().required(),
-    // Password: Joi.string().trim().required(),
     Phone: Joi.string()
+        .regex(/[0-9]/)
         .required(),
     UserName: Joi.string().required(),
-    Birthday: Joi.date().required(),
-    GroupId: Joi.number().required(),
-    Address: Joi.string().required().max(255),
-    City: Joi.number().integer()
+    Birthday: Joi.date()
+        .example('1993-11-12')
+        .description('yyyy-mm-dd')
+        .required(),
+    GroupId: Joi.number().valid([2])
+        .example(2)
+        .required(),
+    Address: Joi.string()
+        .required()
+        .max(255),
+    City: Joi.number()
+        .integer()
         .description('metatypes: type=city'),
     District: Joi.number().integer()
         .description('metatypes: type=district'),

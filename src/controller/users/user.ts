@@ -25,6 +25,20 @@ interface IPayloadCreate {
   Manager: string;
 }
 
+interface IPayloadUpdate {
+  UserName: string;
+  Email: string;
+  Phone: string;
+  FullName: string;
+  Gender: string;
+  Birthday: Date;
+  GroupId: string;
+  Address: string;
+  City: number;
+  District: number;
+}
+
+
 const UserSchema = new Mongoose.Schema({
   userId: {
     type: Number,
@@ -82,4 +96,4 @@ UserSchema.pre('findOneAndUpdate', function () {
 });
 
 const UserModel = Mongoose.model<IUser>('User', UserSchema);
-export { IUser, UserModel, UserSchema, IPayloadCreate };
+export { IUser, UserModel, UserSchema, IPayloadCreate, IPayloadUpdate };

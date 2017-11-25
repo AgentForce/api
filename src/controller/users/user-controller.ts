@@ -71,20 +71,30 @@ export default class UserController {
             } else {
                 throw 'User do not exist';
             }
-        } catch (error) {
-            this.database.logModel.create({
+        } catch (ex) {
+            console.log(ex);
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    error: { code: 'ex', msg: 'Exception occurred update profile user' }
+                };
+            }
+            LogUser.create({
+                type: 'updateprofile',
                 dataInput: request.payload,
-                error: error,
+                msg: 'errors',
                 meta: {
-                    // header: request.headers,
-                    params: request.params,
-                    auth: request.auth
-                }
+                    exception: ex,
+                    response: res
+                },
             });
-            return reply({
-                status: HTTP_STATUS.BAD_REQUEST,
-                error: error
-            }).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
 
