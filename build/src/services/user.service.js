@@ -88,17 +88,35 @@ class UserService {
      * create new user
      * @param user IUser
      */
-    static create(user) {
+    static create(payload) {
         return __awaiter(this, void 0, void 0, function* () {
-            user.ReportToList = [];
-            let parent = yield this.findById(user.ReportTo);
+            let parent = yield this.findByCode(payload.Manager);
             if (parent == null) {
+                throw { code: 'ex_user_create', msg: 'Username of manager not found' };
             }
-            return postgres_1.User
-                .create(user)
-                .catch(ex => {
-                throw ex;
-            });
+            else {
+                let user = {
+                    Address: payload.Address,
+                    Birthday: payload.Birthday,
+                    City: payload.City,
+                    UserName: payload.UserName,
+                    Email: payload.Email,
+                    FullName: payload.FullName,
+                    District: payload.District,
+                    Gender: payload.Gender,
+                    GroupId: payload.GroupId,
+                    Phone: payload.Phone,
+                    Password: payload.Password,
+                    ReportTo: null,
+                    ReportToList: [],
+                };
+                return postgres_1.User
+                    .create(user)
+                    .catch(ex => {
+                    console.log(ex);
+                    throw ex;
+                });
+            }
         });
     }
 }

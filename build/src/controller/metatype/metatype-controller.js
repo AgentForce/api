@@ -20,7 +20,7 @@ class MetatypeController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let type = request.params.type;
-                let rows = yield metatype_service_1.MetatypeService.findByType(_.lowerCase(type));
+                let rows = yield metatype_service_1.MetatypeService.findByType(_.toLower(type));
                 if (rows == null || _.size(rows) === 0) {
                     return reply({
                         status: HTTP_STATUS.NOT_FOUND,
@@ -39,6 +39,38 @@ class MetatypeController {
                     status: 400,
                     error: error
                 }).code(HTTP_STATUS.BAD_REQUEST);
+            }
+        });
+    }
+    create(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let type = request.payload;
+                let typeDb = yield metatype_service_1.MetatypeService.create(type)
+                    .catch(ex => {
+                    throw ex;
+                });
+                // log mongo create success
+                reply({
+                    status: HTTP_STATUS.OK,
+                    data: typeDb
+                }).code(HTTP_STATUS.OK);
+            }
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 400,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 400,
+                        error: { code: 'ex', msg: 'Create type has errors' }
+                    };
+                }
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
         });
     }

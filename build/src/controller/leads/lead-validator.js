@@ -15,7 +15,7 @@ const createLeadModel = Joi.object().keys({
         .description('Full name'),
     Age: Joi.number().required()
         .valid([1, 2, 3, 4])
-        .description('Get info from api /types, key=rangeage'),
+        .description('Get info from api /types, key=age'),
     Gender: Joi.number().required()
         .valid([0, 1])
         .description('Gender of customer. 0 = male, 1 = female'),
@@ -36,13 +36,14 @@ const createLeadModel = Joi.object().keys({
         .description('Get info from api /types, key=district'),
     Relationship: Joi.number()
         .required()
-        .description('Get info from api /types, key=relationship'),
+        .description('Get info from api /types, key=Relationship'),
     Source: Joi.number()
-        .required(),
+        .required()
+        .description('Get info from api /types, key=Source'),
     Job: Joi.string(),
     LeadType: Joi.number()
         .required()
-        .description('Get info from api /types, key=leadtype'),
+        .description('Get info from api /types, key=LeadType'),
     Description: Joi.string().max(500)
 });
 exports.createLeadModel = createLeadModel;

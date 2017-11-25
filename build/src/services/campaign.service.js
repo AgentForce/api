@@ -44,6 +44,25 @@ class CampaignService {
             throw ex;
         });
     }
+    /**
+         * find campaign by
+         * @param id userid
+         */
+    static findByIdAndDate(campId, date) {
+        return postgres_1.Campaign
+            .findOne({
+            where: {
+                Id: campId,
+                IsDeleted: false,
+                StartDate: {
+                    $gte: date
+                }
+            }
+        })
+            .catch(ex => {
+            throw ex;
+        });
+    }
     static findByUserId(userId) {
         return postgres_1.Campaign
             .findAll({
