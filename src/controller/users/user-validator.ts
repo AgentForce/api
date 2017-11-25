@@ -12,6 +12,9 @@ const createUserModel = Joi.object().keys({
     Phone: Joi.string().required(),
     UserName: Joi.string()
         .required(),
+    Gender: Joi.number()
+        .valid([0, 1])
+        .required(),
     Birthday: Joi.date()
         .required()
         .example('1993-11-12')
@@ -28,10 +31,10 @@ const createUserModel = Joi.object().keys({
         .integer()
         .example(1)
         .description('metatypes: type=district'),
-    ReportTo: Joi.number().integer()
+    Manager: Joi.string()
         .allow(null)
         .example(null)
-
+        .description("username of manager")
 });
 
 const updateProfileModel = Joi.object().keys({

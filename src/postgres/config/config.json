@@ -36,6 +36,15 @@
     "dialect": "postgres",
     "timezone": "+07:00"
   },
+  "development": {
+    "username": "tunguyene",
+    "password": "admin$123",
+    "database": "manulife",
+    "host": "127.0.0.1",
+    "port": 5433,
+    "dialect": "postgres",
+    "timezone": "+07:00"
+  },
   "test": {
     "username": "postgres",
     "password": "admin$123",
