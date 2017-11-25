@@ -1,5 +1,10 @@
 import { MetaType } from '../postgres';
-
+interface IMetatype {
+    Type: string;
+    Key: number;
+    Value: string;
+    Description: string;
+}
 class MetatypeService {
 
     /**
@@ -12,6 +17,9 @@ class MetatypeService {
                 where: {
                     Type: type,
                     IsDeleted: false
+                },
+                attributes: {
+                    exclude: ['Id', 'IsDeleted', 'UpdatedAt', 'CreatedAt']
                 }
             });
             return types;
@@ -20,5 +28,18 @@ class MetatypeService {
         }
     }
 
+    /**
+     * Api create type
+     * @param metatype Imeta
+     */
+    static async create(metatype: IMetatype) {
+        return MetaType.create(metatype)
+            .catch(ex => {
+                throw ex;
+            });
+    }
 }
-export { MetatypeService };
+
+
+
+export { MetatypeService, IMetatype };

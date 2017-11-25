@@ -1,7 +1,7 @@
 import * as Hapi from "hapi";
 import * as Boom from "boom";
 import * as Jwt from "jsonwebtoken";
-import { IUser } from "./user";
+import { IUser, IPayloadCreate } from "./user";
 import { } from 'module';
 import { IDatabase } from "../../database";
 import { IIUser, UserService } from '../../services/user.service';
@@ -71,20 +71,30 @@ export default class UserController {
             } else {
                 throw 'User do not exist';
             }
-        } catch (error) {
-            this.database.logModel.create({
+        } catch (ex) {
+            console.log(ex);
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    error: { code: 'ex', msg: 'Exception occurred update profile user' }
+                };
+            }
+            LogUser.create({
+                type: 'updateprofile',
                 dataInput: request.payload,
-                error: error,
+                msg: 'errors',
                 meta: {
-                    // header: request.headers,
-                    params: request.params,
-                    auth: request.auth
-                }
+                    exception: ex,
+                    response: res
+                },
             });
-            return reply({
-                status: HTTP_STATUS.BAD_REQUEST,
-                error: error
-            }).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
 
@@ -94,9 +104,8 @@ export default class UserController {
             const dataInput = request.payload;
             const user = <any>await UserService.findByCode(dataInput.UserName);
             if (user == null) {
-
-                let iUser: IIUser = dataInput;
-                let newUserPg = <IIUser>await UserService.create(iUser);
+                let iUser: IPayloadCreate = dataInput;
+                let newUserPg = <any>await UserService.create(iUser);
                 let newUser: any = await this.database.userModel
                     .create({
                         userId: newUserPg.Id,
@@ -113,9 +122,10 @@ export default class UserController {
                 })
                     .code(HTTP_STATUS.OK);
             } else {
-                throw 'this code exist';
+                throw { code: 'ex_create_exist', msg: 'username exist' };
             }
         } catch (ex) {
+            console.log(ex);
             let res = {};
             if (ex.code) {
                 res = {

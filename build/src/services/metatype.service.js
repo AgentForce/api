@@ -21,6 +21,9 @@ class MetatypeService {
                     where: {
                         Type: type,
                         IsDeleted: false
+                    },
+                    attributes: {
+                        exclude: ['Id', 'IsDeleted', 'UpdatedAt', 'CreatedAt']
                     }
                 });
                 return types;
@@ -28,6 +31,18 @@ class MetatypeService {
             catch (error) {
                 throw error;
             }
+        });
+    }
+    /**
+     * Api create type
+     * @param metatype Imeta
+     */
+    static create(metatype) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return postgres_1.MetaType.create(metatype)
+                .catch(ex => {
+                throw ex;
+            });
         });
     }
 }

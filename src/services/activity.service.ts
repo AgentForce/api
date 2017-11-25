@@ -8,13 +8,17 @@ interface IActivity {
     Name: string;
     ProcessStep: number;
     Location: string;
-    Date: Date;
+    StartDate: Date;
+    EndDate: Date;
     Description: string;
     ReportTo: number;
     ReportToList: Array<number>;
     Type: number;
     Status: number;
     IsDeleted: number;
+    FullDate: boolean;
+    Notification: number;
+
 
 }
 class ActivityService {

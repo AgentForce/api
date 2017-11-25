@@ -63,7 +63,7 @@ class LeadService {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             let objExists = yield bluebird_1.Promise.all([
                 user_service_1.UserService.findById(lead.UserId),
-                campaign_service_1.CampaignService.findByUserIdAndDate(lead.CampId, moment().toDate()),
+                campaign_service_1.CampaignService.findByIdAndDate(lead.CampId, moment().toDate()),
                 lead_1.Lead.findOne({
                     where: {
                         $or: [{
@@ -100,7 +100,8 @@ class LeadService {
                     Type: 1,
                     Status: 0,
                     ProcessStep: 1,
-                    Date: moment().toDate(),
+                    StartDate: moment().toDate(),
+                    EndDate: moment().add(3, 'd').startOf('day').toDate(),
                     ReportTo: userDb.ReportTo,
                     ReportToList: userDb.ReportToList
                 };

@@ -6,6 +6,7 @@ import * as UserValidator from "./user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
+import { LogUser } from "../../mongo/index";
 export default function (server: Hapi.Server, serverConfigs: IServerConfigurations, database: IDatabase) {
 
     const userController = new UserController(serverConfigs, database);
@@ -76,12 +77,30 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         path: '/users/profile',
         config: {
             handler: userController.updateProfile,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['users', 'api'],
             description: 'Update user profile.',
             validate: {
                 payload: UserValidator.updateProfileModel,
-                headers: UserValidator.jwtValidator
+                // headers: UserValidator.jwtValidator
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: 'ex_payload', msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    LogUser.create({
+                        type: 'updateprofile',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
             },
             plugins: {
                 'hapi-swagger': {
@@ -108,7 +127,23 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             validate: {
                 payload: UserValidator.createUserModel,
                 failAction: (request, reply, source, error) => {
-                    return reply({ status: HTTP_STATUS.BAD_REQUEST, error });
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        error: {
+                            code: 'ex_payload', msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    LogUser.create({
+                        type: 'updateprofile',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
                 }
             },
             plugins: {

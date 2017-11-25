@@ -55,9 +55,25 @@ const Activity = db.define('manulife_activities', {
     allowNull: true,
     defaultValue: ''
   },
-  Date: {
+  StartDate: {
     type: Sequelize.DATE,
-    allowNull: false
+    allowNull: false,
+    defaultValue: Sequelize.NOW
+  },
+  EndDate: {
+    type: Sequelize.DATE,
+    allowNull: false,
+    defaultValue: Sequelize.NOW
+  },
+  FullDate: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: true
+  },
+  Notification: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
   },
   Description: {
     type: Sequelize.STRING(500),

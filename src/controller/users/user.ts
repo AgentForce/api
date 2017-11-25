@@ -10,6 +10,33 @@ interface IUser extends Mongoose.Document {
   updateAt: Date;
   validatePassword(requestPassword): boolean;
 }
+interface IPayloadCreate {
+  UserName: string;
+  Password: string;
+  Email: string;
+  Phone: string;
+  FullName: string;
+  Gender: string;
+  Birthday: Date;
+  GroupId: string;
+  Address: string;
+  City: number;
+  District: number;
+  Manager: string;
+}
+
+interface IPayloadUpdate {
+  UserName: string;
+  Email: string;
+  Phone: string;
+  FullName: string;
+  Gender: string;
+  Birthday: Date;
+  GroupId: string;
+  Address: string;
+  City: number;
+  District: number;
+}
 
 
 const UserSchema = new Mongoose.Schema({
@@ -19,7 +46,7 @@ const UserSchema = new Mongoose.Schema({
   },
   email: {
     type: String,
-    unique: true,
+    // unique: true,
     required: true
   },
   fullName: {
@@ -69,4 +96,4 @@ UserSchema.pre('findOneAndUpdate', function () {
 });
 
 const UserModel = Mongoose.model<IUser>('User', UserSchema);
-export { IUser, UserModel, UserSchema };
+export { IUser, UserModel, UserSchema, IPayloadCreate, IPayloadUpdate };

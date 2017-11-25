@@ -1,11 +1,11 @@
 import { User } from '../postgres';
 import * as _ from 'lodash';
+import { IPayloadCreate } from '../controller/users/user';
 interface IIUser {
-    Id: string;
-    Code: string;
     Password: string;
     Email: string;
     Phone: string;
+    UserName: string;
     FullName: string;
     Gender: string;
     Birthday: Date;
@@ -14,10 +14,7 @@ interface IIUser {
     Address: string;
     City: number;
     District: number;
-    Status: number;
     ReportTo: number;
-    CreatedAt: Date;
-    UpdatedAt: Date;
 }
 
 
@@ -103,16 +100,35 @@ class UserService {
      * create new user
      * @param user IUser
      */
-    static async create(user: IIUser) {
-        user.ReportToList = [];
-        let parent = await this.findById(user.ReportTo);
+    static async create(payload: IPayloadCreate) {
+        let parent = await this.findByCode(payload.Manager);
         if (parent == null) {
+            throw { code: 'ex_user_create', msg: 'Username of manager not found' };
+        } else {
+            let user: IIUser = {
+                Address: payload.Address,
+                Birthday: payload.Birthday,
+                City: payload.City,
+                UserName: payload.UserName,
+                Email: payload.Email,
+                FullName: payload.FullName,
+                District: payload.District,
+                Gender: payload.Gender,
+                GroupId: payload.GroupId,
+                Phone: payload.Phone,
+                Password: payload.Password,
+                ReportTo: null,
+                ReportToList: [],
+            };
+            return User
+                .create(user)
+                .catch(ex => {
+                    console.log(ex);
+                    throw ex;
+                });
         }
-        return User
-            .create(user)
-            .catch(ex => {
-                throw ex;
-            });
     }
+
+
 }
 export { UserService, IIUser };

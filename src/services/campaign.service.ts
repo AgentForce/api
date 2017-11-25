@@ -85,6 +85,25 @@ class CampaignService {
             });
     }
 
+    /**
+         * find campaign by
+         * @param id userid
+         */
+    static findByIdAndDate(campId: number, date: Date) {
+        return Campaign
+            .findOne({
+                where: {
+                    Id: campId,
+                    IsDeleted: false,
+                    StartDate: {
+                        $gte: date
+                    }
+                }
+            })
+            .catch(ex => {
+                throw ex;
+            });
+    }
 
 
     static findByUserId(userId) {
