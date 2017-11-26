@@ -68,6 +68,7 @@ const updateProfileModel = Joi.object().keys({
     // ReportTo: Joi.number().integer().default(1)
 });
 
+
 const loginUserModel = Joi.object().keys({
     email: Joi.string().email().required(),
     password: Joi.string().trim().required()

@@ -5,6 +5,7 @@ const Users = require("./controller/users");
 const Campaigns = require("./controller/campaigns");
 const Leads = require("./controller/leads");
 const Metatypes = require("./controller/metatype");
+const Actvities = require("./controller/activities");
 function init(configs, database) {
     return new Promise(resolve => {
         const port = process.env.PORT;
@@ -36,6 +37,7 @@ function init(configs, database) {
             Users.init(server, configs, database);
             Campaigns.init(server, configs, database);
             Leads.init(server, configs, database);
+            Actvities.init(server, configs, database);
             // Events.init(server, configs, database);
             Metatypes.init(server, configs, database);
             // Invites.init(server, configs, database);

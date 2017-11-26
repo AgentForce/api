@@ -172,10 +172,10 @@ class CampaignService {
             ])
             .spread(async (user: IIUser, camps) => {
                 if (user == null) {
-                    throw ({ code: 'camp_1', msg: 'UserId not found' });
+                    throw ({ code: 'ex_camp_1', msg: 'UserId not found' });
                 }
                 if (_.size(camps) > 0) {
-                    throw ({ code: 'camp_2', msg: `this user have campaign in ${campaign.StartDate}.` });
+                    throw ({ code: 'ex_camp_2', msg: `this user have campaign in ${campaign.StartDate}.` });
                 }
                 let campPrepare = <Array<ICampaign>>await this.prepareCamp(campaign, user)
                     .catch(ex => {
@@ -215,7 +215,7 @@ class CampaignService {
                 let camp: ICampaign = _.clone(campaign);
                 camp.Period = val + 1;
                 camp.StartDate = moment(campaign.StartDate).add(val, 'M').toDate();
-                // camp.EndDate = moment(campaign.StartDate).add(12, 'M').endOf('d').toDate();
+                camp.EndDate = moment(campaign.StartDate).add(val + 1, 'M').subtract(1, 'd').endOf('d').toDate();
                 camp.TargetCallSale = numContract * 5;
                 // dataInput.meetingCustomers = dataInput.contracts * 3;
                 camp.TargetMetting = numContract * 3;

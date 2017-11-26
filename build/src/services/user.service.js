@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const postgres_1 = require("../postgres");
+const Bcrypt = require("bcryptjs");
 class UserService {
     static validate() {
     }
@@ -42,7 +43,6 @@ class UserService {
             }
         })
             .catch(ex => {
-            console.log(ex);
             throw ex;
         });
     }
@@ -106,14 +106,13 @@ class UserService {
                     Gender: payload.Gender,
                     GroupId: payload.GroupId,
                     Phone: payload.Phone,
-                    Password: payload.Password,
+                    Password: Bcrypt.hashSync(payload.Password, Bcrypt.genSaltSync(8)),
                     ReportTo: null,
                     ReportToList: [],
                 };
                 return postgres_1.User
                     .create(user)
                     .catch(ex => {
-                    console.log(ex);
                     throw ex;
                 });
             }
