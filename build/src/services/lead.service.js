@@ -36,15 +36,15 @@ class LeadService {
         });
     }
     /**
-    * Tìm một lead dựa vào số điện thoại
+    * Tìm một lead dựa vào Id
     * @param phone string
     */
-    static findById(phone) {
+    static findById(Id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let lead = yield lead_1.Lead.findOne({
                     where: {
-                        Phone: phone,
+                        Id: Id,
                         IsDeleted: false
                     }
                 });
@@ -53,6 +53,28 @@ class LeadService {
             catch (error) {
                 throw error;
             }
+        });
+    }
+    static update(leadId, lead) {
+        return this
+            .findById(leadId)
+            .then(leadDb => {
+            if (leadDb == null) {
+                throw { code: 'ex_lead_not_found', msg: 'Lead not found' };
+            }
+            return lead_1.Lead
+                .update(lead, {
+                where: {
+                    Id: leadId
+                },
+                returning: true
+            })
+                .then(result => {
+                return result[1];
+            });
+        })
+            .catch(ex => {
+            throw ex;
         });
     }
     /**

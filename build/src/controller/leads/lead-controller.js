@@ -19,7 +19,7 @@ class LeadController {
     findById(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let idEvent = request.params.id;
+                let idEvent = parseInt(request.params.id, 10);
                 let events = yield lead_service_1.LeadService.findById(idEvent);
                 if (events == null) {
                     return reply(events).code(HTTP_STATUS.NOT_FOUND);
@@ -36,14 +36,17 @@ class LeadController {
             }
         });
     }
-    create(request, reply) {
+    /**
+     * create lead
+     * @param request  payload
+     * @param reply lead
+     */
+    update(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let iLead = request.payload;
-                let lead = yield lead_service_1.LeadService.create(iLead)
-                    .catch(ex => {
-                    throw ex;
-                });
+                let id = parseInt(request.params.id, 10);
+                let payload = request.payload;
+                let lead = yield lead_service_1.LeadService.update(id, payload);
                 // log mongo create success
                 this.database.logLead
                     .create({
@@ -54,6 +57,55 @@ class LeadController {
                         lead: lead.dataValues
                     }
                 });
+                reply({
+                    status: HTTP_STATUS.OK,
+                    data: lead
+                }).code(HTTP_STATUS.OK);
+            }
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 400,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 400,
+                        error: { code: 'ex', msg: 'Create lead have errors' }
+                    };
+                }
+                index_1.LogLead.create({
+                    type: 'updatelead',
+                    dataInput: {
+                        payload: request.payload,
+                        params: request.params
+                    },
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            }
+        });
+    }
+    /**
+     * create lead
+     * @param request  payload
+     * @param reply lead
+     */
+    create(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let iLead = request.payload;
+                let lead = yield lead_service_1.LeadService.create(iLead)
+                    .catch(ex => {
+                    throw ex;
+                });
+                // log mongo create success
                 reply({
                     status: HTTP_STATUS.OK,
                     data: lead

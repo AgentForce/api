@@ -42,6 +42,50 @@ class UserController {
             });
         });
     }
+    getByUsername(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const username = request.params.username;
+                const user = yield user_service_1.UserService.findByCode(username);
+                if (user !== null) {
+                    reply({
+                        status: HTTP_STATUS.OK,
+                        data: user
+                    }).code(HTTP_STATUS.OK);
+                }
+                else {
+                    throw { code: 'ex_user_not_found', msg: 'UserName not found' };
+                }
+            }
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 400,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 400,
+                        error: { code: 'ex', msg: 'Exception occurred find username' }
+                    };
+                }
+                index_1.LogUser.create({
+                    type: 'findusername',
+                    dataInput: {
+                        params: request.params
+                    },
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            }
+        });
+    }
     updateProfile(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -63,7 +107,7 @@ class UserController {
                     }).code(HTTP_STATUS.OK);
                 }
                 else {
-                    throw 'User do not exist';
+                    throw { code: 'ex_user_update', msg: 'UserName not found' };
                 }
             }
             catch (ex) {

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const Joi = require("joi");
 const user_controller_1 = require("./user-controller");
 const UserValidator = require("./user-validator");
 const HTTP_STATUS = require("http-status");
@@ -7,16 +8,19 @@ const index_1 = require("../../mongo/index");
 function default_1(server, serverConfigs, database) {
     const userController = new user_controller_1.default(serverConfigs, database);
     server.bind(userController);
-    /*server.route({
+    server.route({
         method: 'GET',
-        path: '/users/info',
+        path: '/users/{username}',
         config: {
-            handler: userController.infoUser,
-            auth: "jwt",
+            handler: userController.getByUsername,
+            // auth: "jwt",
             tags: ['api', 'users'],
-            description: 'Get user info.',
+            description: 'Get user by username.',
             validate: {
-                headers: UserValidator.jwtValidator,
+                // headers: UserValidator.jwtValidator,
+                params: {
+                    username: Joi.string().required()
+                }
             },
             plugins: {
                 'hapi-swagger': {
@@ -32,6 +36,7 @@ function default_1(server, serverConfigs, database) {
             }
         }
     });
+    /*
 
     server.route({
         method: 'DELETE',
@@ -125,7 +130,8 @@ function default_1(server, serverConfigs, database) {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST,
                         error: {
-                            code: 'ex_payload', msg: 'payload dont valid',
+                            code: 'ex_payload',
+                            msg: 'payload dont valid',
                             details: error
                         }
                     };

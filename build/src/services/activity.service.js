@@ -9,6 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const postgres_1 = require("../postgres");
+const user_service_1 = require("./user.service");
+const lead_1 = require("../postgres/lead");
 class ActivityService {
     /**
     * Tìm một lead dựa vào số điện thoại
@@ -31,19 +33,50 @@ class ActivityService {
         });
     }
     /**
-     * Tạo mới lead
-     * @param lead lead
+     * Tạo mới activiy
+     * @param activiy activiy
      */
-    static create(activiy) {
-        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-            postgres_1.Activity.create(activiy)
-                .then(rs => {
-                // Tao activity default
-                resolve(rs);
-            })
-                .catch(ex => {
-                reject(ex);
-            });
+    static create(payload) {
+        return Promise.all([
+            lead_1.Lead.findOne({
+                where: {
+                    Id: payload.LeadId,
+                    CampId: payload.CampId,
+                    IsDeleted: false,
+                    UserId: payload.UserId
+                }
+            }),
+            user_service_1.UserService.findById(payload.UserId)
+        ])
+            .then((results) => __awaiter(this, void 0, void 0, function* () {
+            let lead = results[0];
+            let user = results[1];
+            if (lead == null) {
+                throw { code: 'ex_activity_lead', msg: 'lead not found' };
+            }
+            if (user == null) {
+                throw { code: 'ex_activity_user', msg: 'userid not found' };
+            }
+            let activity = {
+                CampId: payload.CampId,
+                Description: payload.Description,
+                EndDate: payload.EndDate,
+                Phone: lead.Phone,
+                LeadId: lead.Id,
+                Name: payload.ProcessStep.toString(),
+                Type: lead.ProcessStep,
+                ReportToList: user.ReportToList,
+                FullDate: payload.FullDate,
+                Location: payload.Location,
+                Notification: payload.Notification,
+                ReportTo: user.ReportTo,
+                Status: 1,
+                StartDate: payload.StartDate,
+                ProcessStep: payload.ProcessStep,
+                UserId: payload.UserId
+            };
+            let actDb = yield postgres_1.Activity.create(activity);
+            return actDb;
         }))
             .catch(ex => {
             throw ex;
