@@ -1,11 +1,11 @@
 import { Activity } from '../postgres';
-import { IPayloadCreate } from '../controller/activities/activity';
+import { IPayloadCreate, IPayloadUpdate } from '../controller/activities/activity';
 import { CampaignSchema, ICampaign } from '../controller/campaigns/campaign';
 import { CampaignService } from './campaign.service';
 import { LeadService, ILead } from './lead.service';
 import { UserService, IIUser } from './user.service';
 import { Lead } from '../postgres/lead';
-
+import { ManulifeErrors as Ex } from '../helpers/code-errors';
 interface IActivity {
     UserId: number;
     CampId: number;
@@ -70,10 +70,10 @@ class ActivityService {
                 let user = results[1] as IIUser;
 
                 if (lead == null) {
-                    throw { code: 'ex_activity_lead', msg: 'lead not found' };
+                    throw { code: Ex.EX_LEADID_NOT_FOUND, msg: 'lead not found' };
                 }
                 if (user == null) {
-                    throw { code: 'ex_activity_user', msg: 'userid not found' };
+                    throw { code: Ex.EX_USERID_NOT_FOUND, msg: 'userid not found' };
                 }
                 let activity: IActivity = {
                     CampId: payload.CampId,
@@ -95,6 +95,41 @@ class ActivityService {
                 };
                 let actDb = await Activity.create(activity);
                 return actDb;
+            })
+            .catch(ex => {
+                throw ex;
+            });
+    }
+
+
+    /**
+    * Update  activiy
+    * @param activiy activiy
+    */
+    static update(activityId: number, payload: IPayloadUpdate) {
+        return Activity
+            .findOne({
+                where: {
+                    Id: activityId,
+                    IsDeleted: false
+                }
+            })
+            .then(activity => {
+                if (activity == null) {
+                    throw {
+                        code: Ex.EX_ACTIVITYID_NOT_FOUND,
+                        msg: 'ActivityId not found'
+                    };
+                }
+                return Activity
+                    .update(payload, {
+                        where: {
+                            Id: activityId
+                        },
+                        returning: true
+                    }).then(acDb => {
+                        return acDb[1];
+                    });
             })
             .catch(ex => {
                 throw ex;

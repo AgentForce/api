@@ -2,6 +2,7 @@ import { User } from '../postgres';
 import * as _ from 'lodash';
 import { IPayloadCreate } from '../controller/users/user';
 import * as Bcrypt from "bcryptjs";
+import { ManulifeErrors as Ex } from '../helpers/code-errors';
 interface IIUser {
     Password: string;
     Email: string;
@@ -103,7 +104,7 @@ class UserService {
     static async create(payload: IPayloadCreate) {
         let parent = await this.findByCode(payload.Manager);
         if (parent == null) {
-            throw { code: 'ex_user_create', msg: 'Username of manager not found' };
+            throw { code: Ex.EX_USERNAME_NOT_FOUND, msg: 'Username of manager not found' };
         } else {
             let user: IIUser = {
                 Address: payload.Address,

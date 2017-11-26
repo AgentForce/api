@@ -9,6 +9,7 @@ import { IServerConfigurations } from "../../configurations";
 import * as Joi from 'joi';
 import * as HTTP_STATUS from 'http-status';
 import { LogUser } from "../../mongo/index";
+import { ManulifeErrors as Ex } from '../../helpers/code-errors';
 export default class UserController {
 
     private database: IDatabase;
@@ -23,7 +24,6 @@ export default class UserController {
         const jwtSecret = this.configs.jwtSecret;
         const jwtExpiration = this.configs.jwtExpiration;
         const payload = { id: user._id };
-
         return Jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiration });
     }
 
@@ -31,11 +31,9 @@ export default class UserController {
     public async loginUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         const email = request.payload.email;
         const password = request.payload.password;
-
         let user: IUser = await this.database
             .userModel
             .findOne({ email: email });
-
         if (!user) {
             return reply(Boom.unauthorized("User does not exists."));
         }
@@ -60,7 +58,7 @@ export default class UserController {
                     data: user
                 }).code(HTTP_STATUS.OK);
             } else {
-                throw { code: 'ex_user_not_found', msg: 'UserName not found' };
+                throw { code: Ex.EX_USERNAME_NOT_FOUND, msg: 'UserName not found' };
             }
         } catch (ex) {
             let res = {};
@@ -72,7 +70,7 @@ export default class UserController {
             } else {
                 res = {
                     status: 400,
-                    error: { code: 'ex', msg: 'Exception occurred find username' }
+                    error: { code: Ex.EX_GENERAL, msg: 'Exception occurred find username' }
                 };
             }
             LogUser.create({
@@ -109,7 +107,7 @@ export default class UserController {
                     data: userPg
                 }).code(HTTP_STATUS.OK);
             } else {
-                throw { code: 'ex_user_update', msg: 'UserName not found' };
+                throw { code: Ex.EX_USERNAME_NOT_FOUND, msg: 'UserName not found' };
             }
         } catch (ex) {
             console.log(ex);
@@ -162,7 +160,7 @@ export default class UserController {
                 })
                     .code(HTTP_STATUS.OK);
             } else {
-                throw { code: 'ex_create_exist', msg: 'username exist' };
+                throw { code: Ex.EX_USERNAME_EXIST, msg: 'username exist' };
             }
         } catch (ex) {
             console.log(ex);
