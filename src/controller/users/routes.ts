@@ -11,16 +11,19 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
 
     const userController = new UserController(serverConfigs, database);
     server.bind(userController);
-    /*server.route({
+    server.route({
         method: 'GET',
-        path: '/users/info',
+        path: '/users/{username}',
         config: {
-            handler: userController.infoUser,
-            auth: "jwt",
+            handler: userController.getByUsername,
+            // auth: "jwt",
             tags: ['api', 'users'],
-            description: 'Get user info.',
+            description: 'Get user by username.',
             validate: {
-                headers: UserValidator.jwtValidator,
+                // headers: UserValidator.jwtValidator,
+                params: {
+                    username: Joi.string().required()
+                }
             },
             plugins: {
                 'hapi-swagger': {
@@ -36,6 +39,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             }
         }
     });
+    /*
 
     server.route({
         method: 'DELETE',
@@ -130,7 +134,8 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST,
                         error: {
-                            code: 'ex_payload', msg: 'payload dont valid',
+                            code: 'ex_payload',
+                            msg: 'payload dont valid',
                             details: error
                         }
                     };

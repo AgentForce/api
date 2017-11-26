@@ -49,6 +49,46 @@ export default class UserController {
         });
     }
 
+
+    public async getByUsername(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            const username = request.params.username;
+            const user = <any>await UserService.findByCode(username);
+            if (user !== null) {
+                reply({
+                    status: HTTP_STATUS.OK,
+                    data: user
+                }).code(HTTP_STATUS.OK);
+            } else {
+                throw { code: 'ex_user_not_found', msg: 'UserName not found' };
+            }
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    error: { code: 'ex', msg: 'Exception occurred find username' }
+                };
+            }
+            LogUser.create({
+                type: 'findusername',
+                dataInput: {
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
     public async updateProfile(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             const dataInput = request.payload;
@@ -69,7 +109,7 @@ export default class UserController {
                     data: userPg
                 }).code(HTTP_STATUS.OK);
             } else {
-                throw 'User do not exist';
+                throw { code: 'ex_user_update', msg: 'UserName not found' };
             }
         } catch (ex) {
             console.log(ex);

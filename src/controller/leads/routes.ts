@@ -42,6 +42,52 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     // });
 
     server.route({
+        method: 'PUT',
+        path: '/leads/{id}',
+        config: {
+            handler: leadController.update,
+            // auth: "jwt",
+            tags: ['api', 'leads'],
+            description: 'update a leads',
+            validate: {
+                payload: CampaignValidator.updateModel,
+                params: {
+                    id: Joi.number().required().example(38).description('leadid')
+                },
+                // headers: jwtValidator
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: 'ex_payload', msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    LogLead.create({
+                        type: 'updatelead',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '201': {
+                            'description': 'Lead updated'
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+
+    server.route({
         method: 'POST',
         path: '/leads',
         config: {

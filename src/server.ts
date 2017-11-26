@@ -9,6 +9,7 @@ import * as Leads from "./controller/leads";
 import * as Metatypes from './controller/metatype';
 import * as Invites from './controller/invites';
 import { IDatabase } from "./database";
+import * as Actvities from './controller/activities';
 import { Invite } from "./postgres/invite";
 import * as Path from 'path';
 
@@ -51,6 +52,7 @@ export function init(configs: IServerConfigurations, database: IDatabase): Promi
             Users.init(server, configs, database);
             Campaigns.init(server, configs, database);
             Leads.init(server, configs, database);
+            Actvities.init(server, configs, database);
             // Events.init(server, configs, database);
             Metatypes.init(server, configs, database);
             // Invites.init(server, configs, database);

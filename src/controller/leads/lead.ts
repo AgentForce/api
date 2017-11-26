@@ -8,14 +8,21 @@ interface ILead extends Mongoose.Document {
   createdAt: Date;
   updateAt: Date;
 }
-
-const LeadSchema = new Mongoose.Schema({
-  userId: { type: String, required: true },
-  name: { type: String, required: true },
-  description: String,
-  completed: Boolean
-}, {
-    timestamps: true
-  });
-const CampaignModel = Mongoose.model<ILead>('lead', LeadSchema);
-export { ILead, LeadSchema, CampaignModel };
+interface IPayloadUpdate {
+  Phone: string;
+  Name: string;
+  Age: number;
+  Gender: number;
+  IncomeMonthly: number;
+  MaritalStatus: number;
+  Address: string;
+  City: number;
+  District: number;
+  Relationship: number;
+  Source: number;
+  Job: string;
+  LeadType: number;
+  ProcessStep: number;
+  Description: string;
+}
+export { ILead, IPayloadUpdate };

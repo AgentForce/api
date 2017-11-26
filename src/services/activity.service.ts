@@ -1,4 +1,10 @@
 import { Activity } from '../postgres';
+import { IPayloadCreate } from '../controller/activities/activity';
+import { CampaignSchema, ICampaign } from '../controller/campaigns/campaign';
+import { CampaignService } from './campaign.service';
+import { LeadService, ILead } from './lead.service';
+import { UserService, IIUser } from './user.service';
+import { Lead } from '../postgres/lead';
 
 interface IActivity {
     UserId: number;
@@ -15,7 +21,6 @@ interface IActivity {
     ReportToList: Array<number>;
     Type: number;
     Status: number;
-    IsDeleted: number;
     FullDate: boolean;
     Notification: number;
 
@@ -45,24 +50,55 @@ class ActivityService {
 
 
     /**
-     * Tạo mới lead
-     * @param lead lead
+     * Tạo mới activiy
+     * @param activiy activiy
      */
-    static create(activiy: IActivity) {
-        return new Promise(async (resolve, reject) => {
-            Activity.create(activiy)
-                .then(rs => {
-                    // Tao activity default
-                    resolve(rs);
-                })
-                .catch(ex => {
-                    reject(ex);
-                });
-        })
+    static create(payload: IPayloadCreate) {
+        return Promise.all([
+            Lead.findOne({
+                where: {
+                    Id: payload.LeadId,
+                    CampId: payload.CampId,
+                    IsDeleted: false,
+                    UserId: payload.UserId
+                }
+            }),
+            UserService.findById(payload.UserId)
+        ])
+            .then(async (results) => {
+                let lead = results[0] as ILead;
+                let user = results[1] as IIUser;
+
+                if (lead == null) {
+                    throw { code: 'ex_activity_lead', msg: 'lead not found' };
+                }
+                if (user == null) {
+                    throw { code: 'ex_activity_user', msg: 'userid not found' };
+                }
+                let activity: IActivity = {
+                    CampId: payload.CampId,
+                    Description: payload.Description,
+                    EndDate: payload.EndDate,
+                    Phone: lead.Phone,
+                    LeadId: lead.Id,
+                    Name: payload.ProcessStep.toString(),
+                    Type: lead.ProcessStep,
+                    ReportToList: user.ReportToList,
+                    FullDate: payload.FullDate,
+                    Location: payload.Location,
+                    Notification: payload.Notification,
+                    ReportTo: user.ReportTo,
+                    Status: 1,
+                    StartDate: payload.StartDate,
+                    ProcessStep: payload.ProcessStep,
+                    UserId: payload.UserId
+                };
+                let actDb = await Activity.create(activity);
+                return actDb;
+            })
             .catch(ex => {
                 throw ex;
             });
-
     }
 }
 export { IActivity, ActivityService };

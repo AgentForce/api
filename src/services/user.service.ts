@@ -1,6 +1,7 @@
 import { User } from '../postgres';
 import * as _ from 'lodash';
 import { IPayloadCreate } from '../controller/users/user';
+import * as Bcrypt from "bcryptjs";
 interface IIUser {
     Password: string;
     Email: string;
@@ -53,7 +54,6 @@ class UserService {
                 }
             })
             .catch(ex => {
-                console.log(ex);
                 throw ex;
             });
     }
@@ -116,14 +116,13 @@ class UserService {
                 Gender: payload.Gender,
                 GroupId: payload.GroupId,
                 Phone: payload.Phone,
-                Password: payload.Password,
+                Password: Bcrypt.hashSync(payload.Password, Bcrypt.genSaltSync(8)),
                 ReportTo: null,
                 ReportToList: [],
             };
             return User
                 .create(user)
                 .catch(ex => {
-                    console.log(ex);
                     throw ex;
                 });
         }

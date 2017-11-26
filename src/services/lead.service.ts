@@ -6,6 +6,7 @@ import { UserService, IIUser } from './user.service';
 import { IDatabase } from '../database';
 import { Campaign } from '../postgres/campaign';
 import { CampaignService, ICampaign } from './campaign.service';
+import { IPayloadUpdate } from '../controller/leads/lead';
 interface ILead {
     Id: number;
     UserId: number;
@@ -47,14 +48,14 @@ class LeadService {
 
 
     /**
-    * Tìm một lead dựa vào số điện thoại
+    * Tìm một lead dựa vào Id
     * @param phone string
     */
-    static async findById(phone: string) {
+    static async findById(Id: number) {
         try {
             let lead = await Lead.findOne({
                 where: {
-                    Phone: phone,
+                    Id: Id,
                     IsDeleted: false
                 }
             });
@@ -65,6 +66,29 @@ class LeadService {
     }
 
 
+
+    static update(leadId: number, lead: IPayloadUpdate) {
+        return this
+            .findById(leadId)
+            .then(leadDb => {
+                if (leadDb == null) {
+                    throw { code: 'ex_lead_not_found', msg: 'Lead not found' };
+                }
+                return Lead
+                    .update(lead, {
+                        where: {
+                            Id: leadId
+                        },
+                        returning: true
+                    })
+                    .then(result => {
+                        return result[1];
+                    });
+            })
+            .catch(ex => {
+                throw ex;
+            });
+    }
 
     /**
      * Tạo mới lead sau đó sẽ tạo activity default cho lead này: default là hoạt động gọi
