@@ -35,6 +35,52 @@ export default class LeadController {
     }
 
 
+
+    public async detail(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let idEvent = parseInt(request.params.id, 10);
+            let lead: any = await LeadService.detailLeadActivity(idEvent);
+            if (lead == null) {
+                return reply({
+                    status: HTTP_STATUS.NOT_FOUND,
+                    data: lead
+                }).code(HTTP_STATUS.NOT_FOUND);
+            } else {
+                return reply({
+                    status: HTTP_STATUS.OK,
+                    data: lead
+                }).code(HTTP_STATUS.OK);
+            }
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    error: ex
+                };
+            } else {
+                console.log(ex);
+                res = {
+                    status: 400,
+                    error: { code: 'ex', msg: 'find lead have errors' }
+                };
+            }
+            LogLead.create({
+                type: 'detaillead',
+                dataInput: {
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
+
+
     /**
      * create lead
      * @param request  payload

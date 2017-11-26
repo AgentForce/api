@@ -7,6 +7,7 @@ import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
 import { LogActivity } from "../../mongo/index";
+import { ManulifeErrors as Ex } from '../../helpers/code-errors';
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
 
     const activitiesController = new ActivityController(configs, database);
@@ -65,7 +66,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: 'ex_payload', msg: 'payload dont valid',
+                            code: Ex.EX_PAYLOAD, msg: 'payload dont valid',
                             details: error
                         }
                     };
@@ -92,4 +93,58 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             }
         }
     });
+
+
+
+    server.route({
+        method: 'PUT',
+        path: '/activities/{id}',
+        config: {
+            handler: activitiesController.update,
+            // auth: "jwt",
+            tags: ['activities', 'api'],
+            description: 'Update a activity',
+            validate: {
+                payload: ActivitiesValidator.updateModel,
+                params: {
+                    id: Joi.number().required()
+                        .description('acitivityId')
+                        .example(12)
+                },
+                // headers: UserValidator.jwtValidator
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: Ex.EX_PAYLOAD,
+                            msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    LogActivity.create({
+                        type: 'update activity',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'Updated info.',
+                        },
+                        '400': {
+                            'description': 'User does not have authorization.'
+                        }
+                    }
+                }
+            }
+        }
+    });
+
 }

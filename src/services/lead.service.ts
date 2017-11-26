@@ -7,6 +7,8 @@ import { IDatabase } from '../database';
 import { Campaign } from '../postgres/campaign';
 import { CampaignService, ICampaign } from './campaign.service';
 import { IPayloadUpdate } from '../controller/leads/lead';
+import { ManulifeErrors as Ex } from '../helpers/code-errors';
+import { Activity } from '../postgres/activity';
 interface ILead {
     Id: number;
     UserId: number;
@@ -65,14 +67,32 @@ class LeadService {
         }
     }
 
+    static async detailLeadActivity(Id: number) {
+        return Lead
+            .findOne({
+                where: {
+                    Id: Id,
+                    IsDeleted: false
+                },
+                include: [{
+                    model: Activity,
+                    attributes: {
+                        exclude: ['IsDeleted']
+                    }
+                }]
+            })
+            .then(lead => {
+                return lead;
+            });
+    }
 
 
-    static update(leadId: number, lead: IPayloadUpdate) {
+    static async update(leadId: number, lead: IPayloadUpdate) {
         return this
             .findById(leadId)
             .then(leadDb => {
                 if (leadDb == null) {
-                    throw { code: 'ex_lead_not_found', msg: 'Lead not found' };
+                    throw { code: Ex.EX_LEADID_NOT_FOUND, msg: 'Lead not found' };
                 }
                 return Lead
                     .update(lead, {
@@ -116,11 +136,11 @@ class LeadService {
             ]);
             let userDb = objExists[0] as IIUser;
             if (userDb == null) {
-                reject({ code: 'ex_lead_1', msg: 'UserId not found' });
+                reject({ code: Ex.EX_USERID_NOT_FOUND, msg: 'UserId not found' });
             }
             let campDb = objExists[1] as ICampaign;
             if (campDb == null) {
-                reject({ code: 'ex_lead_2', msg: 'Campaignid not found' });
+                reject({ code: Ex.EX_CAMPID_NOT_FOUND, msg: 'Campaignid not found' });
             }
             let leadDb = objExists[2] as ILead;
             if (leadDb == null) {
@@ -143,7 +163,7 @@ class LeadService {
                 let activityDb = await ActivityService.create(activity);
                 resolve({ lead: leadDb, activity: activityDb });
             } else {
-                reject({ code: 'ex_lead_3', msg: 'This phone exist' });
+                reject({ code: Ex.EX_PHONE_EXISTS, msg: 'This phone exist' });
             }
         })
             .catch(ex => {

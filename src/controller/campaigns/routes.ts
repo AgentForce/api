@@ -6,6 +6,7 @@ import { jwtValidator } from "../users/user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
+import { ManulifeErrors as Ex } from '../../helpers/code-errors';
 import { LogCamp } from "../../mongo/index";
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
 
@@ -32,7 +33,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: 'ex_payload',
+                            code: Ex.EX_PAYLOAD,
                             msg: 'payload dont valid',
                             details: error
                         }
@@ -81,7 +82,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: 'ex_payload',
+                            code: Ex.EX_PAYLOAD,
                             msg: 'params dont valid',
                             details: error
                         }
@@ -210,7 +211,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: 'ex_payload',
+                            code: Ex.EX_PAYLOAD,
                             msg: 'payload dont valid',
                             details: error
                         }

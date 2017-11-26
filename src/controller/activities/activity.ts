@@ -12,7 +12,16 @@ interface IPayloadCreate {
   Notification: number;
 }
 
+interface IPayloadUpdate {
+  ProcessStep: number;
+  Location: string;
+  StartDate: Date;
+  EndDate: Date;
+  Description: string;
+  FullDate: boolean;
+  Notification: number;
+}
 
 
 
-export { IPayloadCreate };
+export { IPayloadCreate, IPayloadUpdate };

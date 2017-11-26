@@ -8,6 +8,7 @@ import { Lead } from '../postgres/lead';
 import { log } from 'util';
 import { Logger, transports, Winston } from 'winston';
 import { LogCamp } from '../mongo';
+import { ManulifeErrors as Ex } from '../helpers/code-errors';
 interface ICampaign {
     UserId: number;
     Period: number;
@@ -172,10 +173,10 @@ class CampaignService {
             ])
             .spread(async (user: IIUser, camps) => {
                 if (user == null) {
-                    throw ({ code: 'ex_camp_1', msg: 'UserId not found' });
+                    throw ({ code: Ex.EX_USERNAME_NOT_FOUND, msg: 'UserId not found' });
                 }
                 if (_.size(camps) > 0) {
-                    throw ({ code: 'ex_camp_2', msg: `this user have campaign in ${campaign.StartDate}.` });
+                    throw ({ code: Ex.EX_CAMP_FINISH, msg: `this user have campaign in ${campaign.StartDate}.` });
                 }
                 let campPrepare = <Array<ICampaign>>await this.prepareCamp(campaign, user)
                     .catch(ex => {

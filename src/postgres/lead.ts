@@ -1,6 +1,7 @@
 import { db } from './db';
 // const Sequelize = require('sequelize');
 import * as Sequelize from 'sequelize';
+import { Activity } from './activity';
 const Lead = db.define('manulife_leads', {
   Id: {
     allowNull: false,
@@ -119,4 +120,5 @@ const Lead = db.define('manulife_leads', {
     createdAt: 'CreatedAt',
     updatedAt: 'UpdatedAt'
   });
+Lead.hasMany(Activity, { foreignKey: 'LeadId' });
 export { Lead };
