@@ -11,6 +11,9 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
 
     const userController = new UserController(serverConfigs, database);
     server.bind(userController);
+
+
+
     server.route({
         method: 'GET',
         path: '/users/{username}',
@@ -24,6 +27,36 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 params: {
                     username: Joi.string().required()
                 }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'User founded.'
+                        },
+                        '401': {
+                            'description': 'Please login.'
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+
+    /**
+     * demo sendmail
+     */
+    server.route({
+        method: 'GET',
+        path: '/users/sendmail',
+        config: {
+            handler: userController.sendMail,
+            // auth: "jwt",
+            tags: ['api', 'users'],
+            description: 'Get user by username.',
+            validate: {
+                // headers: UserValidator.jwtValidator,
             },
             plugins: {
                 'hapi-swagger': {
