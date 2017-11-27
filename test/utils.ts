@@ -26,7 +26,7 @@ export function createUserDummy(email?: string) {
 
 export function clearDatabase(database: Database.IDatabase, done: MochaDone) {
     var promiseUser = database.userModel.remove({});
-    var promiseCampaign = database.campaignModel.remove({});
+    // var promiseCampaign = database.campaignModel.remove({});
 
     Promise.all([promiseUser]).then(() => {
         done();
@@ -39,9 +39,9 @@ export function createSeedCampaignData(database: Database.IDatabase, done: Mocha
     return database.userModel.create(createUserDummy())
         .then((user) => {
             return Promise.all([
-                database.campaignModel.create(createCampaignDummy(user._id, "Campaign 1", "Some dummy data 1")),
-                database.campaignModel.create(createCampaignDummy(user._id, "Campaign 2", "Some dummy data 2")),
-                database.campaignModel.create(createCampaignDummy(user._id, "Campaign 3", "Some dummy data 3")),
+                // database.campaignModel.create(createCampaignDummy(user._id, "Campaign 1", "Some dummy data 1")),
+                // database.campaignModel.create(createCampaignDummy(user._id, "Campaign 2", "Some dummy data 2")),
+                // database.campaignModel.create(createCampaignDummy(user._id, "Campaign 3", "Some dummy data 3")),
             ]);
         }).then((campaign) => {
             done();

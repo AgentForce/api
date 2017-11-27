@@ -8,14 +8,56 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Boom = require("boom");
 const activity_service_1 = require("../../services/activity.service");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
+const code_errors_1 = require("../../helpers/code-errors");
 class ActivitiesController {
     constructor(configs, database) {
         this.configs = configs;
         this.database = database;
+    }
+    update(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let iAc = request.payload;
+                let id = parseInt(request.params.id, 10);
+                let lead = yield activity_service_1.ActivityService.update(id, iAc);
+                // log mongo create success
+                reply({
+                    status: HTTP_STATUS.OK,
+                    data: lead
+                }).code(HTTP_STATUS.OK);
+            }
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 400,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 400,
+                        error: {
+                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
+                            msg: 'Create activity have errors'
+                        }
+                    };
+                }
+                index_1.LogActivity.create({
+                    type: 'createactivity',
+                    dataInput: request.payload,
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            }
+        });
     }
     create(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -39,7 +81,10 @@ class ActivitiesController {
                 else {
                     res = {
                         status: 400,
-                        error: { code: 'ex', msg: 'Create activity have errors' }
+                        error: {
+                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
+                            msg: 'Create activity have errors'
+                        }
                     };
                 }
                 index_1.LogActivity.create({
@@ -52,47 +97,6 @@ class ActivitiesController {
                     },
                 });
                 reply(res).code(HTTP_STATUS.BAD_REQUEST);
-            }
-        });
-    }
-    updateCampaign(request, reply) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // let userId = request.auth.credentials.id;
-            // let id = request.params["id"];
-            // try {
-            //     let campaign: ICampaign = await this.database
-            //         .campaignModel
-            //         .findByIdAndUpdate({
-            //             _id: id,
-            //             userId: userId
-            //         }, {
-            //             $set: request.payload
-            //         }, {
-            //             new: true
-            //         });
-            //     if (campaign) {
-            //         reply(campaign);
-            //     } else {
-            //         reply(Boom.notFound());
-            //     }
-            // } catch (error) {
-            //     return reply(Boom.badImplementation(error));
-            // }
-        });
-    }
-    getCampaignById(request, reply) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let userId = request.auth.credentials.id;
-            let id = request.params["id"];
-            let campaign = yield this.database
-                .campaignModel
-                .findOne({ _id: id, userId: userId })
-                .lean(true);
-            if (campaign) {
-                reply(campaign);
-            }
-            else {
-                reply(Boom.notFound());
             }
         });
     }

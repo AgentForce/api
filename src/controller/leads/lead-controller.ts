@@ -92,7 +92,7 @@ export default class LeadController {
             let payload = request.payload as IPayloadUpdate;
             let lead: any = await LeadService.update(id, payload);
             // log mongo create success
-            this.database.logLead
+            LogLead
                 .create({
                     type: 'create',
                     msg: 'success',

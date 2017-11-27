@@ -1,8 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const routes_1 = require("./routes");
-function init(server, configs, database) {
-    routes_1.default(server, configs, database);
-}
-exports.init = init;
+// import * as Hapi from "hapi";
+// import Routes from "./routes";
+// import { IDatabase } from "../../database";
+// import { IServerConfigurations } from "../../configurations";
+// export function init(server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
+//     Routes(server, configs, database);
+// } 
 //# sourceMappingURL=index.js.map

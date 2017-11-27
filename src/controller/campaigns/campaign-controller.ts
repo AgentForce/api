@@ -126,7 +126,7 @@ export default class CampaignController {
             let payload = request.payload as IPayloadUpdate;
             let campaign: any = await CampaignService.updateCurrent(id, payload);
             // log mongo create success
-            this.database.logLead
+            LogCamp
                 .create({
                     type: 'create',
                     msg: 'success',
@@ -185,7 +185,7 @@ export default class CampaignController {
             }
         } catch (error) {
             // log mongo create fail
-            this.database.logModel
+            LogCamp
                 .create({
                     type: 'getByCampaignId',
                     msg: 'fail',
@@ -219,7 +219,7 @@ export default class CampaignController {
             }
         } catch (error) {
             // log mongo create fail
-            this.database.logModel
+            LogCamp
                 .create({
                     type: 'getByCampaignId',
                     msg: 'fail',

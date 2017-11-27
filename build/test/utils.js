@@ -22,7 +22,7 @@ function createUserDummy(email) {
 exports.createUserDummy = createUserDummy;
 function clearDatabase(database, done) {
     var promiseUser = database.userModel.remove({});
-    var promiseCampaign = database.campaignModel.remove({});
+    // var promiseCampaign = database.campaignModel.remove({});
     Promise.all([promiseUser]).then(() => {
         done();
     }).catch((error) => {
@@ -33,11 +33,7 @@ exports.clearDatabase = clearDatabase;
 function createSeedCampaignData(database, done) {
     return database.userModel.create(createUserDummy())
         .then((user) => {
-        return Promise.all([
-            database.campaignModel.create(createCampaignDummy(user._id, "Campaign 1", "Some dummy data 1")),
-            database.campaignModel.create(createCampaignDummy(user._id, "Campaign 2", "Some dummy data 2")),
-            database.campaignModel.create(createCampaignDummy(user._id, "Campaign 3", "Some dummy data 3")),
-        ]);
+        return Promise.all([]);
     }).then((campaign) => {
         done();
     }).catch((error) => {

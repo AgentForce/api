@@ -116,29 +116,60 @@ class CampaignController {
         //     return reply('Campaigns exist!!!').code(200);
         // }
     }
-    updateCampaign(request, reply) {
+    /**
+     * update target of campaign
+     * @param request reques
+     * @param reply res
+     */
+    updateCurrent(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
-            // let userId = request.auth.credentials.id;
-            // let id = request.params["id"];
-            // try {
-            //     let campaign: ICampaign = await this.database
-            //         .campaignModel
-            //         .findByIdAndUpdate({
-            //             _id: id,
-            //             userId: userId
-            //         }, {
-            //             $set: request.payload
-            //         }, {
-            //             new: true
-            //         });
-            //     if (campaign) {
-            //         reply(campaign);
-            //     } else {
-            //         reply(Boom.notFound());
-            //     }
-            // } catch (error) {
-            //     return reply(Boom.badImplementation(error));
-            // }
+            try {
+                let id = parseInt(request.params.id, 10);
+                let payload = request.payload;
+                let campaign = yield campaign_service_1.CampaignService.updateCurrent(id, payload);
+                // log mongo create success
+                index_1.LogCamp
+                    .create({
+                    type: 'create',
+                    msg: 'success',
+                    dataInput: request.payload,
+                    meta: {
+                        data: campaign.dataValues
+                    }
+                });
+                reply({
+                    status: HTTP_STATUS.OK,
+                    data: campaign
+                }).code(HTTP_STATUS.OK);
+            }
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: HTTP_STATUS.BAD_GATEWAY,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: HTTP_STATUS.BAD_GATEWAY,
+                        error: { code: 'ex', msg: 'update campaign have errors' }
+                    };
+                }
+                index_1.LogCamp.create({
+                    type: 'updatecamp',
+                    dataInput: {
+                        payload: request.payload,
+                        params: request.params
+                    },
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            }
         });
     }
     getByCampaignId(request, reply) {
@@ -161,7 +192,7 @@ class CampaignController {
             }
             catch (error) {
                 // log mongo create fail
-                this.database.logModel
+                index_1.LogCamp
                     .create({
                     type: 'getByCampaignId',
                     msg: 'fail',
@@ -197,7 +228,7 @@ class CampaignController {
             }
             catch (error) {
                 // log mongo create fail
-                this.database.logModel
+                index_1.LogCamp
                     .create({
                     type: 'getByCampaignId',
                     msg: 'fail',
