@@ -84,7 +84,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '201': {
+                        '200': {
                             'description': 'Created event'
                         }
                     }

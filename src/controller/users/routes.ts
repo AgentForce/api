@@ -54,7 +54,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             handler: userController.sendMail,
             // auth: "jwt",
             tags: ['api', 'users'],
-            description: 'Get user by username.',
+            description: 'send email(Just test, please dont try)',
             validate: {
                 // headers: UserValidator.jwtValidator,
             },
@@ -187,7 +187,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        201: {
+                        '200': {
                             'description': 'User created.'
                         }
                     }
@@ -209,7 +209,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        200: {
+                        '200': {
                             'description': 'User logged in.'
                         }
                     }

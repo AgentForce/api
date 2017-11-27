@@ -10,7 +10,8 @@ import * as Joi from 'joi';
 import * as HTTP_STATUS from 'http-status';
 import { LogUser } from "../../mongo/index";
 import { ManulifeErrors as Ex } from '../../helpers/code-errors';
-import * as nodemailer from 'nodemailer';
+const nodemailer = require('nodemailer');
+import * as EmailTemplate from 'email-templates';
 export default class UserController {
 
     private database: IDatabase;
@@ -29,6 +30,7 @@ export default class UserController {
     }
 
     public sendMail(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+
 
         // Generate test SMTP service account from ethereal.email
         // Only needed if you don't have a real mail account for testing
@@ -52,20 +54,38 @@ export default class UserController {
                 text: 'Hello world?', // plain text body
                 html: '<b>Hello world?</b>' // html body
             };
-
-            // send mail with defined transport object
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    return console.log(error);
-                }
-                reply('success');
-                console.log('Message sent: %s', info.messageId);
-                // Preview only available when sending through an Ethereal account
-                console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-
-                // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@blurdybloop.com>
-                // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+            const email = new EmailTemplate({
+                message: {
+                    from: '"Fred Foo 👻"  <tunguyene@gmail.com>'
+                },
+                // uncomment below to send emails in development/test env:
+                // send: true
+                transport: transporter,
             });
+
+            email.send({
+                template: 'resetpassword',
+                message: {
+                    to: 'tunguyenq@gmail.com'
+                },
+                locals: {
+                    name: 'Tu Nguyen'
+                }
+            }).then(console.log).catch(console.error);
+            reply('success');
+            // send mail with defined transport object
+            // transporter.sendMail(mailOptions, (error, info) => {
+            //     if (error) {
+            //         return console.log(error);
+            //     }
+            //     reply('success');
+            //     console.log('Message sent: %s', info.messageId);
+            //     // Preview only available when sending through an Ethereal account
+            //     console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+
+            //     // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@blurdybloop.com>
+            //     // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+            // });
         });
     }
 

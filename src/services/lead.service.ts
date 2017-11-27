@@ -90,9 +90,12 @@ class LeadService {
     static async update(leadId: number, lead: IPayloadUpdate) {
         return this
             .findById(leadId)
-            .then(leadDb => {
+            .then((leadDb: ILead) => {
                 if (leadDb == null) {
                     throw { code: Ex.EX_LEADID_NOT_FOUND, msg: 'Lead not found' };
+                }
+                if (leadDb.ProcessStep > lead.ProcessStep) {
+                    throw { code: Ex.EX_LEAD_PROCESS_STEP, msg: 'cant not update processtep < old processtep' };
                 }
                 return Lead
                     .update(lead, {
