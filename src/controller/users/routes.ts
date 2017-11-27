@@ -13,15 +13,14 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
     server.bind(userController);
 
 
-
     server.route({
         method: 'GET',
         path: '/users/{username}',
         config: {
             handler: userController.getByUsername,
             // auth: "jwt",
-            tags: ['api', 'users'],
             description: 'Get user by username.',
+            tags: ['api', 'users'],
             validate: {
                 // headers: UserValidator.jwtValidator,
                 params: {
@@ -115,7 +114,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         config: {
             handler: userController.updateProfile,
             // auth: "jwt",
-            tags: ['users', 'api'],
+            tags: ['api', 'users'],
             description: 'Update user profile.',
             validate: {
                 payload: UserValidator.updateProfileModel,
@@ -201,7 +200,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         path: '/users/login',
         config: {
             handler: userController.loginUser,
-            tags: ['api', 'users'],
+            tags: ['users', 'api'],
             description: 'Login a user.',
             validate: {
                 payload: UserValidator.loginUserModel
