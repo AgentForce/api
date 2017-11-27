@@ -9,6 +9,7 @@ import { log } from 'util';
 import { Logger, transports, Winston } from 'winston';
 import { LogCamp } from '../mongo';
 import { ManulifeErrors as Ex } from '../helpers/code-errors';
+import { IPayloadUpdate } from '../controller/campaigns/campaign';
 interface ICampaign {
     UserId: number;
     Period: number;
@@ -160,6 +161,34 @@ class CampaignService {
         } catch (error) {
             throw error;
         }
+    }
+    /**
+     * Update current number of a campaign
+     */
+    static updateCurrent(campid: number, payload: IPayloadUpdate) {
+        return this
+            .findById(campid)
+            .then((campDb: ICampaign) => {
+                if (campDb == null) {
+                    throw { code: Ex.EX_CAMPID_NOT_FOUND, msg: 'campaignid not found' };
+                }
+                if (campDb.EndDate < moment().toDate()) {
+                    throw { code: Ex.EX_CAMP_FINISH, msg: 'campaign completed' };
+                }
+                return Campaign
+                    .update(payload, {
+                        where: {
+                            Id: campid
+                        },
+                        returning: true
+                    })
+                    .then(result => {
+                        return result;
+                    });
+            })
+            .catch(ex => {
+                throw ex;
+            });
     }
     /**
      * create new user

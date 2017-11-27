@@ -118,34 +118,56 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         }
     });
 
-    // server.route({
-    //     method: 'PUT',
-    //     path: '/campaigns/{id}',
-    //     config: {
-    //         handler: campaignController.getByCampaignId,
-    //         // auth: "jwt",
-    //         tags: ['api', 'campaigns'],
-    //         description: 'Update a campaign',
-    //         validate: {
-    //             params: {
-    //                 id: Joi.string().required()
-    //             },
-    //             // headers: jwtValidator
-    //         },
-    //         plugins: {
-    //             'hapi-swagger': {
-    //                 responses: {
-    //                     200: {
-    //                         'description': 'Campaign founded.'
-    //                     },
-    //                     404: {
-    //                         'description': 'Campaign does not exists.'
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // });
+    server.route({
+        method: 'PUT',
+        path: '/campaigns/{id}',
+        config: {
+            handler: campaignController.updateCurrent,
+            // auth: "jwt",
+            tags: ['api', 'campaigns'],
+            description: 'update a campaign.(waiting feedback flow)',
+            validate: {
+                payload: CampaignValidator.updateModel,
+                params: {
+                    id: Joi.number().required()
+                        .example(240)
+                        .description('campaignid')
+                },
+                // headers: jwtValidator
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: Ex.EX_PAYLOAD,
+                            msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    LogCamp.create({
+                        type: 'updatecamp',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'update campaign.'
+                        },
+                        '400': {
+                            description: 'update fail'
+                        }
+                    }
+                }
+            }
+        }
+    });
 
 
 
