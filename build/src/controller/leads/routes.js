@@ -2,40 +2,61 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 const lead_controller_1 = require("./lead-controller");
-const CampaignValidator = require("./lead-validator");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
+const code_errors_1 = require("../../helpers/code-errors");
+const LeadValidator = require("./lead-validator");
 function default_1(server, configs, database) {
     const leadController = new lead_controller_1.default(configs, database);
     server.bind(leadController);
-    // server.route({
-    //     method: 'GET',
-    //     path: '/leads/{id}',
-    //     config: {
-    //         handler: leadController.getCampaignById,
-    //         auth: "jwt",
-    //         tags: ['api', 'campaigns'],
-    //         description: 'Get campaigns by id.',
-    //         validate: {
-    //             params: {
-    //                 id: Joi.string().required()
-    //             },
-    //             headers: jwtValidator
-    //         },
-    //         plugins: {
-    //             'hapi-swagger': {
-    //                 responses: {
-    //                     '200': {
-    //                         'description': 'Campaign founded.'
-    //                     },
-    //                     '404': {
-    //                         'description': 'Campaign does not exists.'
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // });
+    server.route({
+        method: 'GET',
+        path: '/leads/detail/{id}',
+        config: {
+            handler: leadController.detail,
+            // auth: "jwt",
+            tags: ['api', 'leads'],
+            description: 'find detail a lead with list activities',
+            validate: {
+                params: {
+                    id: Joi.number()
+                        .required().example(38)
+                        .description('leadid')
+                },
+                // headers: jwtValidator
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD, msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    index_1.LogLead.create({
+                        type: 'detaillead',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'Lead found'
+                        },
+                        '404': {
+                            description: 'lead not found'
+                        }
+                    }
+                }
+            }
+        }
+    });
     server.route({
         method: 'PUT',
         path: '/leads/{id}',
@@ -45,7 +66,7 @@ function default_1(server, configs, database) {
             tags: ['api', 'leads'],
             description: 'update a leads',
             validate: {
-                payload: CampaignValidator.updateModel,
+                payload: LeadValidator.updateModel,
                 params: {
                     id: Joi.number().required().example(38).description('leadid')
                 },
@@ -53,7 +74,7 @@ function default_1(server, configs, database) {
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: 'ex_payload', msg: 'payload dont valid',
+                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD, msg: 'payload dont valid',
                             details: error
                         }
                     };
@@ -72,7 +93,7 @@ function default_1(server, configs, database) {
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '201': {
+                        '200': {
                             'description': 'Lead updated'
                         }
                     }
@@ -87,14 +108,14 @@ function default_1(server, configs, database) {
             handler: leadController.create,
             // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'Create a leads',
+            description: 'Create a lead',
             validate: {
-                payload: CampaignValidator.createLeadModel,
+                payload: LeadValidator.createLeadModel,
                 // headers: jwtValidator
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: 'ex_payload', msg: 'payload dont valid',
+                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD, msg: 'payload dont valid',
                             details: error
                         }
                     };
@@ -113,7 +134,7 @@ function default_1(server, configs, database) {
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '201': {
+                        '200': {
                             'description': 'Created lead.'
                         }
                     }

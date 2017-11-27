@@ -69,6 +69,9 @@ const updateModel = Joi.object().keys({
     City: Joi.number()
         .required()
         .description('Get info from api /types, key=city'),
+    ProcessStep: Joi.number()
+        .required()
+        .valid([1, 2, 3, 4]),
     District: Joi.number().required()
         .description('Get info from api /types, key=district'),
     Relationship: Joi.number()

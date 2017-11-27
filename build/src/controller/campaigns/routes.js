@@ -4,6 +4,7 @@ const Joi = require("joi");
 const campaign_controller_1 = require("./campaign-controller");
 const CampaignValidator = require("./campaign-validator");
 const HTTP_STATUS = require("http-status");
+const code_errors_1 = require("../../helpers/code-errors");
 const index_1 = require("../../mongo/index");
 function default_1(server, configs, database) {
     const campaignController = new campaign_controller_1.default(configs, database);
@@ -29,7 +30,7 @@ function default_1(server, configs, database) {
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: 'ex_payload',
+                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
                             msg: 'payload dont valid',
                             details: error
                         }
@@ -78,7 +79,7 @@ function default_1(server, configs, database) {
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: 'ex_payload',
+                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
                             msg: 'params dont valid',
                             details: error
                         }
@@ -112,34 +113,56 @@ function default_1(server, configs, database) {
             }
         }
     });
-    // server.route({
-    //     method: 'PUT',
-    //     path: '/campaigns/{id}',
-    //     config: {
-    //         handler: campaignController.getByCampaignId,
-    //         // auth: "jwt",
-    //         tags: ['api', 'campaigns'],
-    //         description: 'Update a campaign',
-    //         validate: {
-    //             params: {
-    //                 id: Joi.string().required()
-    //             },
-    //             // headers: jwtValidator
-    //         },
-    //         plugins: {
-    //             'hapi-swagger': {
-    //                 responses: {
-    //                     200: {
-    //                         'description': 'Campaign founded.'
-    //                     },
-    //                     404: {
-    //                         'description': 'Campaign does not exists.'
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // });
+    server.route({
+        method: 'PUT',
+        path: '/campaigns/{id}',
+        config: {
+            handler: campaignController.updateCurrent,
+            // auth: "jwt",
+            tags: ['api', 'campaigns'],
+            description: 'update a campaign.(waiting feedback flow)',
+            validate: {
+                payload: CampaignValidator.updateModel,
+                params: {
+                    id: Joi.number().required()
+                        .example(240)
+                        .description('campaignid')
+                },
+                // headers: jwtValidator
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
+                            msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    index_1.LogCamp.create({
+                        type: 'updatecamp',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'update campaign.'
+                        },
+                        '400': {
+                            description: 'update fail'
+                        }
+                    }
+                }
+            }
+        }
+    });
     // server.route({
     //     method: 'GET',
     //     path: '/campaigns/userid/{userid}',
@@ -201,7 +224,7 @@ function default_1(server, configs, database) {
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: 'ex_payload',
+                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
                             msg: 'payload dont valid',
                             details: error
                         }
@@ -221,7 +244,7 @@ function default_1(server, configs, database) {
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '201': {
+                        '200': {
                             'description': 'Created campaign.'
                         }
                     }

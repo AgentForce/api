@@ -36,6 +36,54 @@ class LeadController {
             }
         });
     }
+    detail(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let idEvent = parseInt(request.params.id, 10);
+                let lead = yield lead_service_1.LeadService.detailLeadActivity(idEvent);
+                if (lead == null) {
+                    return reply({
+                        status: HTTP_STATUS.NOT_FOUND,
+                        data: lead
+                    }).code(HTTP_STATUS.NOT_FOUND);
+                }
+                else {
+                    return reply({
+                        status: HTTP_STATUS.OK,
+                        data: lead
+                    }).code(HTTP_STATUS.OK);
+                }
+            }
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 400,
+                        error: ex
+                    };
+                }
+                else {
+                    console.log(ex);
+                    res = {
+                        status: 400,
+                        error: { code: 'ex', msg: 'find lead have errors' }
+                    };
+                }
+                index_1.LogLead.create({
+                    type: 'detaillead',
+                    dataInput: {
+                        params: request.params
+                    },
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            }
+        });
+    }
     /**
      * create lead
      * @param request  payload
@@ -48,7 +96,7 @@ class LeadController {
                 let payload = request.payload;
                 let lead = yield lead_service_1.LeadService.update(id, payload);
                 // log mongo create success
-                this.database.logLead
+                index_1.LogLead
                     .create({
                     type: 'create',
                     msg: 'success',

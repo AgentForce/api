@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const postgres_1 = require("../postgres");
 const user_service_1 = require("./user.service");
 const lead_1 = require("../postgres/lead");
+const code_errors_1 = require("../helpers/code-errors");
 class ActivityService {
     /**
     * Tìm một lead dựa vào số điện thoại
@@ -52,10 +53,10 @@ class ActivityService {
             let lead = results[0];
             let user = results[1];
             if (lead == null) {
-                throw { code: 'ex_activity_lead', msg: 'lead not found' };
+                throw { code: code_errors_1.ManulifeErrors.EX_LEADID_NOT_FOUND, msg: 'lead not found' };
             }
             if (user == null) {
-                throw { code: 'ex_activity_user', msg: 'userid not found' };
+                throw { code: code_errors_1.ManulifeErrors.EX_USERID_NOT_FOUND, msg: 'userid not found' };
             }
             let activity = {
                 CampId: payload.CampId,
@@ -78,6 +79,39 @@ class ActivityService {
             let actDb = yield postgres_1.Activity.create(activity);
             return actDb;
         }))
+            .catch(ex => {
+            throw ex;
+        });
+    }
+    /**
+    * Update  activiy
+    * @param activiy activiy
+    */
+    static update(activityId, payload) {
+        return postgres_1.Activity
+            .findOne({
+            where: {
+                Id: activityId,
+                IsDeleted: false
+            }
+        })
+            .then(activity => {
+            if (activity == null) {
+                throw {
+                    code: code_errors_1.ManulifeErrors.EX_ACTIVITYID_NOT_FOUND,
+                    msg: 'ActivityId not found'
+                };
+            }
+            return postgres_1.Activity
+                .update(payload, {
+                where: {
+                    Id: activityId
+                },
+                returning: true
+            }).then(acDb => {
+                return acDb[1];
+            });
+        })
             .catch(ex => {
             throw ex;
         });

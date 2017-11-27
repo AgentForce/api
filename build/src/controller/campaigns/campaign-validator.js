@@ -13,4 +13,18 @@ const createCampaignFAModel = Joi.object().keys({
     CommissionRate: Joi.number().required()
 });
 exports.createCampaignFAModel = createCampaignFAModel;
+/**
+ * update model validate
+ */
+const updateModel = Joi.object().keys({
+    CurrentCallSale: Joi.number()
+        .required(),
+    CurrentMetting: Joi.number()
+        .required(),
+    CurrentContract: Joi.number()
+        .required(),
+    CurrentPresentation: Joi.number()
+        .required(),
+});
+exports.updateModel = updateModel;
 //# sourceMappingURL=campaign-validator.js.map

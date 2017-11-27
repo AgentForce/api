@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const postgres_1 = require("../postgres");
 const Bcrypt = require("bcryptjs");
+const code_errors_1 = require("../helpers/code-errors");
 class UserService {
     static validate() {
     }
@@ -92,7 +93,7 @@ class UserService {
         return __awaiter(this, void 0, void 0, function* () {
             let parent = yield this.findByCode(payload.Manager);
             if (parent == null) {
-                throw { code: 'ex_user_create', msg: 'Username of manager not found' };
+                throw { code: code_errors_1.ManulifeErrors.EX_USERNAME_NOT_FOUND, msg: 'Username of manager not found' };
             }
             else {
                 let user = {

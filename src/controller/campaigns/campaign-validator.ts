@@ -11,4 +11,17 @@ const createCampaignFAModel = Joi.object().keys({
     CommissionRate: Joi.number().required()
 });
 
-export { createCampaignFAModel };
+/**
+ * update model validate
+ */
+const updateModel = Joi.object().keys({
+    CurrentCallSale: Joi.number()
+        .required(),
+    CurrentMetting: Joi.number()
+        .required(),
+    CurrentContract: Joi.number()
+        .required(),
+    CurrentPresentation: Joi.number()
+        .required(),
+});
+export { createCampaignFAModel, updateModel };

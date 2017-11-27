@@ -15,6 +15,7 @@ const moment = require("moment");
 const bluebird_1 = require("bluebird");
 const lead_1 = require("../postgres/lead");
 const winston_1 = require("winston");
+const code_errors_1 = require("../helpers/code-errors");
 var logger = new (winston_1.Logger)({
     transports: [
         new (winston_1.transports.Console)({ level: 'error' }),
@@ -120,6 +121,34 @@ class CampaignService {
         });
     }
     /**
+     * Update current number of a campaign
+     */
+    static updateCurrent(campid, payload) {
+        return this
+            .findById(campid)
+            .then((campDb) => {
+            if (campDb == null) {
+                throw { code: code_errors_1.ManulifeErrors.EX_CAMPID_NOT_FOUND, msg: 'campaignid not found' };
+            }
+            if (campDb.EndDate < moment().toDate()) {
+                throw { code: code_errors_1.ManulifeErrors.EX_CAMP_FINISH, msg: 'campaign completed' };
+            }
+            return postgres_1.Campaign
+                .update(payload, {
+                where: {
+                    Id: campid
+                },
+                returning: true
+            })
+                .then(result => {
+                return result;
+            });
+        })
+            .catch(ex => {
+            throw ex;
+        });
+    }
+    /**
      * create new user
      * @param user IUser
      */
@@ -131,10 +160,10 @@ class CampaignService {
         ])
             .spread((user, camps) => __awaiter(this, void 0, void 0, function* () {
             if (user == null) {
-                throw ({ code: 'ex_camp_1', msg: 'UserId not found' });
+                throw ({ code: code_errors_1.ManulifeErrors.EX_USERNAME_NOT_FOUND, msg: 'UserId not found' });
             }
             if (_.size(camps) > 0) {
-                throw ({ code: 'ex_camp_2', msg: `this user have campaign in ${campaign.StartDate}.` });
+                throw ({ code: code_errors_1.ManulifeErrors.EX_CAMP_FINISH, msg: `this user have campaign in ${campaign.StartDate}.` });
             }
             let campPrepare = yield this.prepareCamp(campaign, user)
                 .catch(ex => {

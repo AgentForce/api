@@ -36,6 +36,32 @@ function default_1(server, serverConfigs, database) {
             }
         }
     });
+    /**
+     * demo sendmail
+     */
+    server.route({
+        method: 'GET',
+        path: '/users/sendmail',
+        config: {
+            handler: userController.sendMail,
+            // auth: "jwt",
+            tags: ['api', 'users'],
+            description: 'send email(Just test, please dont try)',
+            validate: {},
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'User founded.'
+                        },
+                        '401': {
+                            'description': 'Please login.'
+                        }
+                    }
+                }
+            }
+        }
+    });
     /*
 
     server.route({
@@ -150,7 +176,7 @@ function default_1(server, serverConfigs, database) {
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        201: {
+                        '200': {
                             'description': 'User created.'
                         }
                     }
@@ -171,7 +197,7 @@ function default_1(server, serverConfigs, database) {
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        200: {
+                        '200': {
                             'description': 'User logged in.'
                         }
                     }

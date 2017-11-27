@@ -8,6 +8,7 @@ import * as HTTP_STATUS from 'http-status';
 import { createCampaignFAModel } from './campaign-validator';
 import { Campaign } from "../../postgres/campaign";
 import { LogCamp } from "../../mongo/index";
+import { IPayloadUpdate } from "./campaign";
 export default class CampaignController {
 
     private database: IDatabase;
@@ -114,28 +115,57 @@ export default class CampaignController {
         //     return reply('Campaigns exist!!!').code(200);
         // }
     }
-    public async updateCampaign(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        // let userId = request.auth.credentials.id;
-        // let id = request.params["id"];
-        // try {
-        //     let campaign: ICampaign = await this.database
-        //         .campaignModel
-        //         .findByIdAndUpdate({
-        //             _id: id,
-        //             userId: userId
-        //         }, {
-        //             $set: request.payload
-        //         }, {
-        //             new: true
-        //         });
-        //     if (campaign) {
-        //         reply(campaign);
-        //     } else {
-        //         reply(Boom.notFound());
-        //     }
-        // } catch (error) {
-        //     return reply(Boom.badImplementation(error));
-        // }
+    /**
+     * update target of campaign
+     * @param request reques
+     * @param reply res
+     */
+    public async updateCurrent(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let id = parseInt(request.params.id, 10);
+            let payload = request.payload as IPayloadUpdate;
+            let campaign: any = await CampaignService.updateCurrent(id, payload);
+            // log mongo create success
+            LogCamp
+                .create({
+                    type: 'create',
+                    msg: 'success',
+                    dataInput: request.payload,
+                    meta: {
+                        data: campaign.dataValues
+                    }
+                });
+            reply({
+                status: HTTP_STATUS.OK,
+                data: campaign
+            }).code(HTTP_STATUS.OK);
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: HTTP_STATUS.BAD_GATEWAY,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: HTTP_STATUS.BAD_GATEWAY,
+                    error: { code: 'ex', msg: 'update campaign have errors' }
+                };
+            }
+            LogCamp.create({
+                type: 'updatecamp',
+                dataInput: {
+                    payload: request.payload,
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
     }
 
     public async getByCampaignId(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
@@ -155,7 +185,7 @@ export default class CampaignController {
             }
         } catch (error) {
             // log mongo create fail
-            this.database.logModel
+            LogCamp
                 .create({
                     type: 'getByCampaignId',
                     msg: 'fail',
@@ -189,7 +219,7 @@ export default class CampaignController {
             }
         } catch (error) {
             // log mongo create fail
-            this.database.logModel
+            LogCamp
                 .create({
                     type: 'getByCampaignId',
                     msg: 'fail',

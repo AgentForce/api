@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Hapi = require("hapi");
 const Users = require("./controller/users");
 const Campaigns = require("./controller/campaigns");
+// import * as Events from './controller/event';
 const Leads = require("./controller/leads");
 const Metatypes = require("./controller/metatype");
 const Actvities = require("./controller/activities");

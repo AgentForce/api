@@ -14,6 +14,8 @@ const bluebird_1 = require("bluebird");
 const moment = require("moment");
 const user_service_1 = require("./user.service");
 const campaign_service_1 = require("./campaign.service");
+const code_errors_1 = require("../helpers/code-errors");
+const activity_1 = require("../postgres/activity");
 class LeadService {
     /**
      * Tìm một lead dựa vào số điện thoại
@@ -55,26 +57,51 @@ class LeadService {
             }
         });
     }
-    static update(leadId, lead) {
-        return this
-            .findById(leadId)
-            .then(leadDb => {
-            if (leadDb == null) {
-                throw { code: 'ex_lead_not_found', msg: 'Lead not found' };
-            }
+    static detailLeadActivity(Id) {
+        return __awaiter(this, void 0, void 0, function* () {
             return lead_1.Lead
-                .update(lead, {
+                .findOne({
                 where: {
-                    Id: leadId
+                    Id: Id,
+                    IsDeleted: false
                 },
-                returning: true
+                include: [{
+                        model: activity_1.Activity,
+                        attributes: {
+                            exclude: ['IsDeleted']
+                        }
+                    }]
             })
-                .then(result => {
-                return result[1];
+                .then(lead => {
+                return lead;
             });
-        })
-            .catch(ex => {
-            throw ex;
+        });
+    }
+    static update(leadId, lead) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this
+                .findById(leadId)
+                .then((leadDb) => {
+                if (leadDb == null) {
+                    throw { code: code_errors_1.ManulifeErrors.EX_LEADID_NOT_FOUND, msg: 'Lead not found' };
+                }
+                if (leadDb.ProcessStep > lead.ProcessStep) {
+                    throw { code: code_errors_1.ManulifeErrors.EX_LEAD_PROCESS_STEP, msg: 'cant not update processtep < old processtep' };
+                }
+                return lead_1.Lead
+                    .update(lead, {
+                    where: {
+                        Id: leadId
+                    },
+                    returning: true
+                })
+                    .then(result => {
+                    return result[1];
+                });
+            })
+                .catch(ex => {
+                throw ex;
+            });
         });
     }
     /**
@@ -103,11 +130,11 @@ class LeadService {
             ]);
             let userDb = objExists[0];
             if (userDb == null) {
-                reject({ code: 'ex_lead_1', msg: 'UserId not found' });
+                reject({ code: code_errors_1.ManulifeErrors.EX_USERID_NOT_FOUND, msg: 'UserId not found' });
             }
             let campDb = objExists[1];
             if (campDb == null) {
-                reject({ code: 'ex_lead_2', msg: 'Campaignid not found' });
+                reject({ code: code_errors_1.ManulifeErrors.EX_CAMPID_NOT_FOUND, msg: 'Campaignid not found' });
             }
             let leadDb = objExists[2];
             if (leadDb == null) {
@@ -131,7 +158,7 @@ class LeadService {
                 resolve({ lead: leadDb, activity: activityDb });
             }
             else {
-                reject({ code: 'ex_lead_3', msg: 'This phone exist' });
+                reject({ code: code_errors_1.ManulifeErrors.EX_PHONE_EXISTS, msg: 'This phone exist' });
             }
         }))
             .catch(ex => {

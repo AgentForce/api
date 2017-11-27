@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const db_1 = require("./db");
 // const Sequelize = require('sequelize');
 const Sequelize = require("sequelize");
+const activity_1 = require("./activity");
 const Lead = db_1.db.define('manulife_leads', {
     Id: {
         allowNull: false,
@@ -122,4 +123,5 @@ const Lead = db_1.db.define('manulife_leads', {
     updatedAt: 'UpdatedAt'
 });
 exports.Lead = Lead;
+Lead.hasMany(activity_1.Activity, { foreignKey: 'LeadId' });
 //# sourceMappingURL=lead.js.map

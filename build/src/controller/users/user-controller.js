@@ -13,6 +13,9 @@ const Jwt = require("jsonwebtoken");
 const user_service_1 = require("../../services/user.service");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
+const code_errors_1 = require("../../helpers/code-errors");
+const nodemailer = require('nodemailer');
+const EmailTemplate = require("email-templates");
 class UserController {
     constructor(configs, database) {
         this.database = database;
@@ -23,6 +26,60 @@ class UserController {
         const jwtExpiration = this.configs.jwtExpiration;
         const payload = { id: user._id };
         return Jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiration });
+    }
+    sendMail(request, reply) {
+        // Generate test SMTP service account from ethereal.email
+        // Only needed if you don't have a real mail account for testing
+        nodemailer.createTestAccount((err, account) => {
+            // create reusable transporter object using the default SMTP transport
+            let transporter = nodemailer.createTransport({
+                host: 'smtp.mailgun.org',
+                port: 587,
+                secure: false,
+                auth: {
+                    user: 'postmaster@sandbox44fcddb06ee648bab11ed2d961948e16.mailgun.org',
+                    pass: 'b8a3360741b54181a34716645f452fee' // generated ethereal password
+                }
+            });
+            // setup email data with unicode symbols
+            let mailOptions = {
+                from: '"Fred Foo 👻" <foo@blurdybloop.com>',
+                to: 'tunguyenq@gmail.com',
+                subject: 'Hello ✔',
+                text: 'Hello world?',
+                html: '<b>Hello world?</b>' // html body
+            };
+            const email = new EmailTemplate({
+                message: {
+                    from: '"Fred Foo 👻"  <tunguyene@gmail.com>'
+                },
+                // uncomment below to send emails in development/test env:
+                // send: true
+                transport: transporter,
+            });
+            email.send({
+                template: 'resetpassword',
+                message: {
+                    to: 'tunguyenq@gmail.com'
+                },
+                locals: {
+                    name: 'Tu Nguyen'
+                }
+            }).then(console.log).catch(console.error);
+            reply('success');
+            // send mail with defined transport object
+            // transporter.sendMail(mailOptions, (error, info) => {
+            //     if (error) {
+            //         return console.log(error);
+            //     }
+            //     reply('success');
+            //     console.log('Message sent: %s', info.messageId);
+            //     // Preview only available when sending through an Ethereal account
+            //     console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+            //     // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@blurdybloop.com>
+            //     // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+            // });
+        });
     }
     loginUser(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -54,7 +111,7 @@ class UserController {
                     }).code(HTTP_STATUS.OK);
                 }
                 else {
-                    throw { code: 'ex_user_not_found', msg: 'UserName not found' };
+                    throw { code: code_errors_1.ManulifeErrors.EX_USERNAME_NOT_FOUND, msg: 'UserName not found' };
                 }
             }
             catch (ex) {
@@ -68,7 +125,7 @@ class UserController {
                 else {
                     res = {
                         status: 400,
-                        error: { code: 'ex', msg: 'Exception occurred find username' }
+                        error: { code: code_errors_1.ManulifeErrors.EX_GENERAL, msg: 'Exception occurred find username' }
                     };
                 }
                 index_1.LogUser.create({
@@ -107,7 +164,7 @@ class UserController {
                     }).code(HTTP_STATUS.OK);
                 }
                 else {
-                    throw { code: 'ex_user_update', msg: 'UserName not found' };
+                    throw { code: code_errors_1.ManulifeErrors.EX_USERNAME_NOT_FOUND, msg: 'UserName not found' };
                 }
             }
             catch (ex) {
@@ -163,7 +220,7 @@ class UserController {
                         .code(HTTP_STATUS.OK);
                 }
                 else {
-                    throw { code: 'ex_create_exist', msg: 'username exist' };
+                    throw { code: code_errors_1.ManulifeErrors.EX_USERNAME_EXIST, msg: 'username exist' };
                 }
             }
             catch (ex) {

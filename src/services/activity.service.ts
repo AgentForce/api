@@ -1,6 +1,5 @@
 import { Activity } from '../postgres';
 import { IPayloadCreate, IPayloadUpdate } from '../controller/activities/activity';
-import { CampaignSchema, ICampaign } from '../controller/campaigns/campaign';
 import { CampaignService } from './campaign.service';
 import { LeadService, ILead } from './lead.service';
 import { UserService, IIUser } from './user.service';
