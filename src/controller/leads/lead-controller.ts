@@ -8,6 +8,7 @@ import * as HTTP_STATUS from 'http-status';
 import { createLeadModel } from './lead-validator';
 import { LogLead } from "../../mongo/index";
 import { IPayloadUpdate } from "./lead";
+import { SlackAlert, ManulifeErrors as Ex } from "../../helpers/index";
 export default class LeadController {
 
     private database: IDatabase;
@@ -20,17 +21,49 @@ export default class LeadController {
     public async findById(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let idEvent = parseInt(request.params.id, 10);
-            let events: any = await LeadService.findById(idEvent);
-            if (events == null) {
-                return reply(events).code(HTTP_STATUS.NOT_FOUND);
+            let lead: any = await LeadService.findById(idEvent);
+            if (lead == null) {
+                return reply({
+                    status: HTTP_STATUS.NOT_FOUND,
+                    data: null,
+                }).code(HTTP_STATUS.NOT_FOUND);
             } else {
-                return reply(events).code(HTTP_STATUS.OK);
+                return reply({
+                    status: HTTP_STATUS.OK,
+                    data: lead,
+                }).code(HTTP_STATUS.OK);
             }
-        } catch (error) {
-            return reply({
-                status: 400,
-                error: error
-            }).code(HTTP_STATUS.BAD_REQUEST);
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: {
+                        code: Ex.EX_GENERAL,
+                        msg: 'find lead have errors'
+                    }
+                };
+            }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+            LogLead.create({
+                type: 'findById',
+                dataInput: {
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
 
@@ -56,17 +89,19 @@ export default class LeadController {
             if (ex.code) {
                 res = {
                     status: 400,
+                    url: request.url.path,
                     error: ex
                 };
             } else {
-                console.log(ex);
                 res = {
                     status: 400,
-                    error: { code: 'ex', msg: 'find lead have errors' }
+                    url: request.url.path,
+                    error: { code: Ex.EX_GENERAL, msg: 'find lead have errors' }
                 };
             }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
             LogLead.create({
-                type: 'detaillead',
+                type: 'detail lead',
                 dataInput: {
                     params: request.params
                 },
@@ -110,16 +145,19 @@ export default class LeadController {
             if (ex.code) {
                 res = {
                     status: 400,
+                    url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
                     status: 400,
-                    error: { code: 'ex', msg: 'Create lead have errors' }
+                    url: request.url.path,
+                    error: { code: Ex.EX_GENERAL, msg: 'Create lead have errors' }
                 };
             }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
             LogLead.create({
-                type: 'updatelead',
+                type: 'update lead',
                 dataInput: {
                     payload: request.payload,
                     params: request.params
@@ -156,16 +194,19 @@ export default class LeadController {
             if (ex.code) {
                 res = {
                     status: 400,
+                    url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
                     status: 400,
+                    url: request.url.path,
                     error: { code: 'ex', msg: 'Create lead have errors' }
                 };
             }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
             LogLead.create({
-                type: 'createlead',
+                type: 'create lead',
                 dataInput: request.payload,
                 msg: 'errors',
                 meta: {

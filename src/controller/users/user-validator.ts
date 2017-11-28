@@ -39,6 +39,18 @@ const createUserModel = Joi.object().keys({
         .description("username of manager")
 });
 
+
+/**
+ * change password model
+ */
+const changePassModel = Joi.object().keys({
+    OldPassword: Joi.string().trim().required(),
+    NewPassword: Joi.string().trim().required()
+});
+
+/**
+ * validate profile
+ */
 const updateProfileModel = Joi.object().keys({
     Email: Joi.string()
         .email()
@@ -75,4 +87,4 @@ const loginUserModel = Joi.object().keys({
 });
 
 const jwtValidator = Joi.object({ 'authorization': Joi.string().required() }).unknown();
-export { createUserModel, updateProfileModel, loginUserModel, jwtValidator };
+export { createUserModel, updateProfileModel, loginUserModel, jwtValidator, changePassModel };

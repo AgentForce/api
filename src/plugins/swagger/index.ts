@@ -15,21 +15,19 @@ export default (): IPlugin => {
                                 description: 'Manulife Api Documentation',
                                 version: '1.0'
                             },
-                            tags: [
-                                {
-                                    'name': 'api',
-                                    'description': 'Api tasks interface.'
-                                },
-                                {
-                                    'name': 'users',
-                                    'description': 'Api users interface.'
-                                }
-                            ],
+                            tags: [{
+                                'name': 'leads',
+                                'description': 'Api tasks interface.'
+                            }, {
+                                'name': 'users',
+                                'description': 'Api users interface.'
+                            }],
                             // payloadType: 'form',
                             // tagsGroupingFilter: 'users',
                             swaggerUI: true,
+                            basePath: '/api',
                             documentationPage: true,
-                            documentationPath: '/docs'
+                            documentationPath: '/docs',
                         }
                     }
                 ], (error) => {

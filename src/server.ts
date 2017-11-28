@@ -23,19 +23,20 @@ export function init(configs: IServerConfigurations, database: IDatabase): Promi
         server.connection({
             port: port,
             routes: {
-                cors: true
+                cors: true,
             },
         });
 
         if (configs.routePrefix) {
             server.realm.modifiers.route.prefix = configs.routePrefix;
+            // server.realm.modifiers.route.prefix = '';
         }
 
         //  Setup Hapi Plugins
         const plugins: Array<string> = configs.plugins;
         const pluginOptions = {
             database: database,
-            serverConfigs: configs
+            serverConfigs: configs,
         };
 
         let pluginPromises = [];
@@ -45,7 +46,6 @@ export function init(configs: IServerConfigurations, database: IDatabase): Promi
             console.log(`Register Plugin ${plugin.info().name} v${plugin.info().version}`);
             pluginPromises.push(plugin.register(server, pluginOptions));
         });
-
         Promise.all(pluginPromises).then(() => {
             console.log('All plugins registered successfully.');
             console.log('Register Routes');

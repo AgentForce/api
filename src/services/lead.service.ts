@@ -148,23 +148,23 @@ class LeadService {
             let leadDb = objExists[2] as ILead;
             if (leadDb == null) {
                 lead.ProcessStep = 1;
-                let leadDb = <ILead>await Lead.create(lead);
+                let leadNew = <ILead>await Lead.create(lead);
                 let activity = <IActivity>{
-                    CampId: leadDb.CampId,
+                    CampId: leadNew.CampId,
                     Name: 'call',
-                    Phone: leadDb.Phone,
-                    LeadId: leadDb.Id,
-                    UserId: leadDb.UserId,
+                    Phone: leadNew.Phone,
+                    LeadId: leadNew.Id,
+                    UserId: leadNew.UserId,
                     Type: 1,
                     Status: 0, //waiting, 1 done
-                    ProcessStep: 1,
+                    ProcessStep: leadNew.ProcessStep,
                     StartDate: moment().toDate(),
                     EndDate: moment().add(3, 'd').startOf('day').toDate(),
                     ReportTo: userDb.ReportTo,
                     ReportToList: userDb.ReportToList
                 };
                 let activityDb = await ActivityService.create(activity);
-                resolve({ lead: leadDb, activity: activityDb });
+                resolve({ lead: leadNew, activity: activityDb });
             } else {
                 reject({ code: Ex.EX_PHONE_EXISTS, msg: 'This phone exist' });
             }

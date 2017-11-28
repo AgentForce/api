@@ -32,6 +32,7 @@
     "@types/nodemailer": "^4.3.1",
     "@types/pug": "^2.0.4",
     "@types/sequelize": "^4.0.78",
+    "@types/slack-node": "^0.1.2",
     "@types/winston": "^2.3.7",
     "bcryptjs": "^2.4.3",
     "boom": "^4.3.1",
@@ -61,6 +62,7 @@
     "pug": "^2.0.0-rc.4",
     "sequelize": "^4.22.5",
     "sequelize-cli": "^3.0.0",
+    "slack-node": "^0.1.8",
     "vision": "^4.1.1",
     "winston": "^2.4.0"
   },

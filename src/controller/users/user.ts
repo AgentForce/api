@@ -38,6 +38,11 @@ interface IPayloadUpdate {
   District: number;
 }
 
+interface IPayloadChangePass {
+  OldPassword: string;
+  Newpassword: string;
+}
+
 
 const UserSchema = new Mongoose.Schema({
   userId: {
@@ -96,4 +101,4 @@ UserSchema.pre('findOneAndUpdate', function () {
 });
 
 const UserModel = Mongoose.model<IUser>('User', UserSchema);
-export { IUser, UserModel, UserSchema, IPayloadCreate, IPayloadUpdate };
+export { IUser, UserModel, UserSchema, IPayloadCreate, IPayloadUpdate, IPayloadChangePass };

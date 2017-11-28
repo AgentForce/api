@@ -8,6 +8,7 @@ import * as HTTP_STATUS from 'http-status';
 import { IPayloadCreate, IPayloadUpdate } from "./activity";
 import { LogActivity } from "../../mongo/index";
 import { ManulifeErrors as EX } from '../../helpers/code-errors';
+import { SlackAlert } from "../../helpers/index";
 export default class ActivitiesController {
 
     private database: IDatabase;
@@ -24,6 +25,18 @@ export default class ActivitiesController {
             let id = parseInt(request.params.id, 10);
             let lead: any = await ActivityService.update(id, iAc);
             // log mongo create success
+            LogActivity.create({
+                type: 'update activity',
+                dataInput: {
+                    payload: request.payload,
+                    params: request.params
+                },
+                msg: 'success',
+                meta: {
+                    exception: '',
+                    response: JSON.parse(JSON.stringify(lead))
+                },
+            });
             reply({
                 status: HTTP_STATUS.OK,
                 data: lead
@@ -33,20 +46,26 @@ export default class ActivitiesController {
             if (ex.code) {
                 res = {
                     status: 400,
+                    url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
                     status: 400,
+                    url: request.url.path,
                     error: {
                         code: EX.EX_GENERAL,
-                        msg: 'Create activity have errors'
+                        msg: 'update activity have errors'
                     }
                 };
             }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
             LogActivity.create({
-                type: 'createactivity',
-                dataInput: request.payload,
+                type: 'update activity',
+                dataInput: {
+                    payload: request.payload,
+                    params: request.params
+                },
                 msg: 'errors',
                 meta: {
                     exception: ex,
@@ -72,17 +91,20 @@ export default class ActivitiesController {
             if (ex.code) {
                 res = {
                     status: 400,
+                    url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
                     status: 400,
+                    url: request.url.path,
                     error: {
                         code: EX.EX_GENERAL,
                         msg: 'Create activity have errors'
                     }
                 };
             }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
             LogActivity.create({
                 type: 'createactivity',
                 dataInput: request.payload,
