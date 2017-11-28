@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 const lead_controller_1 = require("./lead-controller");
+const user_validator_1 = require("../users/user-validator");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
 const code_errors_1 = require("../../helpers/code-errors");
@@ -14,7 +15,7 @@ function default_1(server, configs, database) {
         path: '/leads/detail/{id}',
         config: {
             handler: leadController.detail,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'leads'],
             description: 'find detail a lead with list activities',
             validate: {
@@ -23,7 +24,7 @@ function default_1(server, configs, database) {
                         .required().example(38)
                         .description('leadid')
                 },
-                // headers: jwtValidator
+                headers: user_validator_1.jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
@@ -62,7 +63,7 @@ function default_1(server, configs, database) {
         path: '/leads/{id}',
         config: {
             handler: leadController.update,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'leads'],
             description: 'update a leads',
             validate: {
@@ -70,7 +71,7 @@ function default_1(server, configs, database) {
                 params: {
                     id: Joi.number().required().example(38).description('leadid')
                 },
-                // headers: jwtValidator
+                headers: user_validator_1.jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
@@ -106,12 +107,12 @@ function default_1(server, configs, database) {
         path: '/leads',
         config: {
             handler: leadController.create,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'leads'],
             description: 'Create a lead',
             validate: {
                 payload: LeadValidator.createLeadModel,
-                // headers: jwtValidator
+                headers: user_validator_1.jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {

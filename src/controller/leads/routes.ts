@@ -17,7 +17,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/leads/detail/{id}',
         config: {
             handler: leadController.detail,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'leads'],
             description: 'find detail a lead with list activities',
             validate: {
@@ -26,7 +26,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         .required().example(38)
                         .description('leadid')
                 },
-                // headers: jwtValidator
+                headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
@@ -67,7 +67,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/leads/{id}',
         config: {
             handler: leadController.update,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'leads'],
             description: 'update a leads',
             validate: {
@@ -75,7 +75,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 params: {
                     id: Joi.number().required().example(38).description('leadid')
                 },
-                // headers: jwtValidator
+                headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
@@ -113,12 +113,12 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/leads',
         config: {
             handler: leadController.create,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'leads'],
             description: 'Create a lead',
             validate: {
                 payload: LeadValidator.createLeadModel,
-                // headers: jwtValidator
+                headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {

@@ -22,7 +22,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/campaigns/{id}/customers/{type}',
         config: {
             handler: campaignController.leadsOfCamp,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'campaigns'],
             description: 'Get Customer(leads) in a campaigns by id.',
             validate: {
@@ -31,7 +31,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                     type: Joi.number().required().valid([1, 2, 3, 4])
                         .description('4 processtep in lead')
                 },
-                // headers: jwtValidator
+                headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
@@ -78,10 +78,11 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/campaigns/{id}',
         config: {
             handler: campaignController.getByCampaignId,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'campaigns'],
             description: 'Get campaign by campaignid.',
             validate: {
+                headers: jwtValidator,
                 params: {
                     id: Joi.number().required().description('campaignid')
                 },
@@ -132,10 +133,11 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/campaigns/userid/{userid}',
         config: {
             handler: campaignController.getByUserId,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'campaigns'],
             description: 'Get all campaigns of 1 userid',
             validate: {
+                headers: jwtValidator,
                 params: {
                     userid: Joi.string().required()
                 },
@@ -186,12 +188,12 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/campaigns',
         config: {
             handler: campaignController.createCampaign,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'campaigns'],
             description: 'Create a campaign.',
             validate: {
                 payload: CampaignValidator.createCampaignFAModel,
-                // headers: jwtValidator
+                headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {

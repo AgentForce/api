@@ -7,6 +7,7 @@ import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
 import { LogUser } from "../../mongo/index";
+import { jwtValidator } from "./user-validator";
 export default function (server: Hapi.Server, serverConfigs: IServerConfigurations, database: IDatabase) {
 
     const userController = new UserController(serverConfigs, database);
@@ -88,12 +89,12 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         path: '/users/profile',
         config: {
             handler: userController.updateProfile,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'users'],
             description: 'Update user profile.',
             validate: {
                 payload: UserValidator.updateProfileModel,
-                // headers: UserValidator.jwtValidator
+                headers: UserValidator.jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
@@ -179,8 +180,10 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         config: {
             handler: userController.createUser,
             tags: ['api', 'users'],
+            auth: "jwt",
             description: 'Change password',
             validate: {
+                headers: jwtValidator,
                 payload: UserValidator.changePassModel,
                 failAction: (request, reply, source, error) => {
                     let res = {

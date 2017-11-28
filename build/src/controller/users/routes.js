@@ -5,6 +5,7 @@ const user_controller_1 = require("./user-controller");
 const UserValidator = require("./user-validator");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
+const user_validator_1 = require("./user-validator");
 function default_1(server, serverConfigs, database) {
     const userController = new user_controller_1.default(serverConfigs, database);
     server.bind(userController);
@@ -77,12 +78,12 @@ function default_1(server, serverConfigs, database) {
         path: '/users/profile',
         config: {
             handler: userController.updateProfile,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'users'],
             description: 'Update user profile.',
             validate: {
                 payload: UserValidator.updateProfileModel,
-                // headers: UserValidator.jwtValidator
+                headers: UserValidator.jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
@@ -166,8 +167,10 @@ function default_1(server, serverConfigs, database) {
         config: {
             handler: userController.createUser,
             tags: ['api', 'users'],
+            auth: "jwt",
             description: 'Change password',
             validate: {
+                headers: user_validator_1.jwtValidator,
                 payload: UserValidator.changePassModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
