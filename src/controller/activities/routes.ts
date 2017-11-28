@@ -58,12 +58,12 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/activities',
         config: {
             handler: activitiesController.create,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'activities'],
             description: 'Create a activity.',
             validate: {
                 payload: ActivitiesValidator.createModel,
-                // headers: jwtValidator
+                headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
@@ -103,7 +103,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/activities/{id}',
         config: {
             handler: activitiesController.update,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['activities', 'api'],
             description: 'Update a activity',
             validate: {
@@ -113,7 +113,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         .description('acitivityId')
                         .example(12)
                 },
-                // headers: UserValidator.jwtValidator
+                headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
