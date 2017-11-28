@@ -6,6 +6,7 @@ const ActivitiesValidator = require("./activity-validator");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
 const code_errors_1 = require("../../helpers/code-errors");
+const index_2 = require("../../helpers/index");
 function default_1(server, configs, database) {
     const activitiesController = new activity_controller_1.default(configs, database);
     server.bind(activitiesController);
@@ -61,6 +62,7 @@ function default_1(server, configs, database) {
                             details: error
                         }
                     };
+                    index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                     index_1.LogActivity.create({
                         type: 'createactivty',
                         dataInput: request.payload,
@@ -108,6 +110,7 @@ function default_1(server, configs, database) {
                             details: error
                         }
                     };
+                    index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                     index_1.LogActivity.create({
                         type: 'update activity',
                         dataInput: request.payload,

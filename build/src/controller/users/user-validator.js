@@ -40,6 +40,17 @@ const createUserModel = Joi.object().keys({
         .description("username of manager")
 });
 exports.createUserModel = createUserModel;
+/**
+ * change password model
+ */
+const changePassModel = Joi.object().keys({
+    OldPassword: Joi.string().trim().required(),
+    NewPassword: Joi.string().trim().required()
+});
+exports.changePassModel = changePassModel;
+/**
+ * validate profile
+ */
 const updateProfileModel = Joi.object().keys({
     Email: Joi.string()
         .email()

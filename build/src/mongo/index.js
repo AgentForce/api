@@ -3,6 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const connection_1 = require("./connection");
 const mongoose_1 = require("mongoose");
 const LogSchema = new mongoose_1.Schema({
+    url: {
+        type: String,
+        default: ''
+    },
     type: {
         type: Object
     },

@@ -81,6 +81,13 @@ class UserController {
             // });
         });
     }
+    changePassword(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
+    /**
+     * User login
+     */
     loginUser(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             const email = request.payload.email;
@@ -111,7 +118,10 @@ class UserController {
                     }).code(HTTP_STATUS.OK);
                 }
                 else {
-                    throw { code: code_errors_1.ManulifeErrors.EX_USERNAME_NOT_FOUND, msg: 'UserName not found' };
+                    throw {
+                        code: code_errors_1.ManulifeErrors.EX_USERNAME_NOT_FOUND,
+                        msg: 'UserName not found'
+                    };
                 }
             }
             catch (ex) {
@@ -119,13 +129,18 @@ class UserController {
                 if (ex.code) {
                     res = {
                         status: 400,
+                        url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
                         status: 400,
-                        error: { code: code_errors_1.ManulifeErrors.EX_GENERAL, msg: 'Exception occurred find username' }
+                        url: request.url.path,
+                        error: {
+                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
+                            msg: 'Exception occurred find username'
+                        }
                     };
                 }
                 index_1.LogUser.create({
@@ -173,12 +188,14 @@ class UserController {
                 if (ex.code) {
                     res = {
                         status: 400,
+                        url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
                         status: 400,
+                        url: request.url.path,
                         error: { code: 'ex', msg: 'Exception occurred update profile user' }
                     };
                 }
@@ -229,13 +246,18 @@ class UserController {
                 if (ex.code) {
                     res = {
                         status: 400,
+                        url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
                         status: 400,
-                        error: { code: 'ex', msg: 'Exception occurred create user' }
+                        url: request.url.path,
+                        error: {
+                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
+                            msg: 'Exception occurred create user'
+                        }
                     };
                 }
                 index_1.LogUser.create({

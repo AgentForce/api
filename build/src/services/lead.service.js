@@ -139,23 +139,23 @@ class LeadService {
             let leadDb = objExists[2];
             if (leadDb == null) {
                 lead.ProcessStep = 1;
-                let leadDb = yield lead_1.Lead.create(lead);
+                let leadNew = yield lead_1.Lead.create(lead);
                 let activity = {
-                    CampId: leadDb.CampId,
+                    CampId: leadNew.CampId,
                     Name: 'call',
-                    Phone: leadDb.Phone,
-                    LeadId: leadDb.Id,
-                    UserId: leadDb.UserId,
+                    Phone: leadNew.Phone,
+                    LeadId: leadNew.Id,
+                    UserId: leadNew.UserId,
                     Type: 1,
                     Status: 0,
-                    ProcessStep: 1,
+                    ProcessStep: leadNew.ProcessStep,
                     StartDate: moment().toDate(),
                     EndDate: moment().add(3, 'd').startOf('day').toDate(),
                     ReportTo: userDb.ReportTo,
                     ReportToList: userDb.ReportToList
                 };
                 let activityDb = yield activity_service_1.ActivityService.create(activity);
-                resolve({ lead: leadDb, activity: activityDb });
+                resolve({ lead: leadNew, activity: activityDb });
             }
             else {
                 reject({ code: code_errors_1.ManulifeErrors.EX_PHONE_EXISTS, msg: 'This phone exist' });

@@ -11,11 +11,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const campaign_service_1 = require("../../services/campaign.service");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
+const index_2 = require("../../helpers/index");
 class CampaignController {
     constructor(configs, database) {
         this.configs = configs;
         this.database = database;
     }
+    /**
+     * creat a new campaign
+     */
     createCampaign(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             // 1. Router Checking data input : commission > 0, loan > 0, monthly > 0
@@ -32,21 +36,26 @@ class CampaignController {
                 if (ex.code) {
                     res = {
                         status: 400,
+                        url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
                         status: 400,
+                        url: request.url.path,
                         error: {
-                            code: 'ex_payload',
+                            code: index_2.ManulifeErrors.EX_GENERAL,
                             msg: 'Create campaign have errors'
                         }
                     };
                 }
+                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                 index_1.LogCamp.create({
                     type: 'createcampaign',
-                    dataInput: request.payload,
+                    dataInput: {
+                        payload: request.payload
+                    },
                     msg: 'errors',
                     meta: {
                         exception: ex,
@@ -57,6 +66,9 @@ class CampaignController {
             }
         });
     }
+    /**
+     *  list leads of a campaign
+     */
     leadsOfCamp(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -68,11 +80,39 @@ class CampaignController {
                     leads: leads
                 }).code(200);
             }
-            catch (error) {
-                return reply({
-                    status: 400,
-                    error: error
-                }).code(HTTP_STATUS.BAD_REQUEST);
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 400,
+                        url: request.url.path,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 400,
+                        url: request.url.path,
+                        error: {
+                            code: index_2.ManulifeErrors.EX_GENERAL,
+                            msg: 'get leadsOfCamp have errors'
+                        }
+                    };
+                }
+                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                index_1.LogCamp.create({
+                    type: 'leadsOfCamp',
+                    dataInput: {
+                        payload: request.payload,
+                        params: request.params
+                    },
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
         });
     }
@@ -117,61 +157,8 @@ class CampaignController {
         // }
     }
     /**
-     * update target of campaign
-     * @param request reques
-     * @param reply res
+     * get a campaign by campaignid
      */
-    updateCurrent(request, reply) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                let id = parseInt(request.params.id, 10);
-                let payload = request.payload;
-                let campaign = yield campaign_service_1.CampaignService.updateCurrent(id, payload);
-                // log mongo create success
-                index_1.LogCamp
-                    .create({
-                    type: 'create',
-                    msg: 'success',
-                    dataInput: request.payload,
-                    meta: {
-                        data: campaign.dataValues
-                    }
-                });
-                reply({
-                    status: HTTP_STATUS.OK,
-                    data: campaign
-                }).code(HTTP_STATUS.OK);
-            }
-            catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: HTTP_STATUS.BAD_GATEWAY,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: HTTP_STATUS.BAD_GATEWAY,
-                        error: { code: 'ex', msg: 'update campaign have errors' }
-                    };
-                }
-                index_1.LogCamp.create({
-                    type: 'updatecamp',
-                    dataInput: {
-                        payload: request.payload,
-                        params: request.params
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
-            }
-        });
-    }
     getByCampaignId(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -190,24 +177,46 @@ class CampaignController {
                     }).code(HTTP_STATUS.OK);
                 }
             }
-            catch (error) {
+            catch (ex) {
                 // log mongo create fail
-                index_1.LogCamp
-                    .create({
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 400,
+                        url: request.url.path,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 400,
+                        url: request.url.path,
+                        error: {
+                            code: index_2.ManulifeErrors.EX_GENERAL,
+                            msg: 'get getByCampaignId have errors'
+                        }
+                    };
+                }
+                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                index_1.LogCamp.create({
                     type: 'getByCampaignId',
-                    msg: 'fail',
-                    dataInput: request.payload,
+                    dataInput: {
+                        payload: request.payload,
+                        params: request.params
+                    },
+                    msg: 'errors',
                     meta: {
-                        error
-                    }
+                        exception: ex,
+                        response: res
+                    },
                 });
-                return reply({
-                    status: 400,
-                    error: error
-                }).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
         });
     }
+    /**
+     * get list campaign of userid
+     */
     getByUserId(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -226,21 +235,40 @@ class CampaignController {
                     }).code(HTTP_STATUS.OK);
                 }
             }
-            catch (error) {
+            catch (ex) {
                 // log mongo create fail
-                index_1.LogCamp
-                    .create({
-                    type: 'getByCampaignId',
-                    msg: 'fail',
-                    dataInput: request.payload,
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 400,
+                        url: request.url.path,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 400,
+                        url: request.url.path,
+                        error: {
+                            code: index_2.ManulifeErrors.EX_GENERAL,
+                            msg: 'get getByUserId have errors'
+                        }
+                    };
+                }
+                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                index_1.LogCamp.create({
+                    type: 'getByUserId',
+                    dataInput: {
+                        payload: request.payload,
+                        params: request.params
+                    },
+                    msg: 'errors',
                     meta: {
-                        error
-                    }
+                        exception: ex,
+                        response: res
+                    },
                 });
-                return reply({
-                    status: 400,
-                    error: error
-                }).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
         });
     }

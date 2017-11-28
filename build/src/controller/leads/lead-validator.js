@@ -24,6 +24,10 @@ const createLeadModel = Joi.object().keys({
         .required()
         .description('Get info from api /types, key=IncomeMonthly')
         .default(1),
+    Type: Joi.number()
+        .required()
+        .valid([1, 2, 3, 4])
+        .description('4 type of activity'),
     MaritalStatus: Joi.number()
         .valid([1, 2, 3, 4])
         .required()
@@ -69,9 +73,10 @@ const updateModel = Joi.object().keys({
     City: Joi.number()
         .required()
         .description('Get info from api /types, key=city'),
-    ProcessStep: Joi.number()
+    Type: Joi.number()
         .required()
-        .valid([1, 2, 3, 4]),
+        .valid([1, 2, 3, 4])
+        .description('4 type of activity'),
     District: Joi.number().required()
         .description('Get info from api /types, key=district'),
     Relationship: Joi.number()
