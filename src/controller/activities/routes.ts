@@ -8,6 +8,7 @@ import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
 import { LogActivity } from "../../mongo/index";
 import { ManulifeErrors as Ex } from '../../helpers/code-errors';
+import { SlackAlert } from "../../helpers/index";
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
 
     const activitiesController = new ActivityController(configs, database);
@@ -70,6 +71,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             details: error
                         }
                     };
+                    SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                     LogActivity.create({
                         type: 'createactivty',
                         dataInput: request.payload,
@@ -120,6 +122,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             details: error
                         }
                     };
+                    SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                     LogActivity.create({
                         type: 'update activity',
                         dataInput: request.payload,

@@ -11,6 +11,10 @@ export interface ILog extends Document {
 }
 
 const LogSchema = new Schema({
+    url: {
+        type: String,
+        default: ''
+    },
     type: {
         type: Object
     },

@@ -89,6 +89,13 @@ export default class UserController {
         });
     }
 
+
+    public async changePassword(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+
+    }
+    /**
+     * User login
+     */
     public async loginUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         const email = request.payload.email;
         const password = request.payload.password;
@@ -119,19 +126,27 @@ export default class UserController {
                     data: user
                 }).code(HTTP_STATUS.OK);
             } else {
-                throw { code: Ex.EX_USERNAME_NOT_FOUND, msg: 'UserName not found' };
+                throw {
+                    code: Ex.EX_USERNAME_NOT_FOUND,
+                    msg: 'UserName not found'
+                };
             }
         } catch (ex) {
             let res = {};
             if (ex.code) {
                 res = {
                     status: 400,
+                    url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
                     status: 400,
-                    error: { code: Ex.EX_GENERAL, msg: 'Exception occurred find username' }
+                    url: request.url.path,
+                    error: {
+                        code: Ex.EX_GENERAL,
+                        msg: 'Exception occurred find username'
+                    }
                 };
             }
             LogUser.create({
@@ -176,11 +191,13 @@ export default class UserController {
             if (ex.code) {
                 res = {
                     status: 400,
+                    url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
                     status: 400,
+                    url: request.url.path,
                     error: { code: 'ex', msg: 'Exception occurred update profile user' }
                 };
             }
@@ -229,12 +246,17 @@ export default class UserController {
             if (ex.code) {
                 res = {
                     status: 400,
+                    url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
                     status: 400,
-                    error: { code: 'ex', msg: 'Exception occurred create user' }
+                    url: request.url.path,
+                    error: {
+                        code: Ex.EX_GENERAL,
+                        msg: 'Exception occurred create user'
+                    }
                 };
             }
             LogUser.create({

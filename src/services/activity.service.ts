@@ -1,10 +1,14 @@
 import { Activity } from '../postgres';
 import { IPayloadCreate, IPayloadUpdate } from '../controller/activities/activity';
-import { CampaignService } from './campaign.service';
+import { CampaignService, ICampaign } from './campaign.service';
 import { LeadService, ILead } from './lead.service';
 import { UserService, IIUser } from './user.service';
 import { Lead } from '../postgres/lead';
 import { ManulifeErrors as Ex } from '../helpers/code-errors';
+import { Campaign } from '../postgres/campaign';
+import * as moment from 'moment';
+import * as _ from 'lodash';
+import { Constants, SlackAlert } from '../helpers';
 interface IActivity {
     UserId: number;
     CampId: number;
@@ -80,8 +84,9 @@ class ActivityService {
                     EndDate: payload.EndDate,
                     Phone: lead.Phone,
                     LeadId: lead.Id,
-                    Name: payload.ProcessStep.toString(),
-                    Type: lead.ProcessStep,
+                    Name: payload.Type.toString(),
+                    Type: payload.Type,
+                    ProcessStep: lead.ProcessStep,
                     ReportToList: user.ReportToList,
                     FullDate: payload.FullDate,
                     Location: payload.Location,
@@ -89,7 +94,6 @@ class ActivityService {
                     ReportTo: user.ReportTo,
                     Status: 1,
                     StartDate: payload.StartDate,
-                    ProcessStep: payload.ProcessStep,
                     UserId: payload.UserId
                 };
                 let actDb = await Activity.create(activity);
@@ -106,28 +110,89 @@ class ActivityService {
     * @param activiy activiy
     */
     static update(activityId: number, payload: IPayloadUpdate) {
-        return Activity
-            .findOne({
-                where: {
-                    Id: activityId,
-                    IsDeleted: false
-                }
-            })
-            .then(activity => {
+        return Promise
+            .all([
+                Activity
+                    .findOne({
+                        where: {
+                            Id: activityId,
+                            IsDeleted: false,
+                            CampId: payload.CampId
+                        }
+                    }),
+                CampaignService.findByIdAndDate(payload.CampId, moment().toDate())
+            ])
+            .then(async (result) => {
+                let activity = result[0] as IActivity;
                 if (activity == null) {
                     throw {
                         code: Ex.EX_ACTIVITYID_NOT_FOUND,
-                        msg: 'ActivityId not found'
+                        msg: `ActivityId ${activityId} not found vs campid ${payload.CampId}`
                     };
                 }
-                return Activity
-                    .update(payload, {
-                        where: {
-                            Id: activityId
-                        },
-                        returning: true
-                    }).then(acDb => {
-                        return acDb[1];
+                let camp = result[1] as ICampaign;
+                if (camp == null) {
+                    throw {
+                        code: Ex.EX_CAMPID_NOT_FOUND,
+                        msg: `campaign ${payload.CampId} finished or dont exist`
+                    };
+                }
+                let updateCamp = {
+                    CurrentCallSale: camp.CurrentCallSale,
+                    CurentContract: camp.CurentContract,
+                    CurrentMetting: camp.CurrentMetting,
+                    CurrentPresentation: camp.CurrentPresentation
+                };
+                if (payload.Status === 1 && activity.Status === Constants.ACTIVITY_DEACTIVE) {
+                    if (activity.Type === 1) {
+                        updateCamp.CurrentCallSale += 1;
+                    } else if (activity.Type === 2) {
+                        updateCamp.CurrentMetting += 1;
+                    } else if (activity.Type === 3) {
+                        updateCamp.CurrentMetting += 1;
+                    } else if (activity.Type === 4) {
+                        updateCamp.CurrentPresentation += 1;
+                    }
+                } else if (payload.Status === 0 && activity.Status === Constants.ACTIVITY_ACTIVE) {
+                    if (activity.Type === 1) {
+                        updateCamp.CurrentCallSale -= 1;
+                    } else if (activity.Type === 2) {
+                        updateCamp.CurrentMetting -= 1;
+                    } else if (activity.Type === 3) {
+                        updateCamp.CurrentMetting -= 1;
+                    } else if (activity.Type === 4) {
+                        updateCamp.CurrentPresentation -= 1;
+                    }
+                }
+                // Update activity and update current some target
+                return Promise
+                    .all([
+                        Activity
+                            .update(payload, {
+                                where: {
+                                    Id: activityId
+                                },
+                                returning: true
+                            }).then(acDb => {
+                                return acDb[1];
+                            }),
+                        Campaign
+                            .update(updateCamp, {
+                                returning: true,
+                                where: {
+                                    Id: activity.CampId
+                                },
+                            })
+                            .then(campDb => {
+                                return campDb[1];
+                            })
+                    ])
+                    .then(rs => {
+                        let obj = _.flatten(rs);
+                        return { activity: obj[0], camp: obj[1] };
+                    })
+                    .catch(ex => {
+                        throw ex;
                     });
             })
             .catch(ex => {

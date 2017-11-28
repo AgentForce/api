@@ -3,7 +3,7 @@ interface IPayloadCreate {
   UserId: number;
   CampId: number;
   LeadId: number;
-  ProcessStep: number;
+  Type: number;
   Location: string;
   StartDate: Date;
   EndDate: Date;
@@ -13,13 +13,14 @@ interface IPayloadCreate {
 }
 
 interface IPayloadUpdate {
-  ProcessStep: number;
+  CampId: number;
   Location: string;
   StartDate: Date;
   EndDate: Date;
   Description: string;
   FullDate: boolean;
   Notification: number;
+  Status: number;
 }
 
 

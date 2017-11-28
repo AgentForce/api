@@ -7,8 +7,9 @@ const createModel = Joi.object().keys({
     //     .regex(/[0-9]/)
     //     .required(), se lay trong table lead
     // Name: string; khong can thiet, ten se gan them processttep
-    ProcessStep: Joi.number()
-        .required(),
+    Type: Joi.number()
+        .valid([1, 2, 3, 4])
+        .example(1),
     Location: Joi.string().allow(null),
     StartDate: Joi.date().required()
         .example('2017-11-11'),
@@ -29,8 +30,7 @@ const updateModel = Joi.object().keys({
     //     .regex(/[0-9]/)
     //     .required(), se lay trong table lead
     // Name: string; khong can thiet, ten se gan them processttep
-    ProcessStep: Joi.number()
-        .required(),
+    CampId: Joi.number().required(),
     Location: Joi.string().allow(null),
     StartDate: Joi.date().required()
         .example('2017-11-11'),
@@ -40,6 +40,9 @@ const updateModel = Joi.object().keys({
     FullDate: Joi.boolean()
         .required()
         .description('false=waiting, true=done'),
+    Status: Joi.number().valid([0, 1])
+        .description('1=done, 0=wating')
+        .example(1),
     Notification: Joi.number()
         .required()
         .description('minutes popup alert before activity happen')

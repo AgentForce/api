@@ -9,6 +9,7 @@ import { createCampaignFAModel } from './campaign-validator';
 import { Campaign } from "../../postgres/campaign";
 import { LogCamp } from "../../mongo/index";
 import { IPayloadUpdate } from "./campaign";
+import { SlackAlert, ManulifeErrors as Ex } from "../../helpers/index";
 export default class CampaignController {
 
     private database: IDatabase;
@@ -19,6 +20,9 @@ export default class CampaignController {
         this.database = database;
     }
 
+    /**
+     * creat a new campaign
+     */
     public async createCampaign(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         // 1. Router Checking data input : commission > 0, loan > 0, monthly > 0
         try {
@@ -33,20 +37,25 @@ export default class CampaignController {
             if (ex.code) {
                 res = {
                     status: 400,
+                    url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
                     status: 400,
+                    url: request.url.path,
                     error: {
-                        code: 'ex_payload',
+                        code: Ex.EX_GENERAL,
                         msg: 'Create campaign have errors'
                     }
                 };
             }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
             LogCamp.create({
                 type: 'createcampaign',
-                dataInput: request.payload,
+                dataInput: {
+                    payload: request.payload
+                },
                 msg: 'errors',
                 meta: {
                     exception: ex,
@@ -57,7 +66,9 @@ export default class CampaignController {
         }
     }
 
-
+    /**
+     *  list leads of a campaign
+     */
     public async leadsOfCamp(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let campId = parseInt(request.params.id, 10);
@@ -67,11 +78,38 @@ export default class CampaignController {
                 status: 200,
                 leads: leads
             }).code(200);
-        } catch (error) {
-            return reply({
-                status: 400,
-                error: error
-            }).code(HTTP_STATUS.BAD_REQUEST);
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: {
+                        code: Ex.EX_GENERAL,
+                        msg: 'get leadsOfCamp have errors'
+                    }
+                };
+            }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+            LogCamp.create({
+                type: 'leadsOfCamp',
+                dataInput: {
+                    payload: request.payload,
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
 
@@ -115,59 +153,11 @@ export default class CampaignController {
         //     return reply('Campaigns exist!!!').code(200);
         // }
     }
-    /**
-     * update target of campaign
-     * @param request reques
-     * @param reply res
-     */
-    public async updateCurrent(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        try {
-            let id = parseInt(request.params.id, 10);
-            let payload = request.payload as IPayloadUpdate;
-            let campaign: any = await CampaignService.updateCurrent(id, payload);
-            // log mongo create success
-            LogCamp
-                .create({
-                    type: 'create',
-                    msg: 'success',
-                    dataInput: request.payload,
-                    meta: {
-                        data: campaign.dataValues
-                    }
-                });
-            reply({
-                status: HTTP_STATUS.OK,
-                data: campaign
-            }).code(HTTP_STATUS.OK);
-        } catch (ex) {
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: HTTP_STATUS.BAD_GATEWAY,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: HTTP_STATUS.BAD_GATEWAY,
-                    error: { code: 'ex', msg: 'update campaign have errors' }
-                };
-            }
-            LogCamp.create({
-                type: 'updatecamp',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
-        }
-    }
 
+
+    /**
+     * get a campaign by campaignid
+     */
     public async getByCampaignId(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let campid = request.params.id;
@@ -183,25 +173,45 @@ export default class CampaignController {
                     data: campaign
                 }).code(HTTP_STATUS.OK);
             }
-        } catch (error) {
+        } catch (ex) {
             // log mongo create fail
-            LogCamp
-                .create({
-                    type: 'getByCampaignId',
-                    msg: 'fail',
-                    dataInput: request.payload,
-                    meta: {
-                        error
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: {
+                        code: Ex.EX_GENERAL,
+                        msg: 'get getByCampaignId have errors'
                     }
-                });
-            return reply({
-                status: 400,
-                error: error
-            }).code(HTTP_STATUS.BAD_REQUEST);
+                };
+            }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+            LogCamp.create({
+                type: 'getByCampaignId',
+                dataInput: {
+                    payload: request.payload,
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
 
-
+    /**
+     * get list campaign of userid
+     */
     public async getByUserId(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let UserId = request.params.userid;
@@ -217,21 +227,39 @@ export default class CampaignController {
                     data: campaigns
                 }).code(HTTP_STATUS.OK);
             }
-        } catch (error) {
+        } catch (ex) {
             // log mongo create fail
-            LogCamp
-                .create({
-                    type: 'getByCampaignId',
-                    msg: 'fail',
-                    dataInput: request.payload,
-                    meta: {
-                        error
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: {
+                        code: Ex.EX_GENERAL,
+                        msg: 'get getByUserId have errors'
                     }
-                });
-            return reply({
-                status: 400,
-                error: error
-            }).code(HTTP_STATUS.BAD_REQUEST);
+                };
+            }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+            LogCamp.create({
+                type: 'getByUserId',
+                dataInput: {
+                    payload: request.payload,
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
 }

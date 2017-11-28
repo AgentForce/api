@@ -8,13 +8,15 @@ import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
 import { ManulifeErrors as Ex } from '../../helpers/code-errors';
 import { LogCamp } from "../../mongo/index";
+import { SlackAlert } from "../../helpers/index";
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
 
     const campaignController = new CampaignController(configs, database);
     server.bind(campaignController);
+
     /**
-         * lấy 1 campaign theo campaignid
-         */
+     * get list leads of campaign with type and campaignid
+     */
     server.route({
         method: 'GET',
         path: '/campaigns/{id}/customers/{type}',
@@ -67,6 +69,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             }
         }
     });
+
+    /**
+     * get a campaign by campaignid
+     */
     server.route({
         method: 'GET',
         path: '/campaigns/{id}',
@@ -118,50 +124,53 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         }
     });
 
+    /**
+     * get list campaign of 1 user
+     */
     server.route({
-        method: 'PUT',
-        path: '/campaigns/{id}',
+        method: 'GET',
+        path: '/campaigns/userid/{userid}',
         config: {
-            handler: campaignController.updateCurrent,
+            handler: campaignController.getByUserId,
             // auth: "jwt",
             tags: ['api', 'campaigns'],
-            description: 'update a campaign.(waiting feedback flow)',
+            description: 'Get all campaigns of 1 userid',
             validate: {
-                payload: CampaignValidator.updateModel,
                 params: {
-                    id: Joi.number().required()
-                        .example(240)
-                        .description('campaignid')
+                    userid: Joi.string().required()
                 },
                 // headers: jwtValidator
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
                             code: Ex.EX_PAYLOAD,
-                            msg: 'payload dont valid',
+                            msg: 'params dont valid',
                             details: error
                         }
                     };
+                    SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                     LogCamp.create({
-                        type: 'updatecamp',
-                        dataInput: request.payload,
-                        msg: 'payload do not valid',
+                        type: '/campaigns/userid/{userid}',
+                        dataInput: {
+                            params: request.params,
+                        },
+                        msg: 'params do not valid',
                         meta: {
                             exception: error,
                             response: res
                         },
                     });
-                    return reply(res);
+                    reply(res);
                 }
             },
             plugins: {
                 'hapi-swagger': {
                     responses: {
                         '200': {
-                            'description': 'update campaign.'
+                            'description': 'Campaign founded.'
                         },
-                        '400': {
-                            description: 'update fail'
+                        '404': {
+                            'description': 'Campaign does not exists.'
                         }
                     }
                 }
@@ -169,56 +178,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         }
     });
 
-
-
-    // server.route({
-    //     method: 'GET',
-    //     path: '/campaigns/userid/{userid}',
-    //     config: {
-    //         handler: campaignController.getByUserId,
-    //         // auth: "jwt",
-    //         tags: ['api', 'campaigns'],
-    //         description: 'Get all campaigns by userid.',
-    //         validate: {
-    //             params: {
-    //                 userid: Joi.string().required()
-    //             },
-    //             // headers: jwtValidator
-    //             failAction: (request, reply, source, error) => {
-    //                 let res = {
-    //                     status: HTTP_STATUS.BAD_REQUEST, error: {
-    //                         code: 'ex_payload',
-    //                         msg: 'params dont valid',
-    //                         details: error
-    //                     }
-    //                 };
-    //                 LogCamp.create({
-    //                     type: 'get',
-    //                     dataInput: request.payload,
-    //                     msg: 'params do not valid',
-    //                     meta: {
-    //                         exception: error,
-    //                         response: res
-    //                     },
-    //                 });
-    //                 return reply(res);
-    //             }
-    //         },
-    //         plugins: {
-    //             'hapi-swagger': {
-    //                 responses: {
-    //                     '200': {
-    //                         'description': 'Campaign founded.'
-    //                     },
-    //                     '404': {
-    //                         'description': 'Campaign does not exists.'
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // });
-
+    /**
+     * creat new campaign
+     */
     server.route({
         method: 'POST',
         path: '/campaigns',
@@ -238,6 +200,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             details: error
                         }
                     };
+                    SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                     LogCamp.create({
                         type: 'createcamp',
                         dataInput: request.payload,
