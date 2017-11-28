@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const lead_service_1 = require("../../services/lead.service");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
+const index_2 = require("../../helpers/index");
 class LeadController {
     constructor(configs, database) {
         this.configs = configs;
@@ -20,19 +21,52 @@ class LeadController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let idEvent = parseInt(request.params.id, 10);
-                let events = yield lead_service_1.LeadService.findById(idEvent);
-                if (events == null) {
-                    return reply(events).code(HTTP_STATUS.NOT_FOUND);
+                let lead = yield lead_service_1.LeadService.findById(idEvent);
+                if (lead == null) {
+                    return reply({
+                        status: HTTP_STATUS.NOT_FOUND,
+                        data: null,
+                    }).code(HTTP_STATUS.NOT_FOUND);
                 }
                 else {
-                    return reply(events).code(HTTP_STATUS.OK);
+                    return reply({
+                        status: HTTP_STATUS.OK,
+                        data: lead,
+                    }).code(HTTP_STATUS.OK);
                 }
             }
-            catch (error) {
-                return reply({
-                    status: 400,
-                    error: error
-                }).code(HTTP_STATUS.BAD_REQUEST);
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 400,
+                        url: request.url.path,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 400,
+                        url: request.url.path,
+                        error: {
+                            code: index_2.ManulifeErrors.EX_GENERAL,
+                            msg: 'find lead have errors'
+                        }
+                    };
+                }
+                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                index_1.LogLead.create({
+                    type: 'findById',
+                    dataInput: {
+                        params: request.params
+                    },
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
         });
     }
@@ -59,18 +93,20 @@ class LeadController {
                 if (ex.code) {
                     res = {
                         status: 400,
+                        url: request.url.path,
                         error: ex
                     };
                 }
                 else {
-                    console.log(ex);
                     res = {
                         status: 400,
-                        error: { code: 'ex', msg: 'find lead have errors' }
+                        url: request.url.path,
+                        error: { code: index_2.ManulifeErrors.EX_GENERAL, msg: 'find lead have errors' }
                     };
                 }
+                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                 index_1.LogLead.create({
-                    type: 'detaillead',
+                    type: 'detail lead',
                     dataInput: {
                         params: request.params
                     },
@@ -115,17 +151,20 @@ class LeadController {
                 if (ex.code) {
                     res = {
                         status: 400,
+                        url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
                         status: 400,
-                        error: { code: 'ex', msg: 'Create lead have errors' }
+                        url: request.url.path,
+                        error: { code: index_2.ManulifeErrors.EX_GENERAL, msg: 'Create lead have errors' }
                     };
                 }
+                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                 index_1.LogLead.create({
-                    type: 'updatelead',
+                    type: 'update lead',
                     dataInput: {
                         payload: request.payload,
                         params: request.params
@@ -164,17 +203,20 @@ class LeadController {
                 if (ex.code) {
                     res = {
                         status: 400,
+                        url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
                         status: 400,
+                        url: request.url.path,
                         error: { code: 'ex', msg: 'Create lead have errors' }
                     };
                 }
+                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                 index_1.LogLead.create({
-                    type: 'createlead',
+                    type: 'create lead',
                     dataInput: request.payload,
                     msg: 'errors',
                     meta: {

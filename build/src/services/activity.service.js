@@ -9,9 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const postgres_1 = require("../postgres");
+const campaign_service_1 = require("./campaign.service");
 const user_service_1 = require("./user.service");
 const lead_1 = require("../postgres/lead");
 const code_errors_1 = require("../helpers/code-errors");
+const campaign_1 = require("../postgres/campaign");
+const moment = require("moment");
+const _ = require("lodash");
+const helpers_1 = require("../helpers");
 class ActivityService {
     /**
     * Tìm một lead dựa vào số điện thoại
@@ -64,8 +69,9 @@ class ActivityService {
                 EndDate: payload.EndDate,
                 Phone: lead.Phone,
                 LeadId: lead.Id,
-                Name: payload.ProcessStep.toString(),
-                Type: lead.ProcessStep,
+                Name: payload.Type.toString(),
+                Type: payload.Type,
+                ProcessStep: lead.ProcessStep,
                 ReportToList: user.ReportToList,
                 FullDate: payload.FullDate,
                 Location: payload.Location,
@@ -73,7 +79,6 @@ class ActivityService {
                 ReportTo: user.ReportTo,
                 Status: 1,
                 StartDate: payload.StartDate,
-                ProcessStep: payload.ProcessStep,
                 UserId: payload.UserId
             };
             let actDb = yield postgres_1.Activity.create(activity);
@@ -88,30 +93,98 @@ class ActivityService {
     * @param activiy activiy
     */
     static update(activityId, payload) {
-        return postgres_1.Activity
-            .findOne({
-            where: {
-                Id: activityId,
-                IsDeleted: false
-            }
-        })
-            .then(activity => {
+        return Promise
+            .all([
+            postgres_1.Activity
+                .findOne({
+                where: {
+                    Id: activityId,
+                    IsDeleted: false,
+                    CampId: payload.CampId
+                }
+            }),
+            campaign_service_1.CampaignService.findByIdAndDate(payload.CampId, moment().toDate())
+        ])
+            .then((result) => __awaiter(this, void 0, void 0, function* () {
+            let activity = result[0];
             if (activity == null) {
                 throw {
                     code: code_errors_1.ManulifeErrors.EX_ACTIVITYID_NOT_FOUND,
-                    msg: 'ActivityId not found'
+                    msg: `ActivityId ${activityId} not found vs campid ${payload.CampId}`
                 };
             }
-            return postgres_1.Activity
-                .update(payload, {
-                where: {
-                    Id: activityId
-                },
-                returning: true
-            }).then(acDb => {
-                return acDb[1];
+            let camp = result[1];
+            if (camp == null) {
+                throw {
+                    code: code_errors_1.ManulifeErrors.EX_CAMPID_NOT_FOUND,
+                    msg: `campaign ${payload.CampId} finished or dont exist`
+                };
+            }
+            let updateCamp = {
+                CurrentCallSale: camp.CurrentCallSale,
+                CurentContract: camp.CurentContract,
+                CurrentMetting: camp.CurrentMetting,
+                CurrentPresentation: camp.CurrentPresentation
+            };
+            if (payload.Status === 1 && activity.Status === helpers_1.Constants.ACTIVITY_DEACTIVE) {
+                if (activity.Type === 1) {
+                    updateCamp.CurrentCallSale += 1;
+                }
+                else if (activity.Type === 2) {
+                    updateCamp.CurrentMetting += 1;
+                }
+                else if (activity.Type === 3) {
+                    updateCamp.CurrentMetting += 1;
+                }
+                else if (activity.Type === 4) {
+                    updateCamp.CurrentPresentation += 1;
+                }
+            }
+            else if (payload.Status === 0 && activity.Status === helpers_1.Constants.ACTIVITY_ACTIVE) {
+                if (activity.Type === 1) {
+                    updateCamp.CurrentCallSale -= 1;
+                }
+                else if (activity.Type === 2) {
+                    updateCamp.CurrentMetting -= 1;
+                }
+                else if (activity.Type === 3) {
+                    updateCamp.CurrentMetting -= 1;
+                }
+                else if (activity.Type === 4) {
+                    updateCamp.CurrentPresentation -= 1;
+                }
+            }
+            // Update activity and update current some target
+            return Promise
+                .all([
+                postgres_1.Activity
+                    .update(payload, {
+                    where: {
+                        Id: activityId
+                    },
+                    returning: true
+                }).then(acDb => {
+                    return acDb[1];
+                }),
+                campaign_1.Campaign
+                    .update(updateCamp, {
+                    returning: true,
+                    where: {
+                        Id: activity.CampId
+                    },
+                })
+                    .then(campDb => {
+                    return campDb[1];
+                })
+            ])
+                .then(rs => {
+                let obj = _.flatten(rs);
+                return { activity: obj[0], camp: obj[1] };
+            })
+                .catch(ex => {
+                throw ex;
             });
-        })
+        }))
             .catch(ex => {
             throw ex;
         });

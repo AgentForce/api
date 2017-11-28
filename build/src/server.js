@@ -14,17 +14,18 @@ function init(configs, database) {
         server.connection({
             port: port,
             routes: {
-                cors: true
+                cors: true,
             },
         });
         if (configs.routePrefix) {
             server.realm.modifiers.route.prefix = configs.routePrefix;
+            // server.realm.modifiers.route.prefix = '';
         }
         //  Setup Hapi Plugins
         const plugins = configs.plugins;
         const pluginOptions = {
             database: database,
-            serverConfigs: configs
+            serverConfigs: configs,
         };
         let pluginPromises = [];
         plugins.forEach((pluginName) => {
