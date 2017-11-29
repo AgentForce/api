@@ -156,7 +156,7 @@ class UserService {
             Gender: payload.Gender,
             GroupId: payload.GroupId,
             Phone: payload.Phone,
-            Password: Bcrypt.hashSync(payload.Password, Bcrypt.genSaltSync(8)),
+            Password: payload.Password,
             ReportTo: ReportTo,
             ReportToList: [],
         };

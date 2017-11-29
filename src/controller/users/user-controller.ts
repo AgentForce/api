@@ -97,12 +97,7 @@ export default class UserController {
             const username = request.params.username;
             const user = <any>await UserService.findByCode(username);
             if (user !== null) {
-                let oldpassHash = Bcrypt.hashSync(dataInput.OldPassword, Bcrypt.genSaltSync(8));
-                console.log(Bcrypt.hashSync(dataInput.OldPassword, Bcrypt.genSaltSync(8)));
-                console.log(Bcrypt.compareSync(user.Password, oldpassHash));
-                console.log(oldpassHash);
-                console.log(user.Password);
-                if (Bcrypt.compareSync(user.Password, oldpassHash)) {
+                if (Bcrypt.compareSync(dataInput.OldPassword, user.Password)) {
                     let passwordHash = Bcrypt.hashSync(dataInput.NewPassword, Bcrypt.genSaltSync(8));
                     let userPg: any = await UserService
                         .changePassword(user.Id, dataInput, passwordHash);
@@ -298,6 +293,8 @@ export default class UserController {
             const user = <any>await UserService.findByUsernameEmail(dataInput.UserName, dataInput.Email);
             if (user == null) {
                 let iUser: IPayloadCreate = dataInput;
+                let passwordHash = Bcrypt.hashSync(dataInput.Password, Bcrypt.genSaltSync(8));
+                iUser.Password = passwordHash;
                 let newUserPg = <any>await UserService.create(iUser);
                 let newUser: any = await this.database.userModel
                     .create({
@@ -305,7 +302,7 @@ export default class UserController {
                         email: dataInput.Email,
                         fullName: dataInput.FullName,
                         username: dataInput.UserName,
-                        password: dataInput.Password
+                        password: passwordHash
                     })
                     .catch(ex => {
                         console.log(ex);
