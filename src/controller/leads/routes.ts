@@ -26,7 +26,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         .required().example(38)
                         .description('leadid')
                 },
-                headers: jwtValidator,
+                // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
@@ -78,7 +78,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 params: {
                     id: Joi.number().required().example(38).description('leadid')
                 },
-                headers: jwtValidator,
+                // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
@@ -124,7 +124,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             description: 'Create a lead',
             validate: {
                 payload: LeadValidator.createLeadModel,
-                headers: jwtValidator,
+                // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {

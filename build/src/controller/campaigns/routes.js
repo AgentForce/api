@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 const campaign_controller_1 = require("./campaign-controller");
 const CampaignValidator = require("./campaign-validator");
-const user_validator_1 = require("../users/user-validator");
 const HTTP_STATUS = require("http-status");
 const code_errors_1 = require("../../helpers/code-errors");
 const index_1 = require("../../mongo/index");
@@ -28,7 +27,7 @@ function default_1(server, configs, database) {
                     type: Joi.number().required().valid([1, 2, 3, 4])
                         .description('4 processtep in lead')
                 },
-                headers: user_validator_1.jwtValidator,
+                // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
@@ -80,7 +79,7 @@ function default_1(server, configs, database) {
             tags: ['api', 'campaigns'],
             description: 'Get campaign by campaignid.',
             validate: {
-                headers: user_validator_1.jwtValidator,
+                // headers: jwtValidator,
                 params: {
                     id: Joi.number().required().description('campaignid')
                 },
@@ -136,7 +135,7 @@ function default_1(server, configs, database) {
             tags: ['api', 'campaigns'],
             description: 'Get all campaigns of 1 userid',
             validate: {
-                headers: user_validator_1.jwtValidator,
+                // headers: jwtValidator,
                 params: {
                     userid: Joi.string().required()
                 },
@@ -194,7 +193,7 @@ function default_1(server, configs, database) {
             description: 'Create a campaign.',
             validate: {
                 payload: CampaignValidator.createCampaignFAModel,
-                headers: user_validator_1.jwtValidator,
+                // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {

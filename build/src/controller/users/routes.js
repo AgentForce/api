@@ -85,7 +85,7 @@ function default_1(server, serverConfigs, database) {
             description: 'Update user profile.',
             validate: {
                 payload: UserValidator.updateProfileModel,
-                headers: UserValidator.jwtValidator,
+                // headers: UserValidator.jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {

@@ -31,7 +31,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                     type: Joi.number().required().valid([1, 2, 3, 4])
                         .description('4 processtep in lead')
                 },
-                headers: jwtValidator,
+                // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
@@ -84,7 +84,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             tags: ['api', 'campaigns'],
             description: 'Get campaign by campaignid.',
             validate: {
-                headers: jwtValidator,
+                // headers: jwtValidator,
                 params: {
                     id: Joi.number().required().description('campaignid')
                 },
@@ -142,7 +142,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             tags: ['api', 'campaigns'],
             description: 'Get all campaigns of 1 userid',
             validate: {
-                headers: jwtValidator,
+                // headers: jwtValidator,
                 params: {
                     userid: Joi.string().required()
                 },
@@ -201,7 +201,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             description: 'Create a campaign.',
             validate: {
                 payload: CampaignValidator.createCampaignFAModel,
-                headers: jwtValidator,
+                // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {

@@ -21,14 +21,14 @@ exports.default = () => {
                                     'name': 'users',
                                     'description': 'Api users interface.'
                                 }],
-                            // payloadType: 'form',
+                            payloadType: 'form',
                             // tagsGroupingFilter: 'users',
                             swaggerUI: true,
                             basePath: '/api',
                             documentationPage: true,
                             documentationPath: '/docs',
                             securityDefinitions: {
-                                "jwt": {
+                                'jwt': {
                                     "type": "apiKey",
                                     "name": "authorization",
                                     "in": "header"
