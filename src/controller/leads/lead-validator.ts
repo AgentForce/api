@@ -51,6 +51,7 @@ const createLeadModel = Joi.object().keys({
 
 const updateModel = Joi.object().keys({
     Name: Joi.string()
+        .default('Phuong Thao')
         .description('Full name'),
     Age: Joi.number().required()
         .valid([1, 2, 3, 4])
