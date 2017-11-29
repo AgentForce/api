@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const campaign_service_1 = require("../../services/campaign.service");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
+const _ = require("lodash");
 const index_2 = require("../../helpers/index");
 class CampaignController {
     constructor(configs, database) {
@@ -26,6 +27,21 @@ class CampaignController {
             try {
                 let iCamp = request.payload;
                 const camps = yield campaign_service_1.CampaignService.createOfFA(iCamp);
+                let logcamps = _.map(camps, (camp) => {
+                    return {
+                        type: 'createcampaign',
+                        dataInput: {
+                            payload: request.payload
+                        },
+                        msg: 'success',
+                        meta: {
+                            response: camp.dataValues
+                        },
+                    };
+                });
+                // save mongo log
+                index_1.LogCamp
+                    .insertMany(logcamps);
                 reply({
                     status: HTTP_STATUS.OK,
                     data: camps

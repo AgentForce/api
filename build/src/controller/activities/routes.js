@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 const activity_controller_1 = require("./activity-controller");
 const ActivitiesValidator = require("./activity-validator");
-const user_validator_1 = require("../users/user-validator");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
 const code_errors_1 = require("../../helpers/code-errors");
@@ -105,7 +104,6 @@ function default_1(server, configs, database) {
                         .description('acitivityId')
                         .example(12)
                 },
-                headers: user_validator_1.jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
