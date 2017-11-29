@@ -12,8 +12,10 @@ const createModel = Joi.object().keys({
         .example(1),
     Location: Joi.string().allow(null),
     StartDate: Joi.date().required()
-        .example('2017-11-11'),
+        .example('2017-11-11')
+        .default('2017-11-11'),
     EndDate: Joi.date().required()
+        .default('2017-11-12')
         .example('2017-11-12'),
     Description: Joi.string().allow(null),
     FullDate: Joi.boolean()
@@ -33,14 +35,18 @@ const updateModel = Joi.object().keys({
     CampId: Joi.number().required(),
     Location: Joi.string().allow(null),
     StartDate: Joi.date().required()
+        .default('2017-11-11')
         .example('2017-11-11'),
     EndDate: Joi.date().required()
+        .default('2017-11-12')
         .example('2017-11-12'),
     Description: Joi.string().allow(null),
     FullDate: Joi.boolean()
         .required()
         .description('false=waiting, true=done'),
-    Status: Joi.number().valid([0, 1])
+    Status: Joi.number()
+        .valid([0, 1])
+        .default(0)
         .description('1=done, 0=wating')
         .example(1),
     Notification: Joi.number()

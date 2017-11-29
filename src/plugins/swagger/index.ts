@@ -17,10 +17,10 @@ export default (): IPlugin => {
                             },
                             tags: [{
                                 'name': 'leads',
-                                'description': 'Api tasks interface.'
+                                'description': 'leads tasks interface.'
                             }, {
                                 'name': 'users',
-                                'description': 'Api users interface.'
+                                'description': 'users interface.'
                             }],
                             payloadType: 'form',
                             // tagsGroupingFilter: 'users',
