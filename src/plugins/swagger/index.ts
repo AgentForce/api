@@ -22,7 +22,7 @@ export default (): IPlugin => {
                                 'name': 'users',
                                 'description': 'Api users interface.'
                             }],
-                            // payloadType: 'form',
+                            payloadType: 'form',
                             // tagsGroupingFilter: 'users',
                             swaggerUI: true,
                             basePath: '/api',
