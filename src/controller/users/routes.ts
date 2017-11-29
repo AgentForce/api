@@ -78,7 +78,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
 
     server.route({
         method: 'GET',
-        path: '/swagger/{param*}',
+        path: '/docs/{param*}',
         handler: {
             directory: {
                 path: 'swagger-ui',
