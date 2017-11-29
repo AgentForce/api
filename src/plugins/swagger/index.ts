@@ -27,7 +27,7 @@ export default (): IPlugin => {
                             swaggerUI: true,
                             basePath: '/api',
                             documentationPage: true,
-                            documentationPath: '/docs',
+                            documentationPath: '/olddocs',
                             securityDefinitions: {
                                 'jwt': {
                                     "type": "apiKey",

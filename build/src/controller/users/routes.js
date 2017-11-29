@@ -67,7 +67,7 @@ function default_1(server, serverConfigs, database) {
     });
     server.route({
         method: 'GET',
-        path: '/swagger/{param*}',
+        path: '/docs/{param*}',
         handler: {
             directory: {
                 path: 'swagger-ui',
