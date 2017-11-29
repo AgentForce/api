@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Boom = require("boom");
+const Bcrypt = require("bcryptjs");
 const Jwt = require("jsonwebtoken");
 const user_service_1 = require("../../services/user.service");
 const HTTP_STATUS = require("http-status");
@@ -83,6 +84,78 @@ class UserController {
     }
     changePassword(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const dataInput = request.payload;
+                const username = request.params.username;
+                const user = yield user_service_1.UserService.findByCode(username);
+                if (user !== null) {
+                    let oldpassHash = Bcrypt.hashSync(dataInput.OldPassword, Bcrypt.genSaltSync(8));
+                    console.log(Bcrypt.hashSync(dataInput.OldPassword, Bcrypt.genSaltSync(8)));
+                    console.log(Bcrypt.compareSync(user.Password, oldpassHash));
+                    console.log(oldpassHash);
+                    console.log(user.Password);
+                    if (Bcrypt.compareSync(user.Password, oldpassHash)) {
+                        let passwordHash = Bcrypt.hashSync(dataInput.NewPassword, Bcrypt.genSaltSync(8));
+                        let userPg = yield user_service_1.UserService
+                            .changePassword(user.Id, dataInput, passwordHash);
+                        let userMongo = yield this.database.userModel
+                            .update({
+                            userId: user.Id,
+                        }, {
+                            password: passwordHash
+                        });
+                        let res = {
+                            status: HTTP_STATUS.OK,
+                            url: request.url.path,
+                        };
+                        index_1.LogUser.create({
+                            type: 'changepassword',
+                            dataInput: {
+                                params: request.params,
+                                payload: request.payload
+                            },
+                            msg: 'change password success',
+                            meta: {
+                                response: res
+                            }
+                        });
+                        reply(res).code(HTTP_STATUS.OK);
+                    }
+                    else {
+                        throw { code: code_errors_1.ManulifeErrors.EX_OLDPASSWORD_DONT_CORRECT, msg: 'oldpass dont correct' };
+                    }
+                }
+                else {
+                    throw { code: code_errors_1.ManulifeErrors.EX_USERID_NOT_FOUND, msg: 'userid not found' };
+                }
+            }
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 400,
+                        url: request.url.path,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 400,
+                        url: request.url.path,
+                        error: { code: 'ex', msg: 'Exception occurred change password' }
+                    };
+                }
+                index_1.LogUser.create({
+                    type: 'changepassword',
+                    dataInput: request.payload,
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            }
         });
     }
     /**
@@ -90,19 +163,21 @@ class UserController {
      */
     loginUser(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
-            const email = request.payload.email;
-            const password = request.payload.password;
+            const username = request.payload.Username;
+            const password = request.payload.Password;
             let user = yield this.database
                 .userModel
-                .findOne({ email: email });
+                .findOne({ username: username });
             if (!user) {
                 return reply(Boom.unauthorized("User does not exists."));
             }
             if (!user.validatePassword(password)) {
                 return reply(Boom.unauthorized("Password is invalid."));
             }
+            let userPg = yield user_service_1.UserService.findByCode(username);
             reply({
-                token: this.generateToken(user)
+                token: this.generateToken(user),
+                info: userPg
             });
         });
     }
@@ -158,6 +233,9 @@ class UserController {
             }
         });
     }
+    /**
+     * update profile user
+     */
     updateProfile(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -212,11 +290,14 @@ class UserController {
             }
         });
     }
+    /**
+     *  Create new user
+     */
     createUser(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const dataInput = request.payload;
-                const user = yield user_service_1.UserService.findByCode(dataInput.UserName);
+                const user = yield user_service_1.UserService.findByUsernameEmail(dataInput.UserName, dataInput.Email);
                 if (user == null) {
                     let iUser = dataInput;
                     let newUserPg = yield user_service_1.UserService.create(iUser);
@@ -225,7 +306,11 @@ class UserController {
                         userId: newUserPg.Id,
                         email: dataInput.Email,
                         fullName: dataInput.FullName,
+                        username: dataInput.UserName,
                         password: dataInput.Password
+                    })
+                        .catch(ex => {
+                        console.log(ex);
                     });
                     return reply({
                         status: HTTP_STATUS.OK,
@@ -237,11 +322,10 @@ class UserController {
                         .code(HTTP_STATUS.OK);
                 }
                 else {
-                    throw { code: code_errors_1.ManulifeErrors.EX_USERNAME_EXIST, msg: 'username exist' };
+                    throw { code: code_errors_1.ManulifeErrors.EX_USERNAME_EXIST, msg: 'username exist or email exist' };
                 }
             }
             catch (ex) {
-                console.log(ex);
                 let res = {};
                 if (ex.code) {
                     res = {

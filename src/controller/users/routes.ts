@@ -19,7 +19,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         path: '/users/{username}',
         config: {
             handler: userController.getByUsername,
-            // auth: "jwt",
+            auth: "jwt",
             description: 'Get user by username.',
             tags: ['api', 'users'],
             validate: {
@@ -37,7 +37,10 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                         '401': {
                             'description': 'Please login.'
                         }
-                    }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
                 }
             }
         }
@@ -123,7 +126,10 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                         '401': {
                             'description': 'User does not have authorization.'
                         }
-                    }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
                 }
             }
         }
@@ -165,7 +171,10 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                         '200': {
                             'description': 'User created.'
                         }
-                    }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
                 }
             }
         }
@@ -176,14 +185,17 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
      */
     server.route({
         method: 'POST',
-        path: '/users/changepassword/{id}',
+        path: '/users/changepassword/{username}',
         config: {
-            handler: userController.createUser,
+            handler: userController.changePassword,
             tags: ['api', 'users'],
             auth: "jwt",
             description: 'Change password',
             validate: {
-                headers: jwtValidator,
+                params: {
+                    username: Joi.string().required()
+                        .description('username')
+                },
                 payload: UserValidator.changePassModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
@@ -211,8 +223,11 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                     responses: {
                         '200': {
                             'description': 'change password success'
-                        }
-                    }
+                        },
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
                 }
             }
         }
@@ -235,7 +250,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                         '200': {
                             'description': 'User logged in.'
                         }
-                    }
+                    },
                 }
             }
         }

@@ -55,13 +55,15 @@ function default_1(server, configs, database) {
                 'hapi-swagger': {
                     responses: {
                         '200': {
-                            status: HTTP_STATUS.OK,
                             'description': 'Campaign .'
                         },
                         '404': {
                             'description': 'Campaign does not exists.'
                         }
-                    }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
                 }
             }
         }
@@ -114,7 +116,10 @@ function default_1(server, configs, database) {
                         '404': {
                             'description': 'Campaign does not exists.'
                         }
-                    }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
                 }
             }
         }
@@ -168,7 +173,10 @@ function default_1(server, configs, database) {
                         '404': {
                             'description': 'Campaign does not exists.'
                         }
-                    }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
                 }
             }
         }
@@ -214,7 +222,10 @@ function default_1(server, configs, database) {
                         '200': {
                             'description': 'Created campaign.'
                         }
-                    }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
                 }
             }
         }

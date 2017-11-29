@@ -63,7 +63,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             description: 'Create a activity.',
             validate: {
                 payload: ActivitiesValidator.createModel,
-                headers: jwtValidator,
+                // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
@@ -90,7 +90,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         201: {
                             'description': 'activity created.'
                         }
-                    }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
                 }
             }
         }
@@ -144,7 +147,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         '400': {
                             'description': 'User does not have authorization.'
                         }
-                    }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
                 }
             }
         }

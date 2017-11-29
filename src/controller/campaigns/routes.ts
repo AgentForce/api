@@ -58,13 +58,15 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 'hapi-swagger': {
                     responses: {
                         '200': {
-                            status: HTTP_STATUS.OK,
                             'description': 'Campaign .'
                         },
                         '404': {
                             'description': 'Campaign does not exists.'
                         }
-                    }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
                 }
             }
         }
@@ -119,7 +121,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         '404': {
                             'description': 'Campaign does not exists.'
                         }
-                    }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
                 }
             }
         }
@@ -174,7 +179,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         '404': {
                             'description': 'Campaign does not exists.'
                         }
-                    }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
                 }
             }
         }
@@ -221,7 +229,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         '200': {
                             'description': 'Created campaign.'
                         }
-                    }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
                 }
             }
         }

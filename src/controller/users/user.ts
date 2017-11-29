@@ -4,6 +4,7 @@ import * as Bcrypt from "bcryptjs";
 interface IUser extends Mongoose.Document {
   userId: number;
   fullName: string;
+  username: string;
   email: string;
   password: string;
   createdAt: Date;
@@ -40,7 +41,7 @@ interface IPayloadUpdate {
 
 interface IPayloadChangePass {
   OldPassword: string;
-  Newpassword: string;
+  NewPassword: string;
 }
 
 
@@ -51,7 +52,12 @@ const UserSchema = new Mongoose.Schema({
   },
   email: {
     type: String,
-    // unique: true,
+    unique: true,
+    required: true
+  },
+  username: {
+    type: String,
+    unique: true,
     required: true
   },
   fullName: {
@@ -70,26 +76,31 @@ function hashPassword(password: string): string {
   if (!password) {
     return null;
   }
-
   return Bcrypt.hashSync(password, Bcrypt.genSaltSync(8));
 }
 
+/**
+ * Validate password
+ */
 UserSchema.methods.validatePassword = function (requestPassword) {
   return Bcrypt.compareSync(requestPassword, this.password);
 };
 
+/**
+ * before save
+ */
 UserSchema.pre('save', function (next) {
   const user = this;
-
   if (!user.isModified('password')) {
     return next();
   }
-
   user.password = hashPassword(user.password);
-
   return next();
 });
 
+/**
+ * find and update code
+ */
 UserSchema.pre('findOneAndUpdate', function () {
   const password = hashPassword(this.getUpdate().$set.password);
 
