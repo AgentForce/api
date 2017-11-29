@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const postgres_1 = require("../postgres");
-const Bcrypt = require("bcryptjs");
 const code_errors_1 = require("../helpers/code-errors");
 class UserService {
     /**
@@ -146,7 +145,7 @@ class UserService {
                 Gender: payload.Gender,
                 GroupId: payload.GroupId,
                 Phone: payload.Phone,
-                Password: Bcrypt.hashSync(payload.Password, Bcrypt.genSaltSync(8)),
+                Password: payload.Password,
                 ReportTo: ReportTo,
                 ReportToList: [],
             };

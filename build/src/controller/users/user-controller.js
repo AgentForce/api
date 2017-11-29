@@ -89,12 +89,7 @@ class UserController {
                 const username = request.params.username;
                 const user = yield user_service_1.UserService.findByCode(username);
                 if (user !== null) {
-                    let oldpassHash = Bcrypt.hashSync(dataInput.OldPassword, Bcrypt.genSaltSync(8));
-                    console.log(Bcrypt.hashSync(dataInput.OldPassword, Bcrypt.genSaltSync(8)));
-                    console.log(Bcrypt.compareSync(user.Password, oldpassHash));
-                    console.log(oldpassHash);
-                    console.log(user.Password);
-                    if (Bcrypt.compareSync(user.Password, oldpassHash)) {
+                    if (Bcrypt.compareSync(dataInput.OldPassword, user.Password)) {
                         let passwordHash = Bcrypt.hashSync(dataInput.NewPassword, Bcrypt.genSaltSync(8));
                         let userPg = yield user_service_1.UserService
                             .changePassword(user.Id, dataInput, passwordHash);
@@ -300,6 +295,8 @@ class UserController {
                 const user = yield user_service_1.UserService.findByUsernameEmail(dataInput.UserName, dataInput.Email);
                 if (user == null) {
                     let iUser = dataInput;
+                    let passwordHash = Bcrypt.hashSync(dataInput.Password, Bcrypt.genSaltSync(8));
+                    iUser.Password = passwordHash;
                     let newUserPg = yield user_service_1.UserService.create(iUser);
                     let newUser = yield this.database.userModel
                         .create({
@@ -307,7 +304,7 @@ class UserController {
                         email: dataInput.Email,
                         fullName: dataInput.FullName,
                         username: dataInput.UserName,
-                        password: dataInput.Password
+                        password: passwordHash
                     })
                         .catch(ex => {
                         console.log(ex);

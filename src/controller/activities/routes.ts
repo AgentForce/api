@@ -116,7 +116,6 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         .description('acitivityId')
                         .example(12)
                 },
-                headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {

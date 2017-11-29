@@ -9,6 +9,7 @@ import { createCampaignFAModel } from './campaign-validator';
 import { Campaign } from "../../postgres/campaign";
 import { LogCamp } from "../../mongo/index";
 import { IPayloadUpdate } from "./campaign";
+import * as _ from 'lodash';
 import { SlackAlert, ManulifeErrors as Ex } from "../../helpers/index";
 export default class CampaignController {
 
@@ -27,11 +28,27 @@ export default class CampaignController {
         // 1. Router Checking data input : commission > 0, loan > 0, monthly > 0
         try {
             let iCamp: ICampaign = request.payload;
-            const camps = await CampaignService.createOfFA(iCamp);
+            const camps = <any>await CampaignService.createOfFA(iCamp);
+            let logcamps = _.map(camps, (camp: any) => {
+                return {
+                    type: 'createcampaign',
+                    dataInput: {
+                        payload: request.payload
+                    },
+                    msg: 'success',
+                    meta: {
+                        response: camp.dataValues
+                    },
+                };
+            });
+            // save mongo log
+            LogCamp
+                .insertMany(logcamps);
             reply({
                 status: HTTP_STATUS.OK,
                 data: camps
             }).code(200);
+
         } catch (ex) {
             let res = {};
             if (ex.code) {
