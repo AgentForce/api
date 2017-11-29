@@ -53,7 +53,10 @@ function default_1(server, configs, database) {
                         '404': {
                             description: 'lead not found'
                         }
-                    }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
                 }
             }
         }
@@ -97,7 +100,10 @@ function default_1(server, configs, database) {
                         '200': {
                             'description': 'Lead updated'
                         }
-                    }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
                 }
             }
         }
@@ -138,7 +144,10 @@ function default_1(server, configs, database) {
                         '200': {
                             'description': 'Created lead.'
                         }
-                    }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
                 }
             }
         }

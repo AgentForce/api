@@ -55,7 +55,7 @@ function default_1(server, configs, database) {
             description: 'Create a activity.',
             validate: {
                 payload: ActivitiesValidator.createModel,
-                headers: user_validator_1.jwtValidator,
+                // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
@@ -82,7 +82,10 @@ function default_1(server, configs, database) {
                         201: {
                             'description': 'activity created.'
                         }
-                    }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
                 }
             }
         }
@@ -133,7 +136,10 @@ function default_1(server, configs, database) {
                         '400': {
                             'description': 'User does not have authorization.'
                         }
-                    }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
                 }
             }
         }

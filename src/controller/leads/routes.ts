@@ -56,7 +56,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         '404': {
                             description: 'lead not found'
                         }
-                    }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
                 }
             }
         }
@@ -101,7 +104,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         '200': {
                             'description': 'Lead updated'
                         }
-                    }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
                 }
             }
         }
@@ -144,7 +150,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         '200': {
                             'description': 'Created lead.'
                         }
-                    }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
                 }
             }
         }

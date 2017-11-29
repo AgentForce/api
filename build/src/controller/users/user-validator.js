@@ -9,10 +9,13 @@ const createUserModel = Joi.object().keys({
     FullName: Joi.string()
         .required()
         .example('Tu Nguyen'),
-    Password: Joi.string().trim().required(),
+    Password: Joi.string().trim()
+        .required()
+        .example('123456'),
     Phone: Joi.string()
         .regex(/[0-9]/)
-        .required(),
+        .required()
+        .example('01693248887'),
     UserName: Joi.string()
         .required(),
     Gender: Joi.number()
@@ -60,7 +63,8 @@ const updateProfileModel = Joi.object().keys({
     FullName: Joi.string().required(),
     Phone: Joi.string()
         .regex(/[0-9]/)
-        .required(),
+        .required()
+        .example('01693248887'),
     UserName: Joi.string().required(),
     Birthday: Joi.date()
         .example('1993-11-12')
@@ -80,8 +84,8 @@ const updateProfileModel = Joi.object().keys({
 });
 exports.updateProfileModel = updateProfileModel;
 const loginUserModel = Joi.object().keys({
-    email: Joi.string().email().required(),
-    password: Joi.string().trim().required()
+    Username: Joi.string().required(),
+    Password: Joi.string().trim().required()
 });
 exports.loginUserModel = loginUserModel;
 const jwtValidator = Joi.object({ 'authorization': Joi.string().required() }).unknown();

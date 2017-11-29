@@ -1,7 +1,8 @@
 import * as Hapi from "hapi";
 import * as Boom from "boom";
+import * as Bcrypt from 'bcryptjs';
 import * as Jwt from "jsonwebtoken";
-import { IUser, IPayloadCreate } from "./user";
+import { IUser, IPayloadCreate, IPayloadChangePass } from "./user";
 import { } from 'module';
 import { IDatabase } from "../../database";
 import { IIUser, UserService } from '../../services/user.service';
@@ -91,17 +92,85 @@ export default class UserController {
 
 
     public async changePassword(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            const dataInput = request.payload as IPayloadChangePass;
+            const username = request.params.username;
+            const user = <any>await UserService.findByCode(username);
+            if (user !== null) {
+                let oldpassHash = Bcrypt.hashSync(dataInput.OldPassword, Bcrypt.genSaltSync(8));
+                console.log(Bcrypt.hashSync(dataInput.OldPassword, Bcrypt.genSaltSync(8)));
+                console.log(Bcrypt.compareSync(user.Password, oldpassHash));
+                console.log(oldpassHash);
+                console.log(user.Password);
+                if (Bcrypt.compareSync(user.Password, oldpassHash)) {
+                    let passwordHash = Bcrypt.hashSync(dataInput.NewPassword, Bcrypt.genSaltSync(8));
+                    let userPg: any = await UserService
+                        .changePassword(user.Id, dataInput, passwordHash);
+                    let userMongo: any = await this.database.userModel
+                        .update({
+                            userId: user.Id,
+                        }, {
+                            password: passwordHash
+                        });
+                    let res = {
+                        status: HTTP_STATUS.OK,
+                        url: request.url.path,
+                    };
+                    LogUser.create({
+                        type: 'changepassword',
+                        dataInput: {
+                            params: request.params,
+                            payload: request.payload
+                        },
+                        msg: 'change password success',
+                        meta: {
+                            response: res
+                        }
+                    });
+                    reply(res).code(HTTP_STATUS.OK);
+                } else {
+                    throw { code: Ex.EX_OLDPASSWORD_DONT_CORRECT, msg: 'oldpass dont correct' };
+                }
 
+            } else {
+                throw { code: Ex.EX_USERID_NOT_FOUND, msg: 'userid not found' };
+            }
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: { code: 'ex', msg: 'Exception occurred change password' }
+                };
+            }
+            LogUser.create({
+                type: 'changepassword',
+                dataInput: request.payload,
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
     }
     /**
      * User login
      */
     public async loginUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        const email = request.payload.email;
-        const password = request.payload.password;
+        const username = request.payload.Username;
+        const password = request.payload.Password;
         let user: IUser = await this.database
             .userModel
-            .findOne({ email: email });
+            .findOne({ username: username });
         if (!user) {
             return reply(Boom.unauthorized("User does not exists."));
         }
@@ -109,9 +178,11 @@ export default class UserController {
         if (!user.validatePassword(password)) {
             return reply(Boom.unauthorized("Password is invalid."));
         }
+        let userPg = await UserService.findByCode(username);
 
         reply({
-            token: this.generateToken(user)
+            token: this.generateToken(user),
+            info: userPg
         });
     }
 
@@ -163,6 +234,10 @@ export default class UserController {
             reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
+
+    /**
+     * update profile user
+     */
     public async updateProfile(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             const dataInput = request.payload;
@@ -214,11 +289,13 @@ export default class UserController {
         }
     }
 
-
+    /**
+     *  Create new user
+     */
     public async createUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             const dataInput = request.payload;
-            const user = <any>await UserService.findByCode(dataInput.UserName);
+            const user = <any>await UserService.findByUsernameEmail(dataInput.UserName, dataInput.Email);
             if (user == null) {
                 let iUser: IPayloadCreate = dataInput;
                 let newUserPg = <any>await UserService.create(iUser);
@@ -227,7 +304,11 @@ export default class UserController {
                         userId: newUserPg.Id,
                         email: dataInput.Email,
                         fullName: dataInput.FullName,
+                        username: dataInput.UserName,
                         password: dataInput.Password
+                    })
+                    .catch(ex => {
+                        console.log(ex);
                     });
                 return reply({
                     status: HTTP_STATUS.OK,
@@ -238,10 +319,9 @@ export default class UserController {
                 })
                     .code(HTTP_STATUS.OK);
             } else {
-                throw { code: Ex.EX_USERNAME_EXIST, msg: 'username exist' };
+                throw { code: Ex.EX_USERNAME_EXIST, msg: 'username exist or email exist' };
             }
         } catch (ex) {
-            console.log(ex);
             let res = {};
             if (ex.code) {
                 res = {

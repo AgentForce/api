@@ -1,7 +1,7 @@
 import { IPlugin, IPluginOptions } from "../interfaces";
 import * as Hapi from "hapi";
 import { IUser, UserModel } from "../../controller/users/user";
-
+import * as Boom from "boom";
 export default (): IPlugin => {
     return {
         register: (server: Hapi.Server, options: IPluginOptions): Promise<void> => {
@@ -9,6 +9,7 @@ export default (): IPlugin => {
             const serverConfig = options.serverConfigs;
 
             const validateUser = (decoded, request, cb) => {
+                console.log('ttut');
                 database.userModel.findById(decoded.id).lean(true)
                     .then((user: IUser) => {
                         if (!user) {
@@ -18,6 +19,7 @@ export default (): IPlugin => {
                         return cb(null, true);
                     });
             };
+
 
             return new Promise<void>((resolve) => {
                 server.register({

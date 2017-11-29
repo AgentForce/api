@@ -5,7 +5,6 @@ const user_controller_1 = require("./user-controller");
 const UserValidator = require("./user-validator");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
-const user_validator_1 = require("./user-validator");
 function default_1(server, serverConfigs, database) {
     const userController = new user_controller_1.default(serverConfigs, database);
     server.bind(userController);
@@ -14,7 +13,7 @@ function default_1(server, serverConfigs, database) {
         path: '/users/{username}',
         config: {
             handler: userController.getByUsername,
-            // auth: "jwt",
+            auth: "jwt",
             description: 'Get user by username.',
             tags: ['api', 'users'],
             validate: {
@@ -32,7 +31,10 @@ function default_1(server, serverConfigs, database) {
                         '401': {
                             'description': 'Please login.'
                         }
-                    }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
                 }
             }
         }
@@ -112,7 +114,10 @@ function default_1(server, serverConfigs, database) {
                         '401': {
                             'description': 'User does not have authorization.'
                         }
-                    }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
                 }
             }
         }
@@ -153,7 +158,10 @@ function default_1(server, serverConfigs, database) {
                         '200': {
                             'description': 'User created.'
                         }
-                    }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
                 }
             }
         }
@@ -163,14 +171,17 @@ function default_1(server, serverConfigs, database) {
      */
     server.route({
         method: 'POST',
-        path: '/users/changepassword/{id}',
+        path: '/users/changepassword/{username}',
         config: {
-            handler: userController.createUser,
+            handler: userController.changePassword,
             tags: ['api', 'users'],
             auth: "jwt",
             description: 'Change password',
             validate: {
-                headers: user_validator_1.jwtValidator,
+                params: {
+                    username: Joi.string().required()
+                        .description('username')
+                },
                 payload: UserValidator.changePassModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
@@ -198,8 +209,11 @@ function default_1(server, serverConfigs, database) {
                     responses: {
                         '200': {
                             'description': 'change password success'
-                        }
-                    }
+                        },
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
                 }
             }
         }
@@ -220,7 +234,7 @@ function default_1(server, serverConfigs, database) {
                         '200': {
                             'description': 'User logged in.'
                         }
-                    }
+                    },
                 }
             }
         }

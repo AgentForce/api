@@ -28,7 +28,15 @@ export default (): IPlugin => {
                             basePath: '/api',
                             documentationPage: true,
                             documentationPath: '/docs',
-                        }
+                            securityDefinitions: {
+                                "jwt": {
+                                    "type": "apiKey",
+                                    "name": "authorization",
+                                    "in": "header"
+                                }
+                            }
+                        },
+
                     }
                 ], (error) => {
                     if (error) {

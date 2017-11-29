@@ -12,7 +12,24 @@ const postgres_1 = require("../postgres");
 const Bcrypt = require("bcryptjs");
 const code_errors_1 = require("../helpers/code-errors");
 class UserService {
-    static validate() {
+    /**
+     * Check if user exist
+     */
+    static findByUsernameEmail(username, email) {
+        return postgres_1.User
+            .findOne({
+            where: {
+                $or: [{
+                        Email: email,
+                    }, {
+                        UserName: username
+                    }
+                ]
+            }
+        })
+            .catch(ex => {
+            throw ex;
+        });
     }
     /**
      * find User
@@ -24,9 +41,6 @@ class UserService {
             where: {
                 Email: email
             }
-        })
-            .then(result => {
-            return result;
         })
             .catch(ex => {
             throw ex;
@@ -41,6 +55,9 @@ class UserService {
             .findOne({
             where: {
                 UserName: username
+            },
+            attributes: {
+                exclude: ['IsDeleted']
             }
         })
             .catch(ex => {
@@ -78,6 +95,22 @@ class UserService {
                 where: {
                     Id: id
                 },
+                returning: true,
+            })
+                .catch(ex => {
+                throw ex;
+            });
+        });
+    }
+    static changePassword(id, payload, passwordHash) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return postgres_1.User
+                .update({
+                Password: passwordHash
+            }, {
+                where: {
+                    Id: id
+                },
                 returning: true
             })
                 .catch(ex => {
@@ -91,32 +124,37 @@ class UserService {
      */
     static create(payload) {
         return __awaiter(this, void 0, void 0, function* () {
-            let parent = yield this.findByCode(payload.Manager);
-            if (parent == null) {
-                throw { code: code_errors_1.ManulifeErrors.EX_USERNAME_NOT_FOUND, msg: 'Username of manager not found' };
+            let ReportTo = null;
+            if (payload.Manager != null) {
+                let parent = yield this.findByCode(payload.Manager);
+                if (parent == null) {
+                    throw { code: code_errors_1.ManulifeErrors.EX_USERNAME_NOT_FOUND, msg: 'Username of manager not found' };
+                }
+                else {
+                    ReportTo = parent.Id;
+                }
             }
-            else {
-                let user = {
-                    Address: payload.Address,
-                    Birthday: payload.Birthday,
-                    City: payload.City,
-                    UserName: payload.UserName,
-                    Email: payload.Email,
-                    FullName: payload.FullName,
-                    District: payload.District,
-                    Gender: payload.Gender,
-                    GroupId: payload.GroupId,
-                    Phone: payload.Phone,
-                    Password: Bcrypt.hashSync(payload.Password, Bcrypt.genSaltSync(8)),
-                    ReportTo: null,
-                    ReportToList: [],
-                };
-                return postgres_1.User
-                    .create(user)
-                    .catch(ex => {
-                    throw ex;
-                });
-            }
+            console.log(ReportTo);
+            let user = {
+                Address: payload.Address,
+                Birthday: payload.Birthday,
+                City: payload.City,
+                UserName: payload.UserName,
+                Email: payload.Email,
+                FullName: payload.FullName,
+                District: payload.District,
+                Gender: payload.Gender,
+                GroupId: payload.GroupId,
+                Phone: payload.Phone,
+                Password: Bcrypt.hashSync(payload.Password, Bcrypt.genSaltSync(8)),
+                ReportTo: ReportTo,
+                ReportToList: [],
+            };
+            return postgres_1.User
+                .create(user)
+                .catch(ex => {
+                throw ex;
+            });
         });
     }
 }
