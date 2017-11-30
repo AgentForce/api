@@ -13,6 +13,7 @@ const ManulifeErrors = {
     EX_PHONE_EXISTS: 'ex_7',
     EX_ACTIVITYID_NOT_FOUND: 'ex_8',
     EX_LEAD_PROCESS_STEP: 'ex_9',
-    EX_OLDPASSWORD_DONT_CORRECT: 'ex_10'
+    EX_OLDPASSWORD_DONT_CORRECT: 'ex_10',
+    EX_DASHBOARD_CAMP_NOT_FOUND: 'ex_11'
 };
 export { ManulifeErrors };

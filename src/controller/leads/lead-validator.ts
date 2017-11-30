@@ -6,7 +6,7 @@ const createLeadModel = Joi.object().keys({
         .required()
         .description('Campaign id'),
     Phone: Joi.string()
-        .regex(/[0-9]/)
+        .regex(/^[0-9]*$/)
         .required()
         .description('number phone of customer'),
     Name: Joi.string()

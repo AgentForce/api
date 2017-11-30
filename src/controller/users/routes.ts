@@ -135,15 +135,65 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         }
     });
 
+    /**
+     * creat account manulife
+     */
     server.route({
         method: 'POST',
         path: '/users',
         config: {
             handler: userController.createUser,
             tags: ['api', 'users'],
-            description: 'Create a user.',
+            description: 'Create a user of manulife',
             validate: {
                 payload: UserValidator.createUserModel,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        error: {
+                            code: 'ex_payload',
+                            msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    LogUser.create({
+                        type: 'updateprofile',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'User created.'
+                        }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+    /**
+     * create account for resource
+     */
+    server.route({
+        method: 'POST',
+        path: '/authorize',
+        config: {
+            handler: userController.createUser,
+            tags: ['api', 'users'],
+            description: 'Create account for access resource',
+            validate: {
+                payload: UserValidator.ResourceModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST,

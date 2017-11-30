@@ -97,7 +97,7 @@ class CampaignService {
                 where: {
                     Id: campId,
                     IsDeleted: false,
-                    StartDate: {
+                    EndDate: {
                         $gte: date
                     }
                 }
