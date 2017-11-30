@@ -8,16 +8,20 @@
   "info": {
     "title": "Manulife Api",
     "version": "1.0",
-    "description": "Manulife Api Documentation"
+    "description": "Manulife Api Documentation                                [link document api google doc                                ](https://docs.google.com/document/d/12GxLBgiOhIdsZm5nliNah8dVtxxNb06LEr0wEYwmxjg/edit)"
   },
   "tags": [
     {
+      "name": "campaigns",
+      "description": "campaigns"
+    },
+    {
       "name": "leads",
-      "description": "Api tasks interface."
+      "description": "leads."
     },
     {
       "name": "users",
-      "description": "Api users interface."
+      "description": "users."
     }
   ],
   "securityDefinitions": {
@@ -62,6 +66,40 @@
         }
       }
     },
+    "/dashboard/{userid}": {
+      "get": {
+        "summary": "Dashboard",
+        "operationId": "getDashboardUserid",
+        "parameters": [
+          {
+            "type": "number",
+            "description": "userid",
+            "name": "userid",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "tags": [
+          "dashboard"
+        ],
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaign .",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "404": {
+            "description": "Campaign does not exists."
+          }
+        }
+      }
+    },
     "/types/{type}": {
       "get": {
         "summary": "Get types by type (Api support)",
@@ -86,26 +124,6 @@
           },
           "404": {
             "description": "types not found."
-          }
-        }
-      }
-    },
-    "/users/sendmail": {
-      "get": {
-        "summary": "send email(Just test, please dont try)",
-        "operationId": "getUsersSendmail",
-        "tags": [
-          ""
-        ],
-        "responses": {
-          "200": {
-            "description": "User founded.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "401": {
-            "description": "Please login."
           }
         }
       }
@@ -257,119 +275,6 @@
         }
       }
     },
-    "/activities/{id}": {
-      "put": {
-        "summary": "Update a activity",
-        "operationId": "putActivitiesId",
-        "parameters": [
-          {
-            "type": "number",
-            "description": "acitivityId",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 1"
-            }
-          }
-        ],
-        "tags": [
-          "activities"
-        ],
-        "security": [
-          {
-            "jwt": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Updated info.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "400": {
-            "description": "User does not have authorization."
-          }
-        }
-      }
-    },
-    "/leads/{id}": {
-      "put": {
-        "summary": "update a leads",
-        "operationId": "putLeadsId",
-        "parameters": [
-          {
-            "type": "number",
-            "description": "leadid",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 2"
-            }
-          }
-        ],
-        "tags": [
-          "leads"
-        ],
-        "security": [
-          {
-            "jwt": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Lead updated",
-            "schema": {
-              "type": "string"
-            }
-          }
-        }
-      }
-    },
-    "/users/profile": {
-      "put": {
-        "summary": "Update user profile.",
-        "operationId": "putUsersProfile",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 3"
-            }
-          }
-        ],
-        "tags": [
-          "users"
-        ],
-        "security": [
-          {
-            "jwt": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Updated info.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "401": {
-            "description": "User does not have authorization."
-          }
-        }
-      }
-    },
     "/activities": {
       "post": {
         "summary": "Create a activity.",
@@ -379,7 +284,7 @@
             "in": "body",
             "name": "body",
             "schema": {
-              "$ref": "#/definitions/Model 4"
+              "$ref": "#/definitions/Model 1"
             }
           }
         ],
@@ -398,6 +303,37 @@
         }
       }
     },
+    "/authen": {
+      "post": {
+        "summary": "Create account for access resource",
+        "operationId": "postAuthen",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Model 2"
+            }
+          }
+        ],
+        "tags": [
+          "authen"
+        ],
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User created.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/campaigns": {
       "post": {
         "summary": "Create a campaign.",
@@ -407,7 +343,7 @@
             "in": "body",
             "name": "body",
             "schema": {
-              "$ref": "#/definitions/Model 5"
+              "$ref": "#/definitions/Model 3"
             }
           }
         ],
@@ -438,7 +374,7 @@
             "in": "body",
             "name": "body",
             "schema": {
-              "$ref": "#/definitions/Model 6"
+              "$ref": "#/definitions/Model 4"
             }
           }
         ],
@@ -469,7 +405,7 @@
             "in": "body",
             "name": "body",
             "schema": {
-              "$ref": "#/definitions/Model 7"
+              "$ref": "#/definitions/Model 5"
             }
           }
         ],
@@ -491,14 +427,14 @@
     },
     "/users": {
       "post": {
-        "summary": "Create a user.",
+        "summary": "Create a user of manulife",
         "operationId": "postUsers",
         "parameters": [
           {
             "in": "body",
             "name": "body",
             "schema": {
-              "$ref": "#/definitions/Model 8"
+              "$ref": "#/definitions/Model 6"
             }
           }
         ],
@@ -520,10 +456,62 @@
         }
       }
     },
+    "/authen/login": {
+      "post": {
+        "summary": "Authentication.",
+        "operationId": "postAuthenLogin",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Model 7"
+            }
+          }
+        ],
+        "tags": [
+          "authen"
+        ],
+        "responses": {
+          "200": {
+            "description": "logged in.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/users/login": {
       "post": {
         "summary": "Login a user.",
         "operationId": "postUsersLogin",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Model 8"
+            }
+          }
+        ],
+        "tags": [
+          "users"
+        ],
+        "responses": {
+          "200": {
+            "description": "User logged in.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/users/resetpassword": {
+      "post": {
+        "summary": "send email(Just test, please dont try)",
+        "operationId": "postUsersResetpassword",
         "parameters": [
           {
             "in": "body",
@@ -538,10 +526,13 @@
         ],
         "responses": {
           "200": {
-            "description": "User logged in.",
+            "description": "User founded.",
             "schema": {
               "type": "string"
             }
+          },
+          "401": {
+            "description": "Please login."
           }
         }
       }
@@ -583,219 +574,123 @@
           }
         }
       }
+    },
+    "/activities/{id}": {
+      "put": {
+        "summary": "Update a activity",
+        "operationId": "putActivitiesId",
+        "parameters": [
+          {
+            "type": "number",
+            "description": "acitivityId",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Model 11"
+            }
+          }
+        ],
+        "tags": [
+          "activities"
+        ],
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated info.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "User does not have authorization."
+          }
+        }
+      }
+    },
+    "/leads/{id}": {
+      "put": {
+        "summary": "update a leads",
+        "operationId": "putLeadsId",
+        "parameters": [
+          {
+            "type": "number",
+            "description": "leadid",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Model 12"
+            }
+          }
+        ],
+        "tags": [
+          "leads"
+        ],
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lead updated",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/users/profile": {
+      "put": {
+        "summary": "Update user profile.",
+        "operationId": "putUsersProfile",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Model 13"
+            }
+          }
+        ],
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated info.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "User does not have authorization."
+          }
+        }
+      }
     }
   },
   "definitions": {
     "Model 1": {
-      "type": "object",
-      "properties": {
-        "CampId": {
-          "type": "number"
-        },
-        "Location": {
-          "type": "string"
-        },
-        "StartDate": {
-          "type": "string",
-          "format": "date",
-          "example": "2017-11-11"
-        },
-        "EndDate": {
-          "type": "string",
-          "format": "date",
-          "example": "2017-11-12"
-        },
-        "Description": {
-          "type": "string"
-        },
-        "FullDate": {
-          "type": "boolean",
-          "description": "false=waiting, true=done"
-        },
-        "Status": {
-          "type": "number",
-          "description": "1=done, 0=wating",
-          "example": 1,
-          "enum": [
-            0,
-            1
-          ]
-        },
-        "Notification": {
-          "type": "number",
-          "description": "minutes popup alert before activity happen"
-        }
-      },
-      "required": [
-        "CampId",
-        "StartDate",
-        "EndDate",
-        "FullDate",
-        "Notification"
-      ]
-    },
-    "Model 2": {
-      "type": "object",
-      "properties": {
-        "Name": {
-          "type": "string",
-          "description": "Full name"
-        },
-        "Age": {
-          "type": "number",
-          "description": "Get info from api /types, key=age",
-          "enum": [
-            1,
-            2,
-            3,
-            4
-          ]
-        },
-        "Gender": {
-          "type": "number",
-          "description": "Gender of customer. 0 = male, 1 = female",
-          "enum": [
-            0,
-            1
-          ]
-        },
-        "IncomeMonthly": {
-          "type": "number",
-          "description": "Get info from api /types, key=IncomeMonthly",
-          "default": 1,
-          "enum": [
-            1,
-            2,
-            3,
-            4
-          ]
-        },
-        "MaritalStatus": {
-          "type": "number",
-          "description": "Get info from api /types, key=MaritalStatus",
-          "enum": [
-            1,
-            2,
-            3,
-            4
-          ]
-        },
-        "Address": {
-          "type": "string",
-          "maxLength": 500
-        },
-        "City": {
-          "type": "number",
-          "description": "Get info from api /types, key=city"
-        },
-        "Type": {
-          "type": "number",
-          "description": "4 type of activity",
-          "enum": [
-            1,
-            2,
-            3,
-            4
-          ]
-        },
-        "District": {
-          "type": "number",
-          "description": "Get info from api /types, key=district"
-        },
-        "Relationship": {
-          "type": "number",
-          "description": "Get info from api /types, key=Relationship"
-        },
-        "Source": {
-          "type": "number",
-          "description": "Get info from api /types, key=Source"
-        },
-        "Job": {
-          "type": "string"
-        },
-        "LeadType": {
-          "type": "number",
-          "description": "Get info from api /types, key=LeadType"
-        },
-        "Description": {
-          "type": "string",
-          "maxLength": 500
-        }
-      },
-      "required": [
-        "Age",
-        "Gender",
-        "IncomeMonthly",
-        "MaritalStatus",
-        "City",
-        "Type",
-        "District",
-        "Relationship",
-        "Source",
-        "LeadType"
-      ]
-    },
-    "Model 3": {
-      "type": "object",
-      "properties": {
-        "Email": {
-          "type": "string",
-          "example": "tunguyene@gmail.com",
-          "x-format": {
-            "email": true
-          },
-          "x-convert": {
-            "trim": true
-          }
-        },
-        "FullName": {
-          "type": "string"
-        },
-        "Phone": {
-          "type": "string",
-          "example": "01693248887",
-          "pattern": "/[0-9]/"
-        },
-        "UserName": {
-          "type": "string"
-        },
-        "Birthday": {
-          "type": "string",
-          "format": "date",
-          "description": "yyyy-mm-dd",
-          "example": "1993-11-12"
-        },
-        "GroupId": {
-          "type": "number",
-          "example": 2,
-          "enum": [
-            2
-          ]
-        },
-        "Address": {
-          "type": "string",
-          "maxLength": 255
-        },
-        "City": {
-          "type": "integer",
-          "description": "metatypes: type=city"
-        },
-        "District": {
-          "type": "integer",
-          "description": "metatypes: type=district"
-        }
-      },
-      "required": [
-        "Email",
-        "FullName",
-        "Phone",
-        "UserName",
-        "Birthday",
-        "GroupId",
-        "Address"
-      ]
-    },
-    "Model 4": {
       "type": "object",
       "properties": {
         "UserId": {
@@ -823,12 +718,14 @@
         "StartDate": {
           "type": "string",
           "format": "date",
-          "example": "2017-11-11"
+          "example": "2017-11-11",
+          "default": "2017-11-11"
         },
         "EndDate": {
           "type": "string",
           "format": "date",
-          "example": "2017-11-12"
+          "example": "2017-11-12",
+          "default": "2017-11-12"
         },
         "Description": {
           "type": "string"
@@ -852,12 +749,46 @@
         "Notification"
       ]
     },
-    "Model 5": {
+    "Model 2": {
+      "type": "object",
+      "properties": {
+        "Email": {
+          "type": "string",
+          "example": "tunguyene@gmail.com",
+          "default": "tunguyene@gmail.com",
+          "x-format": {
+            "email": true
+          },
+          "x-convert": {
+            "trim": true
+          }
+        },
+        "FullName": {
+          "type": "string",
+          "example": "Tu Nguyen",
+          "default": "Tu Nguyen"
+        },
+        "Password": {
+          "type": "string",
+          "example": "123456",
+          "x-convert": {
+            "trim": true
+          }
+        }
+      },
+      "required": [
+        "Email",
+        "FullName",
+        "Password"
+      ]
+    },
+    "Model 3": {
       "type": "object",
       "properties": {
         "CampType": {
           "type": "number",
-          "description": "metatypes: type=camp-camptype"
+          "description": "metatypes: type=camp-camptype",
+          "default": 1
         },
         "Name": {
           "type": "string"
@@ -881,17 +812,21 @@
         },
         "StartDate": {
           "type": "string",
-          "format": "date"
+          "format": "date",
+          "example": "2017-11-12",
+          "default": "2017-11-12"
         },
         "CaseSize": {
           "type": "number",
           "minimum": 1
         },
         "IncomeMonthly": {
-          "type": "number"
+          "type": "number",
+          "minimum": 1
         },
         "CommissionRate": {
-          "type": "number"
+          "type": "number",
+          "minimum": 1
         }
       },
       "required": [
@@ -906,7 +841,7 @@
         "CommissionRate"
       ]
     },
-    "Model 6": {
+    "Model 4": {
       "type": "object",
       "properties": {
         "UserId": {
@@ -920,7 +855,7 @@
         "Phone": {
           "type": "string",
           "description": "number phone of customer",
-          "pattern": "/[0-9]/"
+          "pattern": "/^[0-9]*$/"
         },
         "Name": {
           "type": "string",
@@ -1023,7 +958,7 @@
         "LeadType"
       ]
     },
-    "Model 7": {
+    "Model 5": {
       "type": "object",
       "properties": {
         "Type": {
@@ -1048,12 +983,13 @@
         "Value"
       ]
     },
-    "Model 8": {
+    "Model 6": {
       "type": "object",
       "properties": {
         "Email": {
           "type": "string",
           "example": "tunguyene@gmail.com",
+          "default": "tunguyene@gmail.com",
           "x-format": {
             "email": true
           },
@@ -1063,7 +999,8 @@
         },
         "FullName": {
           "type": "string",
-          "example": "Tu Nguyen"
+          "example": "Tu Nguyen",
+          "default": "Tu Nguyen"
         },
         "Password": {
           "type": "string",
@@ -1075,6 +1012,7 @@
         "Phone": {
           "type": "string",
           "example": "01693248887",
+          "default": "01693248887",
           "pattern": "/[0-9]/"
         },
         "UserName": {
@@ -1082,6 +1020,7 @@
         },
         "Gender": {
           "type": "number",
+          "default": 0,
           "enum": [
             0,
             1
@@ -1091,11 +1030,13 @@
           "type": "string",
           "format": "date",
           "description": "yyyy-mm-dd",
-          "example": "1993-11-12"
+          "example": "1993-11-12",
+          "default": "1993-11-12"
         },
         "GroupId": {
           "type": "number",
-          "example": 2
+          "example": 2,
+          "default": 2
         },
         "Address": {
           "type": "string",
@@ -1104,16 +1045,18 @@
         "City": {
           "type": "integer",
           "description": "metatypes: type=city",
-          "example": 1
+          "example": 1,
+          "default": 1
         },
         "District": {
           "type": "integer",
           "description": "metatypes: type=district",
-          "example": 1
+          "example": 1,
+          "default": 1
         },
         "Manager": {
           "type": "string",
-          "description": "username of manager"
+          "description": "username of manager: null if empty"
         }
       },
       "required": [
@@ -1128,7 +1071,25 @@
         "Address"
       ]
     },
-    "Model 9": {
+    "Model 7": {
+      "type": "object",
+      "properties": {
+        "Email": {
+          "type": "string"
+        },
+        "Password": {
+          "type": "string",
+          "x-convert": {
+            "trim": true
+          }
+        }
+      },
+      "required": [
+        "Email",
+        "Password"
+      ]
+    },
+    "Model 8": {
       "type": "object",
       "properties": {
         "Username": {
@@ -1144,6 +1105,21 @@
       "required": [
         "Username",
         "Password"
+      ]
+    },
+    "Model 9": {
+      "type": "object",
+      "properties": {
+        "Email": {
+          "type": "string",
+          "default": "tunguyenq@gmail.com",
+          "x-format": {
+            "email": true
+          }
+        }
+      },
+      "required": [
+        "Email"
       ]
     },
     "Model 10": {
@@ -1165,6 +1141,223 @@
       "required": [
         "OldPassword",
         "NewPassword"
+      ]
+    },
+    "Model 11": {
+      "type": "object",
+      "properties": {
+        "CampId": {
+          "type": "number"
+        },
+        "Location": {
+          "type": "string"
+        },
+        "StartDate": {
+          "type": "string",
+          "format": "date",
+          "example": "2017-11-11",
+          "default": "2017-11-11"
+        },
+        "EndDate": {
+          "type": "string",
+          "format": "date",
+          "example": "2017-11-12",
+          "default": "2017-11-12"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "FullDate": {
+          "type": "boolean",
+          "description": "false=waiting, true=done"
+        },
+        "Status": {
+          "type": "number",
+          "description": "1=done, 0=wating",
+          "example": 1,
+          "default": 0,
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "Notification": {
+          "type": "number",
+          "description": "minutes popup alert before activity happen"
+        }
+      },
+      "required": [
+        "CampId",
+        "StartDate",
+        "EndDate",
+        "FullDate",
+        "Notification"
+      ]
+    },
+    "Model 12": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string",
+          "description": "Full name",
+          "default": "Phuong Thao"
+        },
+        "Age": {
+          "type": "number",
+          "description": "Get info from api /types, key=age",
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "Gender": {
+          "type": "number",
+          "description": "Gender of customer. 0 = male, 1 = female",
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "IncomeMonthly": {
+          "type": "number",
+          "description": "Get info from api /types, key=IncomeMonthly",
+          "default": 1,
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "MaritalStatus": {
+          "type": "number",
+          "description": "Get info from api /types, key=MaritalStatus",
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "Address": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "City": {
+          "type": "number",
+          "description": "Get info from api /types, key=city"
+        },
+        "Type": {
+          "type": "number",
+          "description": "4 type of activity",
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "District": {
+          "type": "number",
+          "description": "Get info from api /types, key=district"
+        },
+        "Relationship": {
+          "type": "number",
+          "description": "Get info from api /types, key=Relationship"
+        },
+        "Source": {
+          "type": "number",
+          "description": "Get info from api /types, key=Source"
+        },
+        "Job": {
+          "type": "string"
+        },
+        "LeadType": {
+          "type": "number",
+          "description": "Get info from api /types, key=LeadType"
+        },
+        "Description": {
+          "type": "string",
+          "maxLength": 500
+        }
+      },
+      "required": [
+        "Age",
+        "Gender",
+        "IncomeMonthly",
+        "MaritalStatus",
+        "City",
+        "Type",
+        "District",
+        "Relationship",
+        "Source",
+        "LeadType"
+      ]
+    },
+    "Model 13": {
+      "type": "object",
+      "properties": {
+        "Email": {
+          "type": "string",
+          "example": "tunguyene@gmail.com",
+          "default": "tunguyene@gmail.com",
+          "x-format": {
+            "email": true
+          },
+          "x-convert": {
+            "trim": true
+          }
+        },
+        "FullName": {
+          "type": "string"
+        },
+        "Phone": {
+          "type": "string",
+          "example": "01693248887",
+          "default": "01693248887",
+          "pattern": "/[0-9]/"
+        },
+        "UserName": {
+          "type": "string"
+        },
+        "Birthday": {
+          "type": "string",
+          "format": "date",
+          "description": "yyyy-mm-dd",
+          "example": "1993-11-12",
+          "default": "1993-11-12"
+        },
+        "GroupId": {
+          "type": "number",
+          "example": 2,
+          "default": 2,
+          "enum": [
+            2
+          ]
+        },
+        "Address": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "City": {
+          "type": "integer",
+          "description": "metatypes: type=city"
+        },
+        "District": {
+          "type": "integer",
+          "description": "metatypes: type=district"
+        }
+      },
+      "required": [
+        "Email",
+        "FullName",
+        "Phone",
+        "UserName",
+        "Birthday",
+        "GroupId",
+        "Address"
       ]
     }
   }

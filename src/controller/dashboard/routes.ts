@@ -21,7 +21,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/dashboard/{userid}',
         config: {
             handler: dashboardController.dashboard,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'campaigns'],
             description: 'Dashboard',
             validate: {

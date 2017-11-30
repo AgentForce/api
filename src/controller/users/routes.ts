@@ -12,6 +12,16 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
 
     const userController = new UserController(serverConfigs, database);
     server.bind(userController);
+    server.route({
+        method: 'GET',
+        path: '/docs/{param*}',
+        handler: {
+            directory: {
+                path: 'swagger-ui',
+                listing: false
+            }
+        }
+    });
 
 
     server.route({
@@ -51,8 +61,8 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
      * demo sendmail
      */
     server.route({
-        method: 'GET',
-        path: '/users/sendmail',
+        method: 'POST',
+        path: '/users/resetpassword',
         config: {
             handler: userController.sendMail,
             // auth: "jwt",
@@ -60,6 +70,9 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             description: 'send email(Just test, please dont try)',
             validate: {
                 // headers: UserValidator.jwtValidator,
+                payload: {
+                    Email: Joi.string().email().required().default('tunguyenq@gmail.com')
+                }
             },
             plugins: {
                 'hapi-swagger': {
@@ -76,16 +89,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         }
     });
 
-    server.route({
-        method: 'GET',
-        path: '/docs/{param*}',
-        handler: {
-            directory: {
-                path: 'swagger-ui',
-                listing: false
-            }
-        }
-    });
+
 
     server.route({
         method: 'PUT',
@@ -187,9 +191,9 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
      */
     server.route({
         method: 'POST',
-        path: '/authorize',
+        path: '/authen',
         config: {
-            handler: userController.createUser,
+            handler: userController.authorize,
             tags: ['api', 'users'],
             description: 'Create account for access resource',
             validate: {
@@ -299,6 +303,31 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                     responses: {
                         '200': {
                             'description': 'User logged in.'
+                        }
+                    },
+                }
+            }
+        }
+    });
+
+    /**
+     * login authorize
+     */
+    server.route({
+        method: 'POST',
+        path: '/authen/login',
+        config: {
+            handler: userController.loginAuthen,
+            tags: ['users', 'api'],
+            description: 'Authentication.',
+            validate: {
+                payload: UserValidator.loginResourceModel
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'logged in.'
                         }
                     },
                 }

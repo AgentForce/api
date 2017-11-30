@@ -13,8 +13,8 @@ export default (): IPlugin => {
                             info: {
                                 title: 'Manulife Api',
                                 description: "Manulife Api Documentation\
-                                [link document api google doc]\
-                                (https://docs.google.com/document/d/12GxLBgiOhIdsZm5nliNah8dVtxxNb06LEr0wEYwmxjg/edit)",
+                                [link document api google doc\
+                                ](https://docs.google.com/document/d/12GxLBgiOhIdsZm5nliNah8dVtxxNb06LEr0wEYwmxjg/edit)",
                                 version: '1.0'
                             },
                             tags: [{
@@ -29,7 +29,7 @@ export default (): IPlugin => {
                             swaggerUI: true,
                             basePath: '/api',
                             documentationPage: true,
-                            documentationPath: '/olddocs',
+                            documentationPath: '/docsold',
                             securityDefinitions: {
                                 'jwt': {
                                     "type": "apiKey",

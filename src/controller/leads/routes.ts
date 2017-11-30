@@ -119,7 +119,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/leads',
         config: {
             handler: leadController.create,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'leads'],
             description: 'Create a lead',
             validate: {

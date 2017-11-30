@@ -13,6 +13,9 @@ import { LogUser } from "../../mongo/index";
 import { ManulifeErrors as Ex } from '../../helpers/code-errors';
 const nodemailer = require('nodemailer');
 import * as EmailTemplate from 'email-templates';
+import { User } from "../../postgres/user";
+import * as Faker from 'faker';
+import { SlackAlert } from "../../helpers/index";
 export default class UserController {
 
     private database: IDatabase;
@@ -30,64 +33,111 @@ export default class UserController {
         return Jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiration });
     }
 
-    public sendMail(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+    public async sendMail(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
 
 
         // Generate test SMTP service account from ethereal.email
         // Only needed if you don't have a real mail account for testing
-        nodemailer.createTestAccount((err, account) => {
-            // create reusable transporter object using the default SMTP transport
-            let transporter = nodemailer.createTransport({
-                host: 'smtp.mailgun.org',
-                port: 587,
-                secure: false, // true for 465, false for other ports
-                auth: {
-                    user: 'postmaster@sandbox44fcddb06ee648bab11ed2d961948e16.mailgun.org', // generated ethereal user
-                    pass: 'b8a3360741b54181a34716645f452fee'  // generated ethereal password
+        try {
+            let user = <any>await UserService.findByEmail(request.payload.Email);
+            let res = {};
+            if (user === null) {
+                res = {
+                    code: Ex.EX_USER_EMAIL_NOT_EXIST,
+                    msg: 'reset password: email not exist',
+                    email: request.payload.Email
+                };
+                SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                reply(res).code(HTTP_STATUS.BAD_GATEWAY);
+            }
+            let randPass = Faker.random.alphaNumeric(6);
+            let passwordHash = Bcrypt.hashSync(randPass, Bcrypt.genSaltSync(8));
+            let userPg: any = await User
+                .update({
+                    Password: passwordHash,
+                }, {
+                    where: {
+                        Email: request.payload.Email
+                    }
+                });
+
+            let userMongo: any = await this.database.userModel
+                .update({
+                    email: request.payload.Email,
+                }, {
+                    password: passwordHash
+                });
+
+
+            nodemailer.createTestAccount((err, account) => {
+                // create reusable transporter object using the default SMTP transport
+                let transporter = nodemailer.createTransport({
+                    host: 'smtp.mailgun.org',
+                    port: 587,
+                    secure: false, // true for 465, false for other ports
+                    auth: {
+                        user: 'postmaster@sandbox44fcddb06ee648bab11ed2d961948e16.mailgun.org', // generated ethereal user
+                        pass: 'b8a3360741b54181a34716645f452fee'  // generated ethereal password
+                    }
+                });
+
+                // setup email data with unicode symbols
+                const email = new EmailTemplate({
+                    message: {
+                        from: '"Manulife" <apimanulife@gmail.com>', // sender address
+                    },
+                    // uncomment below to send emails in development/test env:
+                    // send: true
+                    transport: transporter,
+                });
+
+                email.send({
+                    template: 'resetpassword',
+                    message: {
+                        to: user.Email
+                    },
+                    locals: {
+                        name: user.FullName,
+                        password: randPass
+                    }
+                }).then(console.log);
+                res = {
+                    msg: 'send email reset password success',
+                    status: HTTP_STATUS.OK
+                };
+                LogUser.create({
+                    type: 'changepassword',
+                    dataInput: {
+                        params: request.params,
+                        payload: request.payload
+                    },
+                    msg: 'change password success',
+                    meta: {
+                        response: res
+                    }
+                });
+                reply(res).code(HTTP_STATUS.OK);
+            });
+        } catch (ex) {
+            LogUser.create({
+                type: 'changepassword',
+                dataInput: {
+                    params: request.params,
+                    payload: request.payload
+                },
+                msg: 'change password success',
+                meta: {
+                    exception: ex
                 }
             });
-
-            // setup email data with unicode symbols
-            let mailOptions = {
-                from: '"Fred Foo 👻" <foo@blurdybloop.com>', // sender address
-                to: 'tunguyenq@gmail.com', // list of receivers
-                subject: 'Hello ✔', // Subject line
-                text: 'Hello world?', // plain text body
-                html: '<b>Hello world?</b>' // html body
+            let res = {
+                status: HTTP_STATUS.BAD_GATEWAY,
+                msg: 'Reset email have error',
+                email: request.payload.Email
             };
-            const email = new EmailTemplate({
-                message: {
-                    from: '"Fred Foo 👻"  <tunguyene@gmail.com>'
-                },
-                // uncomment below to send emails in development/test env:
-                // send: true
-                transport: transporter,
-            });
-
-            email.send({
-                template: 'resetpassword',
-                message: {
-                    to: 'tunguyenq@gmail.com'
-                },
-                locals: {
-                    name: 'Tu Nguyen'
-                }
-            }).then(console.log).catch(console.error);
-            reply('success');
-            // send mail with defined transport object
-            // transporter.sendMail(mailOptions, (error, info) => {
-            //     if (error) {
-            //         return console.log(error);
-            //     }
-            //     reply('success');
-            //     console.log('Message sent: %s', info.messageId);
-            //     // Preview only available when sending through an Ethereal account
-            //     console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-
-            //     // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@blurdybloop.com>
-            //     // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-            // });
-        });
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+            reply(res).code(HTTP_STATUS.OK);
+        }
     }
 
 
@@ -124,7 +174,10 @@ export default class UserController {
                     });
                     reply(res).code(HTTP_STATUS.OK);
                 } else {
-                    throw { code: Ex.EX_OLDPASSWORD_DONT_CORRECT, msg: 'oldpass dont correct' };
+                    throw {
+                        code: Ex.EX_OLDPASSWORD_DONT_CORRECT,
+                        msg: 'oldpass dont correct'
+                    };
                 }
 
             } else {
@@ -142,7 +195,10 @@ export default class UserController {
                 res = {
                     status: 400,
                     url: request.url.path,
-                    error: { code: 'ex', msg: 'Exception occurred change password' }
+                    error: {
+                        code: 'ex', msg:
+                            'Exception occurred change password'
+                    }
                 };
             }
             LogUser.create({
@@ -157,6 +213,7 @@ export default class UserController {
             reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
+
     /**
      * User login
      */
@@ -178,6 +235,29 @@ export default class UserController {
         reply({
             token: this.generateToken(user),
             info: userPg
+        });
+    }
+
+
+    /**
+    * Authentication
+    */
+    public async loginAuthen(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        const email = request.payload.Email;
+        const password = request.payload.Password;
+        let user: IUser = await this.database
+            .userModel
+            .findOne({ email: email });
+        if (!user) {
+            return reply(Boom.unauthorized("User does not exists."));
+        }
+
+        if (!user.validatePassword(password)) {
+            return reply(Boom.unauthorized("Password is invalid."));
+        }
+
+        reply({
+            token: this.generateToken(user),
         });
     }
 
@@ -291,7 +371,11 @@ export default class UserController {
         try {
             const dataInput = request.payload;
             const user = <any>await UserService.findByUsernameEmail(dataInput.UserName, dataInput.Email);
-            if (user == null) {
+            const userMongo = <any>await this.database.userModel
+                .findOne({
+                    where: { email: dataInput.Email }
+                });
+            if (user == null && userMongo == null) {
                 let iUser: IPayloadCreate = dataInput;
                 let passwordHash = Bcrypt.hashSync(dataInput.Password, Bcrypt.genSaltSync(8));
                 iUser.Password = passwordHash;
@@ -338,6 +422,70 @@ export default class UserController {
             }
             LogUser.create({
                 type: 'createuser',
+                dataInput: request.payload,
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
+
+    /**
+     *  create account resource for use api
+     */
+    public async authorize(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            const dataInput = request.payload;
+            const user = <any>await this.database.userModel
+                .findOne({
+                    where: { email: dataInput.Email }
+                });
+            if (user == null) {
+                let passwordHash = Bcrypt.hashSync(dataInput.Password, Bcrypt.genSaltSync(8));
+                let newUser: any = await this.database.userModel
+                    .create({
+                        userId: -1,
+                        username: dataInput.Email,
+                        email: dataInput.Email,
+                        fullName: dataInput.FullName,
+                        password: passwordHash
+                    })
+                    .catch(ex => {
+                        throw ex;
+                    });
+                return reply({
+                    status: HTTP_STATUS.OK,
+                    data: {
+                        token: this.generateToken(newUser)
+                    }
+                })
+                    .code(HTTP_STATUS.OK);
+            } else {
+                throw { code: Ex.EX_EMAIL_AUTHORIZE_EXIST, msg: 'email exist' };
+            }
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: {
+                        code: Ex.EX_GENERAL,
+                        msg: 'Exception occurred create authorize'
+                    }
+                };
+            }
+            LogUser.create({
+                type: 'createauthorize',
                 dataInput: request.payload,
                 msg: 'errors',
                 meta: {

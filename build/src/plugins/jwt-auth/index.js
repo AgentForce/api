@@ -6,7 +6,6 @@ exports.default = () => {
             const database = options.database;
             const serverConfig = options.serverConfigs;
             const validateUser = (decoded, request, cb) => {
-                console.log('ttut');
                 database.userModel.findById(decoded.id).lean(true)
                     .then((user) => {
                     if (!user) {

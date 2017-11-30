@@ -52,6 +52,21 @@ const createUserModel = Joi.object().keys({
         .description("username of manager: null if empty")
 });
 exports.createUserModel = createUserModel;
+const ResourceModel = Joi.object().keys({
+    Email: Joi.string().email()
+        .trim()
+        .required()
+        .example('tunguyene@gmail.com')
+        .default('tunguyene@gmail.com'),
+    FullName: Joi.string()
+        .required()
+        .example('Tu Nguyen')
+        .default('Tu Nguyen'),
+    Password: Joi.string().trim()
+        .required()
+        .example('123456')
+});
+exports.ResourceModel = ResourceModel;
 /**
  * change password model
  */
@@ -101,6 +116,11 @@ const loginUserModel = Joi.object().keys({
     Password: Joi.string().trim().required()
 });
 exports.loginUserModel = loginUserModel;
+const loginResourceModel = Joi.object().keys({
+    Email: Joi.string().required(),
+    Password: Joi.string().trim().required()
+});
+exports.loginResourceModel = loginResourceModel;
 const jwtValidator = Joi.object({ 'authorization': Joi.string().required() }).unknown();
 exports.jwtValidator = jwtValidator;
 //# sourceMappingURL=user-validator.js.map

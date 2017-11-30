@@ -120,6 +120,11 @@ const loginUserModel = Joi.object().keys({
     Password: Joi.string().trim().required()
 });
 
+
+const loginResourceModel = Joi.object().keys({
+    Email: Joi.string().required(),
+    Password: Joi.string().trim().required()
+});
 const jwtValidator = Joi.object({ 'authorization': Joi.string().required() }).unknown();
 export {
     createUserModel,
@@ -127,5 +132,6 @@ export {
     loginUserModel,
     jwtValidator,
     changePassModel,
-    ResourceModel
+    ResourceModel,
+    loginResourceModel
 };
