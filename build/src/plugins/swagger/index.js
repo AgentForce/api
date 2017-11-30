@@ -28,7 +28,7 @@ exports.default = () => {
                             swaggerUI: true,
                             basePath: '/api',
                             documentationPage: true,
-                            documentationPath: '/olddocs',
+                            documentationPath: '/docsold',
                             securityDefinitions: {
                                 'jwt': {
                                     "type": "apiKey",
