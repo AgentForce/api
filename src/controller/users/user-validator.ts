@@ -52,6 +52,23 @@ const createUserModel = Joi.object().keys({
 });
 
 
+const ResourceModel = Joi.object().keys({
+    Email: Joi.string().email()
+        .trim()
+        .required()
+        .example('tunguyene@gmail.com')
+        .default('tunguyene@gmail.com'),
+    FullName: Joi.string()
+        .required()
+        .example('Tu Nguyen')
+        .default('Tu Nguyen'),
+    Password: Joi.string().trim()
+        .required()
+        .example('123456')
+
+});
+
+
 /**
  * change password model
  */
@@ -103,5 +120,18 @@ const loginUserModel = Joi.object().keys({
     Password: Joi.string().trim().required()
 });
 
+
+const loginResourceModel = Joi.object().keys({
+    Email: Joi.string().required(),
+    Password: Joi.string().trim().required()
+});
 const jwtValidator = Joi.object({ 'authorization': Joi.string().required() }).unknown();
-export { createUserModel, updateProfileModel, loginUserModel, jwtValidator, changePassModel };
+export {
+    createUserModel,
+    updateProfileModel,
+    loginUserModel,
+    jwtValidator,
+    changePassModel,
+    ResourceModel,
+    loginResourceModel
+};

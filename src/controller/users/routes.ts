@@ -12,6 +12,16 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
 
     const userController = new UserController(serverConfigs, database);
     server.bind(userController);
+    server.route({
+        method: 'GET',
+        path: '/docs/{param*}',
+        handler: {
+            directory: {
+                path: 'swagger-ui',
+                listing: false
+            }
+        }
+    });
 
 
     server.route({
@@ -51,8 +61,8 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
      * demo sendmail
      */
     server.route({
-        method: 'GET',
-        path: '/users/sendmail',
+        method: 'POST',
+        path: '/users/resetpassword',
         config: {
             handler: userController.sendMail,
             // auth: "jwt",
@@ -60,6 +70,9 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             description: 'send email(Just test, please dont try)',
             validate: {
                 // headers: UserValidator.jwtValidator,
+                payload: {
+                    Email: Joi.string().email().required().default('tunguyenq@gmail.com')
+                }
             },
             plugins: {
                 'hapi-swagger': {
@@ -76,16 +89,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         }
     });
 
-    server.route({
-        method: 'GET',
-        path: '/docs/{param*}',
-        handler: {
-            directory: {
-                path: 'swagger-ui',
-                listing: false
-            }
-        }
-    });
+
 
     server.route({
         method: 'PUT',
@@ -135,15 +139,65 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         }
     });
 
+    /**
+     * creat account manulife
+     */
     server.route({
         method: 'POST',
         path: '/users',
         config: {
             handler: userController.createUser,
             tags: ['api', 'users'],
-            description: 'Create a user.',
+            description: 'Create a user of manulife',
             validate: {
                 payload: UserValidator.createUserModel,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        error: {
+                            code: 'ex_payload',
+                            msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    LogUser.create({
+                        type: 'updateprofile',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'User created.'
+                        }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+    /**
+     * create account for resource
+     */
+    server.route({
+        method: 'POST',
+        path: '/authen',
+        config: {
+            handler: userController.authorize,
+            tags: ['api', 'users'],
+            description: 'Create account for access resource',
+            validate: {
+                payload: UserValidator.ResourceModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST,
@@ -249,6 +303,31 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                     responses: {
                         '200': {
                             'description': 'User logged in.'
+                        }
+                    },
+                }
+            }
+        }
+    });
+
+    /**
+     * login authorize
+     */
+    server.route({
+        method: 'POST',
+        path: '/authen/login',
+        config: {
+            handler: userController.loginAuthen,
+            tags: ['users', 'api'],
+            description: 'Authentication.',
+            validate: {
+                payload: UserValidator.loginResourceModel
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'logged in.'
                         }
                     },
                 }

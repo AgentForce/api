@@ -6,6 +6,8 @@ const Campaigns = require("./controller/campaigns");
 // import * as Events from './controller/event';
 const Leads = require("./controller/leads");
 const Metatypes = require("./controller/metatype");
+// import * as Invites from './controller/invites';
+const Dashboard = require("./controller/dashboard");
 const Actvities = require("./controller/activities");
 function init(configs, database) {
     return new Promise(resolve => {
@@ -42,6 +44,7 @@ function init(configs, database) {
             Actvities.init(server, configs, database);
             // Events.init(server, configs, database);
             Metatypes.init(server, configs, database);
+            Dashboard.init(server, configs, database);
             // Invites.init(server, configs, database);
             console.log('Routes registered sucessfully.');
             resolve(server);
