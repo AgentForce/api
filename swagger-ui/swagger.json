@@ -12,10 +12,6 @@
   },
   "tags": [
     {
-      "name": "campaigns",
-      "description": "campaigns"
-    },
-    {
       "name": "leads",
       "description": "leads."
     },
@@ -44,6 +40,9 @@
             "in": "path",
             "required": true
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "campaigns"
@@ -79,6 +78,9 @@
             "required": true
           }
         ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "tags": [
           "dashboard"
         ],
@@ -112,6 +114,9 @@
             "required": true
           }
         ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "tags": [
           "types"
         ],
@@ -139,6 +144,9 @@
             "in": "path",
             "required": true
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "users"
@@ -173,6 +181,9 @@
             "required": true
           }
         ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "tags": [
           "campaigns"
         ],
@@ -206,6 +217,9 @@
             "in": "path",
             "required": true
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "leads"
@@ -254,6 +268,9 @@
             "required": true
           }
         ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "tags": [
           "campaigns"
         ],
@@ -281,12 +298,77 @@
         "operationId": "postActivities",
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 1"
-            }
+            "type": "number",
+            "name": "UserId",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "name": "CampId",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "name": "LeadId",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "name": "Type",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "name": "Location",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "format": "date",
+            "default": "2017-11-11",
+            "name": "StartDate",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "format": "date",
+            "default": "2017-11-12",
+            "name": "EndDate",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "Description",
+            "in": "formData"
+          },
+          {
+            "type": "boolean",
+            "description": "false=waiting, true=done",
+            "name": "FullDate",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "minutes popup alert before activity happen",
+            "name": "Notification",
+            "in": "formData",
+            "required": true
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "activities"
@@ -309,12 +391,37 @@
         "operationId": "postAuthen",
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 2"
-            }
+            "type": "string",
+            "default": "tunguyene@gmail.com",
+            "x-format": {
+              "email": true
+            },
+            "x-convert": {
+              "trim": true
+            },
+            "name": "Email",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "Tu Nguyen",
+            "name": "FullName",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-convert": {
+              "trim": true
+            },
+            "name": "Password",
+            "in": "formData",
+            "required": true
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "authen"
@@ -340,12 +447,77 @@
         "operationId": "postCampaigns",
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 3"
-            }
+            "type": "number",
+            "description": "metatypes: type=camp-camptype",
+            "default": 1,
+            "name": "CampType",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "Name",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "enum": [
+              "fc",
+              "fa"
+            ],
+            "name": "Label",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "enum": [
+              "old",
+              "new"
+            ],
+            "name": "Experience",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "name": "UserId",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "format": "date",
+            "default": "2017-11-12",
+            "name": "StartDate",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "minimum": 1,
+            "name": "CaseSize",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "minimum": 1,
+            "name": "IncomeMonthly",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "minimum": 1,
+            "name": "CommissionRate",
+            "in": "formData",
+            "required": true
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "campaigns"
@@ -371,12 +543,152 @@
         "operationId": "postLeads",
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 4"
-            }
+            "type": "number",
+            "description": "user id",
+            "name": "UserId",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "Campaign id",
+            "name": "CampId",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "number phone of customer",
+            "pattern": "/^[0-9]*$/",
+            "name": "Phone",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Full name",
+            "name": "Name",
+            "in": "formData"
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=age",
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "name": "Age",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "Gender of customer. 0 = male, 1 = female",
+            "enum": [
+              0,
+              1
+            ],
+            "name": "Gender",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=IncomeMonthly",
+            "default": 1,
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "name": "IncomeMonthly",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "4 type of activity",
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "name": "Type",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=MaritalStatus",
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "name": "MaritalStatus",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "maxLength": 500,
+            "name": "Address",
+            "in": "formData"
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=city",
+            "name": "City",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=district",
+            "name": "District",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=Relationship",
+            "name": "Relationship",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=Source",
+            "name": "Source",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "Job",
+            "in": "formData"
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=LeadType",
+            "name": "LeadType",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "maxLength": 500,
+            "name": "Description",
+            "in": "formData"
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "leads"
@@ -402,12 +714,34 @@
         "operationId": "postTypes",
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 5"
-            }
+            "type": "string",
+            "x-convert": {
+              "lowercase": true
+            },
+            "name": "Type",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "name": "Key",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "Value",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "Description",
+            "in": "formData"
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "types"
@@ -431,12 +765,105 @@
         "operationId": "postUsers",
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 6"
-            }
+            "type": "string",
+            "default": "tunguyene@gmail.com",
+            "x-format": {
+              "email": true
+            },
+            "x-convert": {
+              "trim": true
+            },
+            "name": "Email",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "Tu Nguyen",
+            "name": "FullName",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-convert": {
+              "trim": true
+            },
+            "name": "Password",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "01693248887",
+            "pattern": "/[0-9]/",
+            "name": "Phone",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "UserName",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "default": 0,
+            "enum": [
+              0,
+              1
+            ],
+            "name": "Gender",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "format": "date",
+            "description": "yyyy-mm-dd",
+            "default": "1993-11-12",
+            "name": "Birthday",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "default": 2,
+            "name": "GroupId",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "maxLength": 255,
+            "name": "Address",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "metatypes: type=city",
+            "default": 1,
+            "name": "City",
+            "in": "formData"
+          },
+          {
+            "type": "integer",
+            "description": "metatypes: type=district",
+            "default": 1,
+            "name": "District",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "description": "username of manager: null if empty",
+            "name": "Manager",
+            "in": "formData"
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "users"
@@ -462,12 +889,23 @@
         "operationId": "postAuthenLogin",
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 7"
-            }
+            "type": "string",
+            "name": "Email",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-convert": {
+              "trim": true
+            },
+            "name": "Password",
+            "in": "formData",
+            "required": true
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "authen"
@@ -488,12 +926,23 @@
         "operationId": "postUsersLogin",
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 8"
-            }
+            "type": "string",
+            "name": "Username",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-convert": {
+              "trim": true
+            },
+            "name": "Password",
+            "in": "formData",
+            "required": true
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "users"
@@ -514,12 +963,18 @@
         "operationId": "postUsersResetpassword",
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 9"
-            }
+            "type": "string",
+            "default": "tunguyenq@gmail.com",
+            "x-format": {
+              "email": true
+            },
+            "name": "Email",
+            "in": "formData",
+            "required": true
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "users"
@@ -550,12 +1005,26 @@
             "required": true
           },
           {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 10"
-            }
+            "type": "string",
+            "x-convert": {
+              "trim": true
+            },
+            "name": "OldPassword",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-convert": {
+              "trim": true
+            },
+            "name": "NewPassword",
+            "in": "formData",
+            "required": true
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "users"
@@ -588,12 +1057,65 @@
             "required": true
           },
           {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 11"
-            }
+            "type": "number",
+            "name": "CampId",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "Location",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "format": "date",
+            "default": "2017-11-11",
+            "name": "StartDate",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "format": "date",
+            "default": "2017-11-12",
+            "name": "EndDate",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "Description",
+            "in": "formData"
+          },
+          {
+            "type": "boolean",
+            "description": "false=waiting, true=done",
+            "name": "FullDate",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "1=done, 0=wating",
+            "default": 0,
+            "enum": [
+              0,
+              1
+            ],
+            "name": "Status",
+            "in": "formData"
+          },
+          {
+            "type": "number",
+            "description": "minutes popup alert before activity happen",
+            "name": "Notification",
+            "in": "formData",
+            "required": true
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "activities"
@@ -629,12 +1151,131 @@
             "required": true
           },
           {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 12"
-            }
+            "type": "string",
+            "description": "Full name",
+            "default": "Phuong Thao",
+            "name": "Name",
+            "in": "formData"
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=age",
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "name": "Age",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "Gender of customer. 0 = male, 1 = female",
+            "enum": [
+              0,
+              1
+            ],
+            "name": "Gender",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=IncomeMonthly",
+            "default": 1,
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "name": "IncomeMonthly",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=MaritalStatus",
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "name": "MaritalStatus",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "maxLength": 500,
+            "name": "Address",
+            "in": "formData"
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=city",
+            "name": "City",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "4 type of activity",
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "name": "Type",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=district",
+            "name": "District",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=Relationship",
+            "name": "Relationship",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=Source",
+            "name": "Source",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "Job",
+            "in": "formData"
+          },
+          {
+            "type": "number",
+            "description": "Get info from api /types, key=LeadType",
+            "name": "LeadType",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "maxLength": 500,
+            "name": "Description",
+            "in": "formData"
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "leads"
@@ -660,12 +1301,79 @@
         "operationId": "putUsersProfile",
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/Model 13"
-            }
+            "type": "string",
+            "default": "tunguyene@gmail.com",
+            "x-format": {
+              "email": true
+            },
+            "x-convert": {
+              "trim": true
+            },
+            "name": "Email",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "FullName",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "default": "01693248887",
+            "pattern": "/[0-9]/",
+            "name": "Phone",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "UserName",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "format": "date",
+            "description": "yyyy-mm-dd",
+            "default": "1993-11-12",
+            "name": "Birthday",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "number",
+            "default": 2,
+            "enum": [
+              2
+            ],
+            "name": "GroupId",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "maxLength": 255,
+            "name": "Address",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "metatypes: type=city",
+            "name": "City",
+            "in": "formData"
+          },
+          {
+            "type": "integer",
+            "description": "metatypes: type=district",
+            "name": "District",
+            "in": "formData"
           }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
         ],
         "tags": [
           "users"
@@ -689,676 +1397,5 @@
       }
     }
   },
-  "definitions": {
-    "Model 1": {
-      "type": "object",
-      "properties": {
-        "UserId": {
-          "type": "number"
-        },
-        "CampId": {
-          "type": "number"
-        },
-        "LeadId": {
-          "type": "number"
-        },
-        "Type": {
-          "type": "number",
-          "example": 1,
-          "enum": [
-            1,
-            2,
-            3,
-            4
-          ]
-        },
-        "Location": {
-          "type": "string"
-        },
-        "StartDate": {
-          "type": "string",
-          "format": "date",
-          "example": "2017-11-11",
-          "default": "2017-11-11"
-        },
-        "EndDate": {
-          "type": "string",
-          "format": "date",
-          "example": "2017-11-12",
-          "default": "2017-11-12"
-        },
-        "Description": {
-          "type": "string"
-        },
-        "FullDate": {
-          "type": "boolean",
-          "description": "false=waiting, true=done"
-        },
-        "Notification": {
-          "type": "number",
-          "description": "minutes popup alert before activity happen"
-        }
-      },
-      "required": [
-        "UserId",
-        "CampId",
-        "LeadId",
-        "StartDate",
-        "EndDate",
-        "FullDate",
-        "Notification"
-      ]
-    },
-    "Model 2": {
-      "type": "object",
-      "properties": {
-        "Email": {
-          "type": "string",
-          "example": "tunguyene@gmail.com",
-          "default": "tunguyene@gmail.com",
-          "x-format": {
-            "email": true
-          },
-          "x-convert": {
-            "trim": true
-          }
-        },
-        "FullName": {
-          "type": "string",
-          "example": "Tu Nguyen",
-          "default": "Tu Nguyen"
-        },
-        "Password": {
-          "type": "string",
-          "example": "123456",
-          "x-convert": {
-            "trim": true
-          }
-        }
-      },
-      "required": [
-        "Email",
-        "FullName",
-        "Password"
-      ]
-    },
-    "Model 3": {
-      "type": "object",
-      "properties": {
-        "CampType": {
-          "type": "number",
-          "description": "metatypes: type=camp-camptype",
-          "default": 1
-        },
-        "Name": {
-          "type": "string"
-        },
-        "Label": {
-          "type": "string",
-          "enum": [
-            "fc",
-            "fa"
-          ]
-        },
-        "Experience": {
-          "type": "string",
-          "enum": [
-            "old",
-            "new"
-          ]
-        },
-        "UserId": {
-          "type": "number"
-        },
-        "StartDate": {
-          "type": "string",
-          "format": "date",
-          "example": "2017-11-12",
-          "default": "2017-11-12"
-        },
-        "CaseSize": {
-          "type": "number",
-          "minimum": 1
-        },
-        "IncomeMonthly": {
-          "type": "number",
-          "minimum": 1
-        },
-        "CommissionRate": {
-          "type": "number",
-          "minimum": 1
-        }
-      },
-      "required": [
-        "CampType",
-        "Name",
-        "Label",
-        "Experience",
-        "UserId",
-        "StartDate",
-        "CaseSize",
-        "IncomeMonthly",
-        "CommissionRate"
-      ]
-    },
-    "Model 4": {
-      "type": "object",
-      "properties": {
-        "UserId": {
-          "type": "number",
-          "description": "user id"
-        },
-        "CampId": {
-          "type": "number",
-          "description": "Campaign id"
-        },
-        "Phone": {
-          "type": "string",
-          "description": "number phone of customer",
-          "pattern": "/^[0-9]*$/"
-        },
-        "Name": {
-          "type": "string",
-          "description": "Full name"
-        },
-        "Age": {
-          "type": "number",
-          "description": "Get info from api /types, key=age",
-          "enum": [
-            1,
-            2,
-            3,
-            4
-          ]
-        },
-        "Gender": {
-          "type": "number",
-          "description": "Gender of customer. 0 = male, 1 = female",
-          "enum": [
-            0,
-            1
-          ]
-        },
-        "IncomeMonthly": {
-          "type": "number",
-          "description": "Get info from api /types, key=IncomeMonthly",
-          "default": 1,
-          "enum": [
-            1,
-            2,
-            3,
-            4
-          ]
-        },
-        "Type": {
-          "type": "number",
-          "description": "4 type of activity",
-          "enum": [
-            1,
-            2,
-            3,
-            4
-          ]
-        },
-        "MaritalStatus": {
-          "type": "number",
-          "description": "Get info from api /types, key=MaritalStatus",
-          "enum": [
-            1,
-            2,
-            3,
-            4
-          ]
-        },
-        "Address": {
-          "type": "string",
-          "maxLength": 500
-        },
-        "City": {
-          "type": "number",
-          "description": "Get info from api /types, key=city"
-        },
-        "District": {
-          "type": "number",
-          "description": "Get info from api /types, key=district"
-        },
-        "Relationship": {
-          "type": "number",
-          "description": "Get info from api /types, key=Relationship"
-        },
-        "Source": {
-          "type": "number",
-          "description": "Get info from api /types, key=Source"
-        },
-        "Job": {
-          "type": "string"
-        },
-        "LeadType": {
-          "type": "number",
-          "description": "Get info from api /types, key=LeadType"
-        },
-        "Description": {
-          "type": "string",
-          "maxLength": 500
-        }
-      },
-      "required": [
-        "UserId",
-        "CampId",
-        "Phone",
-        "Age",
-        "Gender",
-        "IncomeMonthly",
-        "Type",
-        "MaritalStatus",
-        "City",
-        "District",
-        "Relationship",
-        "Source",
-        "LeadType"
-      ]
-    },
-    "Model 5": {
-      "type": "object",
-      "properties": {
-        "Type": {
-          "type": "string",
-          "x-convert": {
-            "lowercase": true
-          }
-        },
-        "Key": {
-          "type": "number"
-        },
-        "Value": {
-          "type": "string"
-        },
-        "Description": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "Type",
-        "Key",
-        "Value"
-      ]
-    },
-    "Model 6": {
-      "type": "object",
-      "properties": {
-        "Email": {
-          "type": "string",
-          "example": "tunguyene@gmail.com",
-          "default": "tunguyene@gmail.com",
-          "x-format": {
-            "email": true
-          },
-          "x-convert": {
-            "trim": true
-          }
-        },
-        "FullName": {
-          "type": "string",
-          "example": "Tu Nguyen",
-          "default": "Tu Nguyen"
-        },
-        "Password": {
-          "type": "string",
-          "example": "123456",
-          "x-convert": {
-            "trim": true
-          }
-        },
-        "Phone": {
-          "type": "string",
-          "example": "01693248887",
-          "default": "01693248887",
-          "pattern": "/[0-9]/"
-        },
-        "UserName": {
-          "type": "string"
-        },
-        "Gender": {
-          "type": "number",
-          "default": 0,
-          "enum": [
-            0,
-            1
-          ]
-        },
-        "Birthday": {
-          "type": "string",
-          "format": "date",
-          "description": "yyyy-mm-dd",
-          "example": "1993-11-12",
-          "default": "1993-11-12"
-        },
-        "GroupId": {
-          "type": "number",
-          "example": 2,
-          "default": 2
-        },
-        "Address": {
-          "type": "string",
-          "maxLength": 255
-        },
-        "City": {
-          "type": "integer",
-          "description": "metatypes: type=city",
-          "example": 1,
-          "default": 1
-        },
-        "District": {
-          "type": "integer",
-          "description": "metatypes: type=district",
-          "example": 1,
-          "default": 1
-        },
-        "Manager": {
-          "type": "string",
-          "description": "username of manager: null if empty"
-        }
-      },
-      "required": [
-        "Email",
-        "FullName",
-        "Password",
-        "Phone",
-        "UserName",
-        "Gender",
-        "Birthday",
-        "GroupId",
-        "Address"
-      ]
-    },
-    "Model 7": {
-      "type": "object",
-      "properties": {
-        "Email": {
-          "type": "string"
-        },
-        "Password": {
-          "type": "string",
-          "x-convert": {
-            "trim": true
-          }
-        }
-      },
-      "required": [
-        "Email",
-        "Password"
-      ]
-    },
-    "Model 8": {
-      "type": "object",
-      "properties": {
-        "Username": {
-          "type": "string"
-        },
-        "Password": {
-          "type": "string",
-          "x-convert": {
-            "trim": true
-          }
-        }
-      },
-      "required": [
-        "Username",
-        "Password"
-      ]
-    },
-    "Model 9": {
-      "type": "object",
-      "properties": {
-        "Email": {
-          "type": "string",
-          "default": "tunguyenq@gmail.com",
-          "x-format": {
-            "email": true
-          }
-        }
-      },
-      "required": [
-        "Email"
-      ]
-    },
-    "Model 10": {
-      "type": "object",
-      "properties": {
-        "OldPassword": {
-          "type": "string",
-          "x-convert": {
-            "trim": true
-          }
-        },
-        "NewPassword": {
-          "type": "string",
-          "x-convert": {
-            "trim": true
-          }
-        }
-      },
-      "required": [
-        "OldPassword",
-        "NewPassword"
-      ]
-    },
-    "Model 11": {
-      "type": "object",
-      "properties": {
-        "CampId": {
-          "type": "number"
-        },
-        "Location": {
-          "type": "string"
-        },
-        "StartDate": {
-          "type": "string",
-          "format": "date",
-          "example": "2017-11-11",
-          "default": "2017-11-11"
-        },
-        "EndDate": {
-          "type": "string",
-          "format": "date",
-          "example": "2017-11-12",
-          "default": "2017-11-12"
-        },
-        "Description": {
-          "type": "string"
-        },
-        "FullDate": {
-          "type": "boolean",
-          "description": "false=waiting, true=done"
-        },
-        "Status": {
-          "type": "number",
-          "description": "1=done, 0=wating",
-          "example": 1,
-          "default": 0,
-          "enum": [
-            0,
-            1
-          ]
-        },
-        "Notification": {
-          "type": "number",
-          "description": "minutes popup alert before activity happen"
-        }
-      },
-      "required": [
-        "CampId",
-        "StartDate",
-        "EndDate",
-        "FullDate",
-        "Notification"
-      ]
-    },
-    "Model 12": {
-      "type": "object",
-      "properties": {
-        "Name": {
-          "type": "string",
-          "description": "Full name",
-          "default": "Phuong Thao"
-        },
-        "Age": {
-          "type": "number",
-          "description": "Get info from api /types, key=age",
-          "enum": [
-            1,
-            2,
-            3,
-            4
-          ]
-        },
-        "Gender": {
-          "type": "number",
-          "description": "Gender of customer. 0 = male, 1 = female",
-          "enum": [
-            0,
-            1
-          ]
-        },
-        "IncomeMonthly": {
-          "type": "number",
-          "description": "Get info from api /types, key=IncomeMonthly",
-          "default": 1,
-          "enum": [
-            1,
-            2,
-            3,
-            4
-          ]
-        },
-        "MaritalStatus": {
-          "type": "number",
-          "description": "Get info from api /types, key=MaritalStatus",
-          "enum": [
-            1,
-            2,
-            3,
-            4
-          ]
-        },
-        "Address": {
-          "type": "string",
-          "maxLength": 500
-        },
-        "City": {
-          "type": "number",
-          "description": "Get info from api /types, key=city"
-        },
-        "Type": {
-          "type": "number",
-          "description": "4 type of activity",
-          "enum": [
-            1,
-            2,
-            3,
-            4
-          ]
-        },
-        "District": {
-          "type": "number",
-          "description": "Get info from api /types, key=district"
-        },
-        "Relationship": {
-          "type": "number",
-          "description": "Get info from api /types, key=Relationship"
-        },
-        "Source": {
-          "type": "number",
-          "description": "Get info from api /types, key=Source"
-        },
-        "Job": {
-          "type": "string"
-        },
-        "LeadType": {
-          "type": "number",
-          "description": "Get info from api /types, key=LeadType"
-        },
-        "Description": {
-          "type": "string",
-          "maxLength": 500
-        }
-      },
-      "required": [
-        "Age",
-        "Gender",
-        "IncomeMonthly",
-        "MaritalStatus",
-        "City",
-        "Type",
-        "District",
-        "Relationship",
-        "Source",
-        "LeadType"
-      ]
-    },
-    "Model 13": {
-      "type": "object",
-      "properties": {
-        "Email": {
-          "type": "string",
-          "example": "tunguyene@gmail.com",
-          "default": "tunguyene@gmail.com",
-          "x-format": {
-            "email": true
-          },
-          "x-convert": {
-            "trim": true
-          }
-        },
-        "FullName": {
-          "type": "string"
-        },
-        "Phone": {
-          "type": "string",
-          "example": "01693248887",
-          "default": "01693248887",
-          "pattern": "/[0-9]/"
-        },
-        "UserName": {
-          "type": "string"
-        },
-        "Birthday": {
-          "type": "string",
-          "format": "date",
-          "description": "yyyy-mm-dd",
-          "example": "1993-11-12",
-          "default": "1993-11-12"
-        },
-        "GroupId": {
-          "type": "number",
-          "example": 2,
-          "default": 2,
-          "enum": [
-            2
-          ]
-        },
-        "Address": {
-          "type": "string",
-          "maxLength": 255
-        },
-        "City": {
-          "type": "integer",
-          "description": "metatypes: type=city"
-        },
-        "District": {
-          "type": "integer",
-          "description": "metatypes: type=district"
-        }
-      },
-      "required": [
-        "Email",
-        "FullName",
-        "Phone",
-        "UserName",
-        "Birthday",
-        "GroupId",
-        "Address"
-      ]
-    }
-  }
+  "definitions": {}
 }
