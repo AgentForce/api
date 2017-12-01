@@ -13,7 +13,7 @@ export default (): IPlugin => {
                             info: {
                                 title: 'Manulife Api',
                                 description: "Manulife Api Documentation\
-                                [link document api google doc\
+                                [link document api \
                                 ](https://1drv.ms/w/s!AqHtODf7o0eageFb46YAIgIQwy0dEw)",
                                 version: '1.0'
                             },
