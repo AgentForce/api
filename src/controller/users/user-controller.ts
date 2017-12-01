@@ -16,6 +16,28 @@ import * as EmailTemplate from 'email-templates';
 import { User } from "../../postgres/user";
 import * as Faker from 'faker';
 import { SlackAlert } from "../../helpers/index";
+
+import * as path from 'path';
+import * as fs from 'fs';
+import * as Loki from 'lokijs';
+import {
+    imageFilter, loadCollection, cleanFolder,
+    uploader
+} from '../../helpers/utils';
+
+// setup
+const DB_NAME = 'db.json';
+const COLLECTION_NAME = 'images';
+const UPLOAD_PATH = 'uploads';
+const fileOptions: FileUploaderOption = { dest: `${UPLOAD_PATH}/`, fileFilter: imageFilter };
+const db = new Loki(`${UPLOAD_PATH}/${DB_NAME}`, { persistenceMethod: 'fs' });
+
+// optional: clean all data before start
+// cleanFolder(UPLOAD_PATH);
+if (!fs.existsSync(UPLOAD_PATH)) {
+    fs.mkdirSync(UPLOAD_PATH);
+}
+
 export default class UserController {
 
     private database: IDatabase;
@@ -33,6 +55,24 @@ export default class UserController {
         return Jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiration });
     }
 
+    public async uploadAvatar(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            const data = request.payload;
+            const files = data['photos'];
+
+            const filesDetails = await uploader(files, fileOptions);
+            const col = await loadCollection(COLLECTION_NAME, db);
+            const result = [].concat(col.insert(filesDetails));
+
+            db.saveDatabase();
+            reply(result.map(x => ({ id: x.$loki, fileName: x.filename, originalName: x.originalname })));
+        } catch (err) {
+            reply(Boom.badRequest(err.message, err));
+        }
+    }
+    /**
+     * send mail
+     */
     public async sendMail(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
 
 

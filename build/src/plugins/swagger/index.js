@@ -23,7 +23,7 @@ exports.default = () => {
                                     'name': 'users',
                                     'description': 'users.'
                                 }],
-                            payloadType: 'form',
+                            // payloadType: 'form',
                             // tagsGroupingFilter: 'users',
                             swaggerUI: true,
                             basePath: '/api',

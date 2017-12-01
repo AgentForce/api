@@ -20,6 +20,20 @@ const EmailTemplate = require("email-templates");
 const user_1 = require("../../postgres/user");
 const Faker = require("faker");
 const index_2 = require("../../helpers/index");
+const fs = require("fs");
+const Loki = require("lokijs");
+const utils_1 = require("../../helpers/utils");
+// setup
+const DB_NAME = 'db.json';
+const COLLECTION_NAME = 'images';
+const UPLOAD_PATH = 'uploads';
+const fileOptions = { dest: `${UPLOAD_PATH}/`, fileFilter: utils_1.imageFilter };
+const db = new Loki(`${UPLOAD_PATH}/${DB_NAME}`, { persistenceMethod: 'fs' });
+// optional: clean all data before start
+// cleanFolder(UPLOAD_PATH);
+if (!fs.existsSync(UPLOAD_PATH)) {
+    fs.mkdirSync(UPLOAD_PATH);
+}
 class UserController {
     constructor(configs, database) {
         this.database = database;
@@ -31,6 +45,25 @@ class UserController {
         const payload = { id: user._id };
         return Jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiration });
     }
+    uploadAvatar(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const data = request.payload;
+                const files = data['photos'];
+                const filesDetails = yield utils_1.uploader(files, fileOptions);
+                const col = yield utils_1.loadCollection(COLLECTION_NAME, db);
+                const result = [].concat(col.insert(filesDetails));
+                db.saveDatabase();
+                reply(result.map(x => ({ id: x.$loki, fileName: x.filename, originalName: x.originalname })));
+            }
+            catch (err) {
+                reply(Boom.badRequest(err.message, err));
+            }
+        });
+    }
+    /**
+     * send mail
+     */
     sendMail(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             // Generate test SMTP service account from ethereal.email
