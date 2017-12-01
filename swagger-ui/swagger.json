@@ -1,6 +1,6 @@
 {
   "swagger": "2.0",
-  "host": "https://apimanulife.herokuapp.com",
+  "host": "apimanulife.herokuapp.com",
   "basePath": "/api",
   "schemes": [
     "http"
