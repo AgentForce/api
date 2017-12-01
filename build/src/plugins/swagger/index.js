@@ -13,7 +13,7 @@ exports.default = () => {
                                 title: 'Manulife Api',
                                 description: "Manulife Api Documentation\
                                 [link document api google doc\
-                                ](https://docs.google.com/document/d/12GxLBgiOhIdsZm5nliNah8dVtxxNb06LEr0wEYwmxjg/edit)",
+                                ](https://1drv.ms/w/s!AqHtODf7o0eageFb46YAIgIQwy0dEw)",
                                 version: '1.0'
                             },
                             tags: [{
