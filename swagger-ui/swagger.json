@@ -3,7 +3,7 @@
   "host": "apimanulife.herokuapp.com",
   "basePath": "/api",
   "schemes": [
-    "http"
+    "https"
   ],
   "info": {
     "title": "Manulife Api",
