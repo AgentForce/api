@@ -173,7 +173,7 @@ export default class CampaignController {
 
 
     /**
-     * get a campaign by campaignid
+     * get by campaignid
      */
     public async getByCampaignId(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {

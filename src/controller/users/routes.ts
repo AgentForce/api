@@ -80,12 +80,15 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         config: {
             handler: userController.sendMail,
             // auth: "jwt",
-            tags: ['users'],
+            tags: ['api', 'users'],
             description: 'send email(Just test, please dont try)',
             validate: {
                 // headers: UserValidator.jwtValidator,
                 payload: {
-                    Email: Joi.string().email().required().default('tunguyenq@gmail.com')
+                    Email: Joi.string()
+                        .email()
+                        .required()
+                        .default('tunguyenq@gmail.com')
                 }
             },
             plugins: {
@@ -128,8 +131,10 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 // headers: UserValidator.jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: 'ex_payload', msg: 'payload dont valid',
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        error: {
+                            code: 'ex_payload',
+                            msg: 'payload dont valid',
                             details: error
                         }
                     };

@@ -19,6 +19,9 @@ export default class ActivitiesController {
         this.database = database;
     }
 
+    /**
+     * Update activity
+     */
     public async update(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let iAc = request.payload as IPayloadUpdate;
@@ -76,7 +79,9 @@ export default class ActivitiesController {
         }
     }
 
-
+    /**
+     * create new actiivty
+     */
     public async create(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let iAc = request.payload as IPayloadCreate;

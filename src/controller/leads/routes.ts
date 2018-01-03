@@ -12,6 +12,71 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     const leadController = new LeadController(configs, database);
     server.bind(leadController);
 
+
+    server.route({
+        method: 'GET',
+        path: '/leads/{id}',
+        config: {
+            handler: leadController.findById,
+            auth: "jwt",
+            tags: ['api', 'leads'],
+            description: 'Find a lead by leadId',
+            validate: {
+                params: {
+                    id: Joi.number()
+                        .required()
+                        .example(38)
+                        .description('leadid')
+                },
+                // headers: jwtValidator,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: Ex.EX_PAYLOAD, msg:
+                                'payload dont valid',
+                            details: error
+                        }
+                    };
+                    LogLead.create({
+                        type: 'detaillead',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
+                        },
+                        '404': {
+                            description: 'lead not found'
+                        }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
+
     server.route({
         method: 'GET',
         path: '/leads/detail/{id}',
@@ -140,7 +205,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             handler: leadController.create,
             auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'Create a lead',
+            description: 'Create new lead',
             validate: {
                 payload: LeadValidator.createLeadModel,
                 // headers: jwtValidator,
