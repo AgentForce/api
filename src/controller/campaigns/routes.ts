@@ -23,7 +23,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         config: {
             handler: campaignController.leadsOfCamp,
             auth: "jwt",
-            tags: ['api', 'campaigns'],
+            tags: ['campaigns'],
             description: 'Get Customer(leads) in a campaigns by id.',
             validate: {
                 params: {
@@ -57,8 +57,17 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Campaign .'
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .array(),
+                                }
+                            )
                         },
                         '404': {
                             'description': 'Campaign does not exists.'
@@ -115,8 +124,17 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Campaign founded.'
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
                         },
                         '404': {
                             'description': 'Campaign does not exists.'
@@ -173,11 +191,33 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Campaign founded.'
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .array().items({
+
+                                        }),
+                                }
+                            )
                         },
                         '404': {
-                            'description': 'Campaign does not exists.'
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.NOT_FOUND),
+                                    data: Joi
+                                        .array().items({
+
+                                        }),
+                                }
+                            )
                         }
                     },
                     security: [{
@@ -226,9 +266,18 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Created campaign.'
-                        }
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
+                        },
                     },
                     security: [{
                         'jwt': []

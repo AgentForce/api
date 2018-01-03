@@ -41,11 +41,25 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'User founded.'
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
                         },
                         '401': {
-                            'description': 'Please login.'
+                            'description': 'Please login.',
+                            schema: Joi.object({
+                                "statusCode": 401,
+                                "error": "Unauthorized",
+                                "message": "Missing authentication"
+                            })
                         }
                     },
                     security: [{
@@ -66,7 +80,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         config: {
             handler: userController.sendMail,
             // auth: "jwt",
-            tags: ['api', 'users'],
+            tags: ['users'],
             description: 'send email(Just test, please dont try)',
             validate: {
                 // headers: UserValidator.jwtValidator,
@@ -77,8 +91,17 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'User founded.'
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
                         },
                         '401': {
                             'description': 'Please login.'
@@ -88,6 +111,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             }
         }
     });
+
 
 
 
@@ -124,8 +148,17 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Updated info.',
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
                         },
                         '401': {
                             'description': 'User does not have authorization.'
@@ -175,9 +208,18 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'User created.'
-                        }
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
+                        },
                     },
                     security: [{
                         'jwt': []
@@ -222,9 +264,18 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'User created.'
-                        }
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
+                        },
                     },
                     security: [{
                         'jwt': []
@@ -275,8 +326,17 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'change password success'
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
                         },
                     },
                     security: [{

@@ -26,7 +26,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             description: 'Dashboard',
             validate: {
                 params: {
-                    userid: Joi.number().required().description('userid')
+                    userid: Joi.number()
+                        .required()
+                        .description('userid')
                 },
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
@@ -54,8 +56,17 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Campaign .'
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
                         },
                         '404': {
                             'description': 'Campaign does not exists.'

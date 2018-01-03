@@ -50,8 +50,17 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Lead found'
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
                         },
                         '404': {
                             description: 'lead not found'
@@ -65,6 +74,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         }
     });
 
+    /**
+     * Update a lead
+     */
     server.route({
         method: 'PUT',
         path: '/leads/{id}',
@@ -76,7 +88,11 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             validate: {
                 payload: LeadValidator.updateModel,
                 params: {
-                    id: Joi.number().required().example(38).description('leadid')
+                    id: Joi
+                        .number().
+                        required()
+                        .example(38)
+                        .description('leadid')
                 },
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
@@ -114,6 +130,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     });
 
 
+    /**
+     * create new a lead
+     */
     server.route({
         method: 'POST',
         path: '/leads',
@@ -147,9 +166,18 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Created lead.'
-                        }
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
+                        },
                     },
                     security: [{
                         'jwt': []
