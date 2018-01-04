@@ -10,23 +10,25 @@ import { Logger, transports, Winston } from 'winston';
 import { LogCamp } from '../mongo';
 import { ManulifeErrors as Ex } from '../helpers/code-errors';
 import { IPayloadUpdate } from '../controller/campaigns/campaign';
+
+import redis from '../cache/redis';
 interface ICampaign {
-    UserId: number;
-    Period: number;
-    CampType: number;
-    Label: string;
-    Experience: string;
-    Name: string;
-    StartDate: Date;
-    EndDate: Date;
-    TargetCallSale: number;
-    TargetMetting: number;
-    TargetPresentation: number;
-    TargetContractSale: number;
-    CommissionRate: number;
-    CaseSize: number;
-    IncomeMonthly: number;
-    CurrentCallSale: number;
+    UserId?: number;
+    Period?: number;
+    CampType?: number;
+    Label?: string;
+    Experience?: string;
+    Name?: string;
+    StartDate?: Date;
+    EndDate?: Date;
+    TargetCallSale?: number;
+    TargetMetting?: number;
+    TargetPresentation?: number;
+    TargetContractSale?: number;
+    CommissionRate?: number;
+    CaseSize?: number;
+    IncomeMonthly?: number;
+    CurrentCallSale?: number;
     CurrentMetting: number;
     CurrentPresentation: number;
     CurentContract: number;
@@ -57,6 +59,7 @@ interface ICampaign {
     ReportTo: number;
     ReportToList: Array<number>;
 }
+
 var logger = new (Logger)({
     transports: [
         new (transports.Console)({ level: 'error' }),
@@ -66,6 +69,7 @@ var logger = new (Logger)({
         }),
     ]
 });
+
 class CampaignService {
     /**
      * find campaign by
@@ -86,6 +90,21 @@ class CampaignService {
                 throw ex;
             });
     }
+    static getTotalCamp(key: string) {
+        return new Promise((resolve, reject) => {
+            redis.hgetall(`campaign-total:userid${key}`, (err, res) => {
+                if (err) {
+                    throw err;
+                }
+                if (res) {
+                    resolve(res);
+                }
+                // TODO: recache
+                // let currentYear = moment
+            });
+        });
+    }
+
 
     /**
          * find campaign by
@@ -135,11 +154,10 @@ class CampaignService {
             .catch(ex => {
                 throw ex;
             });
-
     }
 
     /**
-     * List leads of campaign, filter by processtep
+     * return leads of campaign, filter by processtep
      * @param campaignId campaignid
      * @param processStep 4 step in lead
      */
@@ -162,6 +180,7 @@ class CampaignService {
             throw error;
         }
     }
+
     /**
      * Update current number of a campaign
      */
@@ -207,38 +226,61 @@ class CampaignService {
                 if (_.size(camps) > 0) {
                     throw ({ code: Ex.EX_CAMP_FINISH, msg: `this user have campaign in ${campaign.StartDate}.` });
                 }
-                let campPrepare = <Array<ICampaign>>await this.prepareCamp(campaign, user)
+                let campsPrepare = <Array<ICampaign>>await this.prepareCamp(campaign, user)
                     .catch(ex => {
                         throw ex;
                     });
-                let campsPostgres = await Campaign.bulkCreate(campPrepare, { returning: true })
+                let campsPostgres = await Campaign.bulkCreate(campsPrepare, {
+                    returning: true,
+                })
                     .catch(ex => {
                         throw ex;
                     });
+                // TODO: cache campaign total
+                let campTotal = {
+                    UserId: campaign.UserId,
+                    TargetCallSale: 0,
+                    TargetMetting: 0,
+                    TargetPresentation: 0,
+                    TargetContractSale: 0,
+                    IncomeMonthly: 0,
+                    CurrentCallSale: 0,
+                    CurrentMetting: 0,
+                    CurrentPresentation: 0,
+                    CurentContract: 0,
+                    StartDate: campaign.StartDate,
+                    EndDate: moment(campaign.StartDate).add(12, 'M').endOf('d').toDate()
+                };
+                _.reduce(campsPostgres, (campTotal, value: any, key) => {
+                    campTotal.TargetCallSale += value.TargetCallSale;
+                    campTotal.TargetMetting += value.TargetMetting;
+                    campTotal.TargetPresentation += value.TargetPresentation;
+                    campTotal.TargetContractSale += value.TargetContractSale;
+                    return campTotal;
+                }, campTotal);
+                this.cacheCampTotal(campTotal);
+
                 return campsPostgres;
             })
             .catch(async (ex) => {
-                // let a = await LogCamp.find({});
-                // logger.info('test winton');
-                // logger.log('error', 'hello');
                 throw ex;
             });
     }
 
     private static prepareCamp(campaign: ICampaign, user: IIUser) {
-
         return new Promise((resolve, reject) => {
             campaign.ReportTo = user.ReportTo;
             campaign.ReportToList = user.ReportToList;
             let camps = [];
+            // TODO: number contract
+            // (Thu nhập x 100 / tỉ lệ hoa hồng)/loan
             let numContract = Math.ceil((campaign.IncomeMonthly * 100 / campaign.CommissionRate) / campaign.CaseSize);
-            // // (Thu nhập x 100 / tỉ lệ hoa hồng)/loan
-            let maxCustomers = numContract * 10;
             let campTotal = _.clone(campaign);
             campTotal.Period = 13;
             campTotal.Name = 'Camp total';
-            campTotal.TargetCallSale = numContract * 5 * 12;
-            campTotal.TargetMetting = numContract * 3 * 12;
+            campTotal.TargetCallSale = numContract * 10 * 12;
+            campTotal.TargetMetting = numContract * 5 * 12;
+            campTotal.TargetPresentation = numContract * 3 * 12;
             campTotal.TargetContractSale = numContract * 12;
             campTotal.EndDate = moment(campaign.StartDate).add(12, 'M').endOf('d').toDate();
             camps = _.times(12, (val) => {
@@ -246,19 +288,55 @@ class CampaignService {
                 camp.Period = val + 1;
                 camp.StartDate = moment(campaign.StartDate).add(val, 'M').toDate();
                 camp.EndDate = moment(campaign.StartDate).add(val + 1, 'M').subtract(1, 'd').endOf('d').toDate();
-                camp.TargetCallSale = numContract * 5;
-                // dataInput.meetingCustomers = dataInput.contracts * 3;
-                camp.TargetMetting = numContract * 3;
+
                 camp.Name = `Camp ${val + 1}`;
+                camp.TargetCallSale = numContract * 10;
+                camp.TargetMetting = numContract * 5;
+                camp.TargetPresentation = numContract * 3;
                 camp.TargetContractSale = numContract;
                 return camp;
             });
-            camps.push(campTotal);
             resolve(camps);
         })
             .catch(ex => {
                 throw ex;
             });
     }
+    /**
+     * cache total campaign
+     * @param totalCampaign total campaign
+     */
+    private static cacheCampTotal(totalCampaign) {
+        return redis.hmset(`campaign-total:userid${totalCampaign.UserId}`,
+            'TargetCallSale',
+            totalCampaign.TargetCallSale,
+            'TargetMetting',
+            totalCampaign.TargetMetting,
+            'TargetPresentation',
+            totalCampaign.TargetPresentation,
+            'TargetContractSale',
+            totalCampaign.TargetContractSale,
+            'IncomeMonthly',
+            totalCampaign.IncomeMonthly,
+            'CurrentCallSale',
+            totalCampaign.CurrentCallSale,
+            'CurrentMetting',
+            totalCampaign.CurrentMetting,
+            'CurrentPresentation',
+            totalCampaign.CurrentPresentation,
+            'CurentContract',
+            totalCampaign.CurentContract,
+            'StartDate',
+            moment(totalCampaign.StartDate).format('YYYY-MM-DD'),
+            'EndDate',
+            moment(totalCampaign.EndDate).format('YYYY-MM-DD')
+            , (err, res) => {
+                if (err) {
+                    throw err;
+                }
+                console.log(res);
+            });
+    }
 }
+
 export { ICampaign, CampaignService };

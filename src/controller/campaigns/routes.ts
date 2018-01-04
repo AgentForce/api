@@ -6,7 +6,13 @@ import { jwtValidator } from "../users/user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
+/**
+ * constant error
+ */
 import { ManulifeErrors as Ex } from '../../helpers/code-errors';
+/**
+ * plugin log campaign
+ */
 import { LogCamp } from "../../mongo/index";
 import { SlackAlert } from "../../helpers/index";
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
@@ -27,8 +33,13 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             description: 'Get Customer(leads) in a campaigns by id.',
             validate: {
                 params: {
-                    id: Joi.number().required().description('Campaignid'),
-                    type: Joi.number().required().valid([1, 2, 3, 4])
+                    id: Joi.number()
+                        .required()
+                        .description('Campaignid'),
+                    type: Joi
+                        .number()
+                        .required()
+                        .valid([1, 2, 3, 4])
                         .description('4 processtep in lead')
                 },
                 // headers: jwtValidator,
@@ -81,6 +92,75 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         }
     });
 
+
+    /**
+    * get list leads of campaign with type and campaignid
+    */
+    server.route({
+        method: 'GET',
+        path: '/campaigns/totalcamp/{key}',
+        config: {
+            handler: campaignController.getTotalCamp,
+            // auth: "jwt",
+            tags: ['api', 'campaigns'],
+            description: 'Get campaign total of user',
+            validate: {
+                params: {
+                    key: Joi.string()
+                        .required()
+                        .example('userid-yyyy')
+                        .description('key'),
+                },
+                // headers: jwtValidator,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: Ex.EX_PAYLOAD,
+                            msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    LogCamp.create({
+                        type: '/campaigns/totalcamp/{key}',
+                        dataInput: {
+                            params: request.params,
+                        },
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .array(),
+                                }
+                            )
+                        },
+                        '404': {
+                            'description': 'Campaign does not exists.'
+                        }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
     /**
      * get a campaign by campaignid
      */
@@ -89,13 +169,15 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/campaigns/{id}',
         config: {
             handler: campaignController.getByCampaignId,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'campaigns'],
             description: 'Get campaign by campaignid.',
             validate: {
                 // headers: jwtValidator,
                 params: {
-                    id: Joi.number().required().description('campaignid')
+                    id: Joi.number()
+                        .required()
+                        .description('campaignid')
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
@@ -114,7 +196,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         meta: {
                             exception: error,
                             response: res
-                        },
+                        }
                     });
                     reply(res);
                 }
@@ -236,9 +318,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/campaigns',
         config: {
             handler: campaignController.createCampaign,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'campaigns'],
-            description: 'Create a campaign.',
+            description: 'Create a campaign',
             validate: {
                 payload: CampaignValidator.createCampaignFAModel,
                 // headers: jwtValidator,
