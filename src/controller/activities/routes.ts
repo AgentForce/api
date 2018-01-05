@@ -22,14 +22,14 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
      */
     server.route({
         method: 'GET',
-        path: '/activities/camp/{campid}/{processtep}',
+        path: '/activities/camp/{campid}/{processstep}',
         config: {
             handler: activitiesController.list,
             // auth: "jwt",
             tags: ['api', 'activities'],
             description: 'Get activities by campaignid',
             validate: {
-                params: Joi.object({
+                params: {
                     campid: Joi
                         .number()
                         .integer()
@@ -37,16 +37,19 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                     processstep: Joi
                         .number()
                         .integer()
+                        .example(1)
                         .required()
-                }),
+                },
                 query: Joi.object({
                     limit: Joi
                         .number()
                         .integer()
+                        .example(20)
                         .required(),
                     page: Joi
                         .number()
                         .integer()
+                        .example(1)
                         .required()
                 })
                 // headers: jwtValidator
@@ -54,11 +57,32 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Campaign founded.'
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object({
+                                            data: Joi.array().example([]),
+                                            limit: Joi.number(),
+                                            page: Joi.number()
+                                        })
+                                }
+                            )
                         },
-                        '404': {
-                            'description': 'Campaign does not exists.'
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
+                                }
+                            )
                         }
                     }
                 }

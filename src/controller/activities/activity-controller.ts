@@ -24,10 +24,11 @@ export default class ActivitiesController {
      */
     public async list(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let processStep = parseInt(request.params.processtep, 10);
+            let processStep = parseInt(request.params.processstep, 10);
             let campaignId = parseInt(request.params.campid, 10);
             let limit = parseInt(request.query.limit, 10);
-            let page = parseInt(request.params.page, 10);
+            let page = parseInt(request.query.page, 10);
+            console.log(`${processStep} ${campaignId} ${limit} ${page}`);
             let activities: any = await ActivityService.listByCampaignId(campaignId, processStep, limit, page);
             reply({
                 status: HTTP_STATUS.OK,

@@ -87,41 +87,43 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         }
     });
 
-
+    /**
+   * lấy 1 campaign theo campaignid
+   */
     server.route({
         method: 'GET',
-        path: '/leads/detail/{id}',
+        path: '/leads/camp/{campid}/{processstep}',
         config: {
-            handler: leadController.detail,
-            auth: "jwt",
+            handler: leadController.list,
+            // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'find detail a lead with list activities',
+            description: 'Get leads and activities of lead by campaignid',
             validate: {
                 params: {
-                    id: Joi.number()
-                        .required().example(38)
-                        .description('leadid')
+                    campid: Joi
+                        .number()
+                        .integer()
+                        .default(1)
+                        .required(),
+                    processstep: Joi
+                        .number()
+                        .integer()
+                        .default(1)
+                        .required()
                 },
-                // headers: jwtValidator,
-                failAction: (request, reply, source, error) => {
-                    let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: Ex.EX_PAYLOAD, msg:
-                                'payload dont valid',
-                            details: error
-                        }
-                    };
-                    LogLead.create({
-                        type: 'detaillead',
-                        dataInput: request.payload,
-                        msg: 'payload do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        },
-                    });
-                    reply(res);
-                }
+                query: Joi.object({
+                    limit: Joi
+                        .number()
+                        .integer()
+                        .default(1)
+                        .required(),
+                    page: Joi
+                        .number()
+                        .integer()
+                        .default(1)
+                        .required()
+                })
+                // headers: jwtValidator
             },
             plugins: {
                 'hapi-swagger': {
@@ -134,33 +136,90 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .number()
                                         .example(200),
                                     data: Joi
-                                        .object(),
+                                        .object({
+                                            data: Joi.array().example([]),
+                                            limit: Joi.number(),
+                                            page: Joi.number()
+                                        })
                                 }
                             )
                         },
-                        404: {
-                            description: 'not found',
+                        400: {
+                            description: '',
                             schema: Joi.object(
                                 {
                                     status: Joi
                                         .number()
-                                        .example(HTTP_STATUS.NOT_FOUND),
-                                    data: Joi
-                                        .array().items({
-
-                                        }),
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
                                 }
                             )
                         }
-                    },
-                    security: [{
-                        'jwt': []
-                    }]
+                    }
                 }
             }
         }
     });
 
+    /**
+     * lấy 1 campaign theo campaignid
+     */
+    server.route({
+        method: 'GET',
+        path: '/leads/reject/{campid}/{processstep}',
+        config: {
+            handler: leadController.getLeadsReject,
+            // auth: "jwt",
+            tags: ['api', 'leads'],
+            description: 'Get leads reject by campaignId and process step of lead',
+            validate: {
+                params: {
+                    campid: Joi
+                        .number()
+                        .integer()
+                        .default(1)
+                        .required(),
+                    processstep: Joi
+                        .number()
+                        .integer()
+                        .default(1)
+                        .required()
+                }
+                // headers: jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object({
+                                            data: Joi.array().example([]),
+                                        })
+                                }
+                            )
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    });
     /**
      * Update a lead
      */

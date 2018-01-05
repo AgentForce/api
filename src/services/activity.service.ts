@@ -56,17 +56,25 @@ class ActivityService {
     */
     static async listByCampaignId(campId: number, processStep: number, limit: number, page: number) {
         try {
+            let offset = limit * (page - 1);
             let activities = await Activity.findAll({
                 where: {
                     ProcessStep: processStep,
                     CampId: campId,
                     IsDeleted: false
                 },
+                attributes: {
+                    exclude: ['IsDeleted']
+                },
                 // number row skip
-                offset: limit * page,
+                offset: offset,
                 limit: limit
             });
-            return activities;
+            return {
+                data: activities,
+                page: page,
+                limit: limit
+            };
         } catch (error) {
             throw error;
         }

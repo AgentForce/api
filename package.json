@@ -21,8 +21,7 @@
     "test": "gulp test",
     "watch": "tsc-w&&nodemon build/src/index.js",
     "compile": "tsc & ENV_PORT 3000 node build/src/index.js ",
-    "dev": "nodemon -e ts  --exec \"npm run compile\"",
-    "runtime": "set PORT=3000&&ts-node src/index.ts",
+    "runtime": "set PORT=3000&&set NODE_ENV=dev&&ts-node src/index.ts",
     "serve": "nodemon -e ts -w ./src -x \"npm run runtime\""
   },
   "dependencies": {

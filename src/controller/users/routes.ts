@@ -88,7 +88,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                     Email: Joi.string()
                         .email()
                         .required()
-                        .default('tunguyenq@gmail.com')
+                        .example('tunguyenq@gmail.com')
                 }
             },
             plugins: {

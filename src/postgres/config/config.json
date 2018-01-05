@@ -8,12 +8,21 @@
     "dialect": "postgres",
     "timezone": "+07:00"
   },
-  "local": {
+  "dev": {
     "username": "tunguyene",
     "password": "admin$123",
     "database": "manulife",
     "host": "127.0.0.1",
     "port": 5433,
+    "dialect": "postgres",
+    "timezone": "+07:00"
+  },
+  "aws": {
+    "username": "manulife",
+    "password": "manulifePsql",
+    "database": "manulife",
+    "host": "ec2-13-250-56-100.ap-southeast-1.compute.amazonaws.com",
+    "port": 5432,
     "dialect": "postgres",
     "timezone": "+07:00"
   },

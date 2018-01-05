@@ -21,8 +21,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/dashboard/{userid}',
         config: {
             handler: dashboardController.dashboard,
-            auth: "jwt",
-            tags: ['api', 'campaigns'],
+            // auth: "jwt",
+            tags: ['api', 'dashboard'],
             description: 'Dashboard',
             validate: {
                 params: {
@@ -57,19 +57,36 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 'hapi-swagger': {
                     responses: {
                         200: {
-                            description: '',
+                            description: 'success',
                             schema: Joi.object(
                                 {
                                     status: Joi
                                         .number()
                                         .example(200),
                                     data: Joi
-                                        .object(),
+                                        .object({
+                                            call: Joi.array()
+                                                .example([]),
+                                            metting: Joi.array()
+                                                .example([]),
+                                            presentation: Joi.array()
+                                                .example([]),
+                                            close: Joi.array()
+                                                .example([]),
+                                        }),
                                 }
                             )
                         },
-                        '404': {
-                            'description': 'Campaign does not exists.'
+                        400: {
+                            description: 'Error something',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
+                                }
+                            )
                         }
                     },
                     security: [{

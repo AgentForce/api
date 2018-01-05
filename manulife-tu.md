@@ -6,3 +6,5 @@
 		đã làm đủ 3 trường hợp
 		- tạo camp tạo cache
 		- mất cache tạo lại
+##issue
+	
