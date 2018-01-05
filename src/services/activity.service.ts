@@ -50,21 +50,24 @@ class ActivityService {
     }
 
     /**
-    * list activities of a campainid, filter by processttep
+    * list activities of a leadid
     * @param campId
     * @param processStep
+    * @param limit: number row of page
     */
-    static async listByCampaignId(campId: number, processStep: number, limit: number, page: number) {
+    static async listByCampaignId(leadId: number, limit: number, page: number) {
         try {
             let offset = limit * (page - 1);
             let activities = await Activity.findAll({
                 where: {
-                    ProcessStep: processStep,
-                    CampId: campId,
+                    LeadId: leadId,
                     IsDeleted: false
                 },
+                order: [
+                    ['StartDate', 'DESC']
+                ],
                 attributes: {
-                    exclude: ['IsDeleted']
+                    exclude: ['IsDeleted', 'ReportTo', 'ReportToList']
                 },
                 // number row skip
                 offset: offset,

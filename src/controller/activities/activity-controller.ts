@@ -22,14 +22,12 @@ export default class ActivitiesController {
     /**
      * get list activities by campaignid, filter by processstep
      */
-    public async list(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+    public async historyOfLead(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let processStep = parseInt(request.params.processstep, 10);
-            let campaignId = parseInt(request.params.campid, 10);
+            let leadId = parseInt(request.params.leadid, 10);
             let limit = parseInt(request.query.limit, 10);
             let page = parseInt(request.query.page, 10);
-            console.log(`${processStep} ${campaignId} ${limit} ${page}`);
-            let activities: any = await ActivityService.listByCampaignId(campaignId, processStep, limit, page);
+            let activities: any = await ActivityService.listByCampaignId(leadId, limit, page);
             reply({
                 status: HTTP_STATUS.OK,
                 data: activities
@@ -48,13 +46,13 @@ export default class ActivitiesController {
                     url: request.url.path,
                     error: {
                         code: EX.EX_GENERAL,
-                        msg: 'update activity have errors'
+                        msg: 'historyOfLead have errors'
                     }
                 };
             }
             SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
             LogActivity.create({
-                type: 'get list activity',
+                type: 'historyOfLead have errors',
                 dataInput: {
                     payload: request.payload,
                     params: request.params
