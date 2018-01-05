@@ -31,7 +31,6 @@ interface IActivity {
 }
 class ActivityService {
 
-
     /**
     * Tìm một lead dựa vào số điện thoại
     * @param phone string
@@ -50,6 +49,28 @@ class ActivityService {
         }
     }
 
+    /**
+    * list activities of a campainid, filter by processttep
+    * @param campId
+    * @param processStep
+    */
+    static async listByCampaignId(campId: number, processStep: number, limit: number, page: number) {
+        try {
+            let activities = await Activity.findAll({
+                where: {
+                    ProcessStep: processStep,
+                    CampId: campId,
+                    IsDeleted: false
+                },
+                // number row skip
+                offset: limit * page,
+                limit: limit
+            });
+            return activities;
+        } catch (error) {
+            throw error;
+        }
+    }
 
 
     /**

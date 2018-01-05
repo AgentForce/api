@@ -108,8 +108,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 params: {
                     key: Joi.string()
                         .required()
-                        .example('userid-yyyy')
-                        .description('key'),
+                        .example('userid')
+                        .description('key=userid'),
                 },
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
@@ -150,7 +150,26 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             )
                         },
                         '404': {
-                            'description': 'Campaign does not exists.'
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.NOT_FOUND),
+                                    msg: Joi.string().example('not found anything'),
+                                }
+                            )
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
+                                }
+                            )
                         }
                     },
                     security: [{
@@ -349,7 +368,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 'hapi-swagger': {
                     responses: {
                         200: {
-                            description: '',
+                            description: 'success',
                             schema: Joi.object(
                                 {
                                     status: Joi
@@ -360,6 +379,17 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 }
                             )
                         },
+                        400: {
+                            description: 'Error something',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
+                                }
+                            )
+                        }
                     },
                     security: [{
                         'jwt': []

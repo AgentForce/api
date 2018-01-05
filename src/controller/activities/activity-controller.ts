@@ -20,6 +20,55 @@ export default class ActivitiesController {
     }
 
     /**
+     * get list activities by campaignid, filter by processstep
+     */
+    public async list(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let processStep = parseInt(request.params.processtep, 10);
+            let campaignId = parseInt(request.params.campid, 10);
+            let limit = parseInt(request.query.limit, 10);
+            let page = parseInt(request.params.page, 10);
+            let activities: any = await ActivityService.listByCampaignId(campaignId, processStep, limit, page);
+            reply({
+                status: HTTP_STATUS.OK,
+                data: activities
+            }).code(HTTP_STATUS.OK);
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    url: request.url.path,
+                    error: {
+                        code: EX.EX_GENERAL,
+                        msg: 'update activity have errors'
+                    }
+                };
+            }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+            LogActivity.create({
+                type: 'get list activity',
+                dataInput: {
+                    payload: request.payload,
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
+
+    /**
      * Update activity
      */
     public async update(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {

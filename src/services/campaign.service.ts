@@ -12,6 +12,7 @@ import { ManulifeErrors as Ex } from '../helpers/code-errors';
 import { IPayloadUpdate } from '../controller/campaigns/campaign';
 
 import redis from '../cache/redis';
+import { max } from 'moment';
 interface ICampaign {
     UserId?: number;
     Period?: number;
@@ -60,15 +61,15 @@ interface ICampaign {
     ReportToList: Array<number>;
 }
 
-var logger = new (Logger)({
-    transports: [
-        new (transports.Console)({ level: 'error' }),
-        new (transports.File)({
-            filename: 'somefile.log',
-            level: 'info'
-        }),
-    ]
-});
+// var logger = new (Logger)({
+//     transports: [
+//         new (transports.Console)({ level: 'error' }),
+//         new (transports.File)({
+//             filename: 'somefile.log',
+//             level: 'info'
+//         }),
+//     ]
+// });
 
 class CampaignService {
     /**
@@ -90,9 +91,14 @@ class CampaignService {
                 throw ex;
             });
     }
+
+    /**
+     * get total campaign of a user
+     * @key: userid
+     */
     static getTotalCamp(key: string) {
         return new Promise((resolve, reject) => {
-            redis.hgetall(`campaign-total:userid${key}`, (err, res) => {
+            redis.hgetall(`campaign-total:userid${key}`, async (err, res) => {
                 if (err) {
                     throw err;
                 }
@@ -100,7 +106,52 @@ class CampaignService {
                     resolve(res);
                 }
                 // TODO: recache
-                // let currentYear = moment
+                // get 1 record campaign have NumGoal max
+                const maxNumGoal = await Campaign.max('NumGoal', {
+                    where: {
+                        UserId: key
+                    }
+                });
+                if (_.isInteger(maxNumGoal)) {
+                    console.log(`max is ${max}`);
+                    const campsLastUser: Array<ICampaign> = await Campaign.findAll({
+                        where: {
+                            UserId: key,
+                            NumGoal: maxNumGoal,
+                            IsDeleted: false
+                        },
+                        order: [
+                            ['StartDate', 'DESC']
+                        ]
+                    }) as Array<ICampaign>;
+                    let campTotal = {
+                        UserId: key,
+                        TargetCallSale: 0,
+                        TargetMetting: 0,
+                        TargetPresentation: 0,
+                        TargetContractSale: 0,
+                        IncomeMonthly: 0,
+                        CurrentCallSale: 0,
+                        CurrentMetting: 0,
+                        CurrentPresentation: 0,
+                        CurentContract: 0,
+                        StartDate: null,
+                        EndDate: null
+                    };
+                    campTotal.StartDate = _.first(campsLastUser).StartDate;
+                    campTotal.EndDate = _.last(campsLastUser).EndDate;
+                    _.reduce(campsLastUser, (campTotal, value: any, key) => {
+                        campTotal.TargetCallSale += value.TargetCallSale;
+                        campTotal.TargetMetting += value.TargetMetting;
+                        campTotal.TargetPresentation += value.TargetPresentation;
+                        campTotal.TargetContractSale += value.TargetContractSale;
+                        return campTotal;
+                    }, campTotal);
+                    this.cacheCampTotal(campTotal);
+                    resolve(campTotal);
+                }
+                // dont exist any camp
+                resolve(null);
             });
         });
     }

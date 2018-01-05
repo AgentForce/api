@@ -24,6 +24,9 @@ export default (): IPlugin => {
                                 'name': 'leads',
                                 'description': 'leads.'
                             }, {
+                                'name': 'activities',
+                                'description': 'activities'
+                            }, {
                                 'name': 'users',
                                 'description': 'users.'
                             }],

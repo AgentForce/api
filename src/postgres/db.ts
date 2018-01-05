@@ -3,7 +3,7 @@
 // const path = require('path');
 import * as Sequelize from 'sequelize';
 const config = require('./config/config');
-const objconfig = config[process.env.NODE_ENV || 'dev'];
+const objconfig = config[process.env.NODE_ENV || 'development'];
 const db = new Sequelize(objconfig.database, objconfig.username, objconfig.password, objconfig);
 // console.log(objconfig);
 // Export the db Object

@@ -8,6 +8,7 @@ import * as HTTP_STATUS from 'http-status';
 import { LogLead } from "../../mongo/index";
 import { ManulifeErrors as Ex } from '../../helpers/code-errors';
 import * as LeadValidator from "./lead-validator";
+import { Constants, ManulifeErrors } from "../../helpers/index";
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
     const leadController = new LeadController(configs, database);
     server.bind(leadController);
@@ -64,9 +65,19 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 }
                             )
                         },
-                        '404': {
-                            description: 'lead not found'
-                        }
+                        404: {
+                            description: 'not found',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.NOT_FOUND),
+                                    code: Joi.string().example(ManulifeErrors.EX_LEADID_NOT_FOUND),
+                                    msg: Joi.string()
+                                }
+                            )
+                        },
+
                     },
                     security: [{
                         'jwt': []
@@ -127,8 +138,19 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 }
                             )
                         },
-                        '404': {
-                            description: 'lead not found'
+                        404: {
+                            description: 'not found',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.NOT_FOUND),
+                                    data: Joi
+                                        .array().items({
+
+                                        }),
+                                }
+                            )
                         }
                     },
                     security: [{
@@ -203,7 +225,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/leads',
         config: {
             handler: leadController.create,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'leads'],
             description: 'Create new lead',
             validate: {

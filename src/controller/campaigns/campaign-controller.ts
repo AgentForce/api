@@ -92,10 +92,17 @@ export default class CampaignController {
             let key = request.params.key;
             console.log(key);
             let obj = await CampaignService.getTotalCamp(key);
-            reply({
-                status: HTTP_STATUS.OK,
-                data: obj
-            }).code(HTTP_STATUS.OK);
+            if (obj) {
+                reply({
+                    status: HTTP_STATUS.OK,
+                    data: obj,
+                }).code(HTTP_STATUS.OK);
+            } else {
+                reply({
+                    status: HTTP_STATUS.NOT_FOUND,
+                    msg: 'not found anything'
+                }).code(HTTP_STATUS.NOT_FOUND);
+            }
         } catch (ex) {
             let res = {};
             if (ex.code) {
@@ -110,7 +117,7 @@ export default class CampaignController {
                     url: request.url.path,
                     error: {
                         code: Ex.EX_GENERAL,
-                        msg: 'get leadsOfCamp have errors'
+                        msg: 'get camptotal have errors'
                     }
                 };
             }

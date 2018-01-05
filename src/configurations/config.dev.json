@@ -14,6 +14,6 @@
         ]
     },
     "redis": {
-        "url": "//redis:manulife@192.168.0.105:6379"
+        "url": "//localhost:6379"
     }
 }

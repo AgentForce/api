@@ -17,37 +17,54 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
 
 
 
-    // /**
-    //  * lấy 1 campaign theo campaignid
-    //  */
-    // server.route({
-    //     method: 'GET',
-    //     path: '/campaigns/{id}',
-    //     config: {
-    //         handler: campaignController.getCampaignById,
-    //         auth: "jwt",
-    //         tags: ['api', 'campaigns'],
-    //         description: 'Get campaigns by id.',
-    //         validate: {
-    //             params: {
-    //                 id: Joi.string().required()
-    //             },
-    //             headers: jwtValidator
-    //         },
-    //         plugins: {
-    //             'hapi-swagger': {
-    //                 responses: {
-    //                     '200': {
-    //                         'description': 'Campaign founded.'
-    //                     },
-    //                     '404': {
-    //                         'description': 'Campaign does not exists.'
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // });
+    /**
+     * lấy 1 campaign theo campaignid
+     */
+    server.route({
+        method: 'GET',
+        path: '/activities/camp/{campid}/{processtep}',
+        config: {
+            handler: activitiesController.list,
+            // auth: "jwt",
+            tags: ['api', 'activities'],
+            description: 'Get activities by campaignid',
+            validate: {
+                params: Joi.object({
+                    campid: Joi
+                        .number()
+                        .integer()
+                        .required(),
+                    processstep: Joi
+                        .number()
+                        .integer()
+                        .required()
+                }),
+                query: Joi.object({
+                    limit: Joi
+                        .number()
+                        .integer()
+                        .required(),
+                    page: Joi
+                        .number()
+                        .integer()
+                        .required()
+                })
+                // headers: jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'Campaign founded.'
+                        },
+                        '404': {
+                            'description': 'Campaign does not exists.'
+                        }
+                    }
+                }
+            }
+        }
+    });
 
 
     /**

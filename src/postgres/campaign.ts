@@ -239,6 +239,10 @@ const Campaign = db.define('manulife_campaigns', {
   UpdatedAt: {
     allowNull: false,
     type: Sequelize.DATE
+  },
+  NumGoal: {
+    allowNull: false,
+    type: Sequelize.INTEGER,
   }
 }, {
     // tableName: 'campaign',
