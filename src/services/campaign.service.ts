@@ -349,16 +349,17 @@ class CampaignService {
                 camp.EndDate = moment(campaign.StartDate).add(val + 1, 'M').subtract(1, 'd').endOf('d').toDate();
 
                 camp.Name = `Camp ${val + 1}`;
+                camp.TargetCallSale = numContract * 10;
+                camp.TargetMetting = numContract * 5;
+                camp.TargetPresentation = numContract * 3;
+                camp.TargetContractSale = numContract;
+
+                // TODO: default before months full target
                 if (moment(camp.StartDate).unix() < moment().startOf('date').unix()) {
-                    camp.TargetCallSale = 0;
-                    camp.TargetMetting = 0;
-                    camp.TargetPresentation = 0;
-                    camp.TargetContractSale = 0;
-                } else {
-                    camp.TargetCallSale = numContract * 10;
-                    camp.TargetMetting = numContract * 5;
-                    camp.TargetPresentation = numContract * 3;
-                    camp.TargetContractSale = numContract;
+                    camp.CurrentCallSale = camp.TargetCallSale;
+                    camp.CurrentMetting = camp.TargetMetting;
+                    camp.CurrentPresentation = camp.TargetPresentation;
+                    camp.CurentContract = camp.TargetContractSale;
                 }
 
                 return camp;

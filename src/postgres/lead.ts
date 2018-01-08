@@ -104,6 +104,11 @@ const Lead = db.define('manulife_leads', {
     allowNull: false,
     defaultValue: 1 // 1= active, 0 = deactive
   },
+  StatusProcessStep: {
+    allowNull: false,
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
   CreatedAt: {
     allowNull: false,
     type: Sequelize.DATE
