@@ -68,6 +68,59 @@ export default class LeadController {
     }
 
     /**
+     * caculator and group processStep in leads in a campaignid
+     * 
+     */
+    public async groupProcessStepInCamp(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let campId = parseInt(request.params.campid, 10);
+            let lead: any = await LeadService.groupProcessStepInCamp(campId);
+            if (lead == null) {
+                return reply({
+                    status: HTTP_STATUS.NOT_FOUND,
+                    data: null,
+                }).code(HTTP_STATUS.NOT_FOUND);
+            } else {
+                return reply({
+                    status: HTTP_STATUS.OK,
+                    data: lead,
+                }).code(HTTP_STATUS.OK);
+            }
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: {
+                        code: Ex.EX_GENERAL,
+                        msg: 'get group lead have errors'
+                    }
+                };
+            }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+            LogLead.create({
+                type: 'groupProcessStepInCamp',
+                dataInput: {
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
+
+    /**
         * get list activities by campaignid, filter by processstep
         */
     public async list(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {

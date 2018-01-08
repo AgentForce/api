@@ -32,18 +32,21 @@ interface IActivity {
 class ActivityService {
 
     /**
-    * Tìm một lead dựa vào số điện thoại
+    * get a activity by activityId
     * @param phone string
     */
-    static async findById(phone: string) {
+    static async findById(id: number) {
         try {
-            let lead = await Activity.findOne({
+            let activity = await Activity.findOne({
                 where: {
-                    Phone: phone,
+                    Id: id,
                     IsDeleted: false
+                },
+                attributes:{
+                    exclude: ['IsDeleted', 'ReportTo', 'ReportToList']
                 }
             });
-            return lead;
+            return activity;
         } catch (error) {
             throw error;
         }
@@ -61,7 +64,7 @@ class ActivityService {
             let activities = await Activity.findAll({
                 where: {
                     LeadId: leadId,
-                    IsDeleted: false
+                    IsDeleted: false,
                 },
                 order: [
                     ['StartDate', 'DESC']
@@ -85,7 +88,7 @@ class ActivityService {
 
 
     /**
-     * Tạo mới activiy
+     * create new  activiy
      * @param activiy activiy
      */
     static create(payload: IPayloadCreate) {

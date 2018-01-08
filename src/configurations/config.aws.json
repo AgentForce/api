@@ -5,7 +5,7 @@
     "server": {
         "port": 5000,
         "jwtSecret": "random-secret-password",
-        "jwtExpiration": "1h",
+        "jwtExpiration": "48h",
         "routePrefix": "/api",
         "plugins": [
             "logger",

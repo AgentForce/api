@@ -102,53 +102,55 @@ class CampaignService {
                 if (err) {
                     throw err;
                 }
+                console.log(res);
                 if (res) {
                     resolve(res);
-                }
-                // TODO: recache
-                // get 1 record campaign have NumGoal max
-                const maxNumGoal = await Campaign.max('NumGoal', {
-                    where: {
-                        UserId: key
-                    }
-                });
-                if (_.isInteger(maxNumGoal)) {
-                    console.log(`max is ${max}`);
-                    const campsLastUser: Array<ICampaign> = await Campaign.findAll({
+                } else {
+                    // TODO: recache
+                    // get 1 record campaign have NumGoal max
+                    const maxNumGoal = await Campaign.max('NumGoal', {
                         where: {
+                            UserId: key
+                        }
+                    });
+                    if (_.isInteger(maxNumGoal)) {
+                        console.log(`max is ${max}`);
+                        const campsLastUser: Array<ICampaign> = await Campaign.findAll({
+                            where: {
+                                UserId: key,
+                                NumGoal: maxNumGoal,
+                                IsDeleted: false
+                            },
+                            order: [
+                                ['StartDate', 'DESC']
+                            ]
+                        }) as Array<ICampaign>;
+                        let campTotal = {
                             UserId: key,
-                            NumGoal: maxNumGoal,
-                            IsDeleted: false
-                        },
-                        order: [
-                            ['StartDate', 'DESC']
-                        ]
-                    }) as Array<ICampaign>;
-                    let campTotal = {
-                        UserId: key,
-                        TargetCallSale: 0,
-                        TargetMetting: 0,
-                        TargetPresentation: 0,
-                        TargetContractSale: 0,
-                        IncomeMonthly: 0,
-                        CurrentCallSale: 0,
-                        CurrentMetting: 0,
-                        CurrentPresentation: 0,
-                        CurentContract: 0,
-                        StartDate: null,
-                        EndDate: null
-                    };
-                    campTotal.StartDate = _.first(campsLastUser).StartDate;
-                    campTotal.EndDate = _.last(campsLastUser).EndDate;
-                    _.reduce(campsLastUser, (campTotal, value: any, key) => {
-                        campTotal.TargetCallSale += value.TargetCallSale;
-                        campTotal.TargetMetting += value.TargetMetting;
-                        campTotal.TargetPresentation += value.TargetPresentation;
-                        campTotal.TargetContractSale += value.TargetContractSale;
-                        return campTotal;
-                    }, campTotal);
-                    this.cacheCampTotal(campTotal);
-                    resolve(campTotal);
+                            TargetCallSale: 0,
+                            TargetMetting: 0,
+                            TargetPresentation: 0,
+                            TargetContractSale: 0,
+                            IncomeMonthly: 0,
+                            CurrentCallSale: 0,
+                            CurrentMetting: 0,
+                            CurrentPresentation: 0,
+                            CurentContract: 0,
+                            StartDate: null,
+                            EndDate: null
+                        };
+                        campTotal.StartDate = _.first(campsLastUser).StartDate;
+                        campTotal.EndDate = _.last(campsLastUser).EndDate;
+                        _.reduce(campsLastUser, (campTotal, value: any, key) => {
+                            campTotal.TargetCallSale += value.TargetCallSale;
+                            campTotal.TargetMetting += value.TargetMetting;
+                            campTotal.TargetPresentation += value.TargetPresentation;
+                            campTotal.TargetContractSale += value.TargetContractSale;
+                            return campTotal;
+                        }, campTotal);
+                        this.cacheCampTotal(campTotal);
+                        resolve(campTotal);
+                    }
                 }
                 // dont exist any camp
                 resolve(null);
@@ -272,10 +274,16 @@ class CampaignService {
             ])
             .spread(async (user: IIUser, camps) => {
                 if (user == null) {
-                    throw ({ code: Ex.EX_USERNAME_NOT_FOUND, msg: 'UserId not found' });
+                    throw ({
+                        code: Ex.EX_USERNAME_NOT_FOUND,
+                        msg: 'UserId not found'
+                    });
                 }
                 if (_.size(camps) > 0) {
-                    throw ({ code: Ex.EX_CAMP_FINISH, msg: `this user have campaign in ${campaign.StartDate}.` });
+                    throw ({
+                        code: Ex.EX_CAMP_FINISH,
+                        msg: `this user have campaign in ${campaign.StartDate}.`
+                    });
                 }
                 let campsPrepare = <Array<ICampaign>>await this.prepareCamp(campaign, user)
                     .catch(ex => {
@@ -341,10 +349,18 @@ class CampaignService {
                 camp.EndDate = moment(campaign.StartDate).add(val + 1, 'M').subtract(1, 'd').endOf('d').toDate();
 
                 camp.Name = `Camp ${val + 1}`;
-                camp.TargetCallSale = numContract * 10;
-                camp.TargetMetting = numContract * 5;
-                camp.TargetPresentation = numContract * 3;
-                camp.TargetContractSale = numContract;
+                if (moment(camp.StartDate).unix() < moment().startOf('date').unix()) {
+                    camp.TargetCallSale = 0;
+                    camp.TargetMetting = 0;
+                    camp.TargetPresentation = 0;
+                    camp.TargetContractSale = 0;
+                } else {
+                    camp.TargetCallSale = numContract * 10;
+                    camp.TargetMetting = numContract * 5;
+                    camp.TargetPresentation = numContract * 3;
+                    camp.TargetContractSale = numContract;
+                }
+
                 return camp;
             });
             resolve(camps);

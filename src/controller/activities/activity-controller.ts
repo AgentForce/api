@@ -19,6 +19,53 @@ export default class ActivitiesController {
         this.database = database;
     }
 
+
+    /**
+     * get activity by Id
+     */
+    public async findById(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let id = parseInt(request.params.id, 10);
+            let activities: any = await ActivityService.findById(id);
+            reply({
+                status: HTTP_STATUS.OK,
+                data: activities
+            }).code(HTTP_STATUS.OK);
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    url: request.url.path,
+                    error: {
+                        code: EX.EX_GENERAL,
+                        msg: 'activity findById have errors'
+                    }
+                };
+            }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+            LogActivity.create({
+                type: 'activity findById have errors',
+                dataInput: {
+                    payload: request.payload,
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
+
     /**
      * get list activities by campaignid, filter by processstep
      */

@@ -18,22 +18,27 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
 
 
     /**
-     * lấy 1 campaign theo campaignid
+     * history activity of a lead
      */
     server.route({
         method: 'GET',
-        path: '/activities/lead/{leadid}',
+        path: '/activities/lead/{leadid}/{processstep}',
         config: {
             handler: activitiesController.historyOfLead,
             // auth: "jwt",
             tags: ['api', 'activities'],
-            description: 'Get activities by leadid',
+            description: 'Get activities by leadid, paginate by parameter limit and page',
             validate: {
                 params: {
                     leadid: Joi
                         .number()
                         .integer()
                         .required(),
+                    processstep: Joi
+                        .number()
+                        .integer()
+                        .valid([-1, 1, 2, 3, 4, 5])
+                        .description('-1 to get all'),
                 },
                 query: Joi.object({
                     limit: Joi
@@ -64,6 +69,60 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                             data: Joi.array().example([]),
                                             limit: Joi.number(),
                                             page: Joi.number()
+                                        })
+                                }
+                            )
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    /**
+    * history activity of a lead
+    */
+    server.route({
+        method: 'GET',
+        path: '/activities/{id}',
+        config: {
+            handler: activitiesController.findById,
+            // auth: "jwt",
+            tags: ['api', 'activities'],
+            description: 'Get a activity by id',
+            validate: {
+                params: {
+                    id: Joi
+                        .number()
+                        .integer()
+                        .required(),
+                }
+                // headers: jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object({
+                                            data: Joi.object(),
                                         })
                                 }
                             )

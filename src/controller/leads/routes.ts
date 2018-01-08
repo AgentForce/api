@@ -220,6 +220,61 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             }
         }
     });
+
+    /**
+    * group count leads in a campaign
+    */
+    server.route({
+        method: 'GET',
+        path: '/leads/group/processstep/{campid}',
+        config: {
+            handler: leadController.groupProcessStepInCamp,
+            // auth: "jwt",
+            tags: ['api', 'leads'],
+            description: 'group count leads in a campaign',
+            validate: {
+                params: {
+                    campid: Joi
+                        .number()
+                        .integer()
+                        .default(1)
+                        .required(),
+                }
+                // headers: jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object({
+                                            data: Joi.array().example([]),
+                                        })
+                                }
+                            )
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    });
     /**
      * Update a lead
      */
@@ -263,8 +318,28 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Lead updated'
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object()
+                                }
+                            )
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
+                                }
+                            )
                         }
                     },
                     security: [{
@@ -320,10 +395,21 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .number()
                                         .example(200),
                                     data: Joi
-                                        .object(),
+                                        .object()
                                 }
                             )
                         },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
+                                }
+                            )
+                        }
                     },
                     security: [{
                         'jwt': []

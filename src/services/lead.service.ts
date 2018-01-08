@@ -2,6 +2,7 @@ import { Lead } from '../postgres/lead';
 import { IActivity, ActivityService } from './activity.service';
 import { Promise as Bluebird } from 'bluebird';
 import * as moment from 'moment';
+import * as Sequelize from 'sequelize';
 import { UserService, IIUser } from './user.service';
 import { IDatabase } from '../database';
 import { Campaign } from '../postgres/campaign';
@@ -48,6 +49,26 @@ class LeadService {
         }
     }
 
+    /**
+     * get leads by group count processStep and where campid
+     */
+    static async groupProcessStepInCamp(campId: number) {
+        try {
+            let leads = await Lead.findAll({
+                attributes: ['ProcessStep', 'CampId', [Sequelize.fn('Count', Sequelize.col('*')), 'Count']],
+                where: {
+                    CampId: campId,
+                    IsDeleted: false,
+                    Status: true, // dount count lead have reject
+                },
+                group: ['ProcessStep', 'CampId']
+            });
+            return leads;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
 
     /**
      * get list leads reject by campId, filter by processtep
@@ -88,6 +109,7 @@ class LeadService {
                     model: Activity,
                     where: {
                         IsDeleted: false,
+                        ProcessStep: processStep
                     },
                     attributes: {
                         exclude: ['IsDeleted']

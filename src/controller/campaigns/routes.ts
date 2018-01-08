@@ -101,7 +101,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/campaigns/totalcamp/{key}',
         config: {
             handler: campaignController.getTotalCamp,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'campaigns'],
             description: 'Get campaign total of user',
             validate: {
@@ -188,7 +188,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/campaigns/{id}',
         config: {
             handler: campaignController.getByCampaignId,
-            // auth: "jwt",
+            auth: "jwt",
             tags: ['api', 'campaigns'],
             description: 'Get campaign by campaignid.',
             validate: {
@@ -237,9 +237,18 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 }
                             )
                         },
-                        '404': {
-                            'description': 'Campaign does not exists.'
-                        }
+                        404: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.NOT_FOUND),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
+                        },
                     },
                     security: [{
                         'jwt': []
