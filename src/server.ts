@@ -49,11 +49,10 @@ export function init(configs: IServerConfigurations, database: IDatabase): Promi
         });
         Promise.all(pluginPromises).then(() => {
             console.log('All plugins registered successfully.');
-            console.log('Register Routes');
             Users.init(server, configs, database);
             Campaigns.init(server, configs, database);
-            Leads.init(server, configs, database);
-            Actvities.init(server, configs, database);
+            // Leads.init(server, configs, database);
+            // Actvities.init(server, configs, database);
             // Events.init(server, configs, database);
             Metatypes.init(server, configs, database);
             Dashboard.init(server, configs, database);

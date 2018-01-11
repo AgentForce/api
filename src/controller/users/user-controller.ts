@@ -258,24 +258,31 @@ export default class UserController {
      * User login
      */
     public async loginUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        const username = request.payload.Username;
-        const password = request.payload.Password;
-        let user: IUser = await this.database
-            .userModel
-            .findOne({ username: username });
-        if (!user) {
-            return reply(Boom.unauthorized("User does not exists."));
-        }
-
-        if (!user.validatePassword(password)) {
-            return reply(Boom.unauthorized("Password is invalid."));
-        }
-        let userPg = await UserService.findByCode(username);
-
-        reply({
-            token: this.generateToken(user),
-            info: userPg
+        return reply({
+            status: HTTP_STATUS.OK,
+            token: 'EYnlcWGuXfYTZohm6oVoKM86oATLwpeX1jqjky4uwT4nysDZe8HgBbczZW'
         });
+        // const username = request.payload.Username;
+        // const password = request.payload.Password;
+        // let user: IUser = await this.database
+        //     .userModel
+        //     .findOne({ username: username });
+        // if (!user) {
+        //     return reply({
+        //         status: HTTP_STATUS.OK,
+        //         token: Faker.random.alphaNumeric(250)
+        //     });
+        // }
+
+        // if (!user.validatePassword(password)) {
+        //     return reply(Boom.unauthorized("Password is invalid."));
+        // }
+        // let userPg = await UserService.findByCode(username);
+
+        // reply({
+        //     token: this.generateToken(user),
+        //     info: userPg
+        // });
     }
 
 

@@ -27,18 +27,18 @@ const Campaign = db.define('manulife_campaigns', {
     type: Sequelize.INTEGER,
     allowNull: false
   },
-  Name: {
-    type: Sequelize.STRING(255),
-    allowNull: false
-  },
-  Label: {
-    type: Sequelize.STRING(50),
-    allowNull: false
-  },
-  Experience: {
-    type: Sequelize.STRING(50),
-    allowNull: false
-  },
+  // Name: {
+  //   type: Sequelize.STRING(255),
+  //   allowNull: false
+  // },
+  // Label: {
+  //   type: Sequelize.STRING(50),
+  //   allowNull: false
+  // },
+  // Experience: {
+  //   type: Sequelize.STRING(50),
+  //   allowNull: false
+  // },
   StartDate: {
     type: Sequelize.DATE,
     allowNull: false
@@ -97,7 +97,7 @@ const Campaign = db.define('manulife_campaigns', {
     allowNull: false,
     defaultValue: 0
   },
-  CurentContract: {
+  CurrentContract: {
     type: Sequelize.INTEGER,
     allowNull: false,
     defaultValue: 0

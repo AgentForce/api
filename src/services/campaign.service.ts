@@ -12,57 +12,10 @@ import { Logger, transports, Winston } from 'winston';
 import { LogCamp } from '../mongo';
 import { ManulifeErrors as Ex } from '../helpers/code-errors';
 import { IPayloadUpdate } from '../controller/campaigns/campaign';
-
+import { ICampaign, ICampTotal } from './ICampaign';
 import redis from '../cache/redis';
-import { max } from 'moment';
 import { db } from '../postgres/db';
-interface ICampaign {
-    UserId?: number;
-    Period?: number;
-    CampType?: number;
-    Label?: string;
-    Experience?: string;
-    Name?: string;
-    StartDate?: Date;
-    EndDate?: Date;
-    TargetCallSale?: number;
-    TargetMetting?: number;
-    TargetPresentation?: number;
-    TargetContractSale?: number;
-    CommissionRate?: number;
-    CaseSize?: number;
-    IncomeMonthly?: number;
-    CurrentCallSale?: number;
-    CurrentMetting: number;
-    CurrentPresentation: number;
-    CurentContract: number;
-    TargetCallReCruit: number;
-    TargetSurvey: number;
-    TargetPamphlet: number;
-    TargetCop: number;
-    TargetTest: number;
-    TargetInterview: number;
-    TargetMit: number;
-    TargetAgentCode: number;
-    Description: string;
-    CurrentCallRecruit: number;
-    CurrentSurvey: number;
-    CurrentPamphlet: number;
-    CurrentCop: number;
-    CurrentTest: number;
-    CurrentInterview: number;
-    CurrentMit: number;
-    CurentTer: number;
-    AgentTer: number;
-    ActiveRaito: number;
-    M3AARaito: number;
-    AverageCC: number;
-    M3AA: number;
-    FypRaito: number;
-    Results: number;
-    ReportTo: number;
-    ReportToList: string;
-}
+
 
 // var logger = new (Logger)({
 //     transports: [
@@ -117,7 +70,6 @@ class CampaignService {
                         }
                     });
                     if (_.isInteger(maxNumGoal)) {
-                        console.log(`max is ${max}`);
                         const campsLastUser: Array<ICampaign> = await Campaign.findAll({
                             where: {
                                 UserId: key,
@@ -200,10 +152,10 @@ class CampaignService {
      * @param campaignId number
      */
     static findById(campaignId) {
-        db
-            .query('select * from manulife_users ',
-            { replacements: { email: 42 } })
-            .then(v => console.log(v));
+        // db
+        //     .query('select * from manulife_users ',
+        //     { replacements: { email: 42 } })
+        //     .then(v => console.log(v));
 
         return Campaign
             .findOne({
@@ -294,11 +246,11 @@ class CampaignService {
                     });
                 }
                 campaign.UserId = userId;
-                campaign.ReportTo = user.Id;
+                campaign.ReportTo = user.ReportTo;
                 if (user.ReportToList === '') {
                     campaign.ReportToList = '';
                 } else {
-                    campaign.ReportToList = user.ReportToList;
+                    campaign.ReportToList = `${user.ReportToList}.${user.ReportTo}`;
                 }
                 let campsPrepare = <Array<ICampaign>>await this.prepareCamp(campaign)
                     .catch(ex => {
@@ -311,17 +263,17 @@ class CampaignService {
                         throw ex;
                     });
                 // TODO: cache campaign total
-                let campTotal = {
+                let campTotal: ICampTotal = {
                     UserId: campaign.UserId,
                     TargetCallSale: 0,
                     TargetMetting: 0,
                     TargetPresentation: 0,
                     TargetContractSale: 0,
-                    IncomeMonthly: 0,
+                    // IncomeMonthly: 0,
                     CurrentCallSale: 0,
                     CurrentMetting: 0,
                     CurrentPresentation: 0,
-                    CurentContract: 0,
+                    CurrentContract: 0,
                     StartDate: campaign.StartDate,
                     EndDate: moment(campaign.StartDate).add(12, 'M').endOf('d').toDate()
                 };
@@ -330,6 +282,10 @@ class CampaignService {
                     campTotal.TargetMetting += value.TargetMetting;
                     campTotal.TargetPresentation += value.TargetPresentation;
                     campTotal.TargetContractSale += value.TargetContractSale;
+                    campTotal.CurrentCallSale += value.CurrentCallSale;
+                    campTotal.CurrentMetting += value.CurrentMetting;
+                    campTotal.CurrentPresentation += value.CurrentPresentation;
+                    campTotal.CurrentContract += value.CurrentContract;
                     return campTotal;
                 }, campTotal);
                 this.cacheCampTotal(campTotal);
@@ -347,21 +303,13 @@ class CampaignService {
             // TODO: number contract
             // (Thu nhập x 100 / tỉ lệ hoa hồng)/loan
             let numContract = Math.ceil((campaign.IncomeMonthly * 100 / campaign.CommissionRate) / campaign.CaseSize);
-            let campTotal = _.clone(campaign);
-            campTotal.Period = 13;
-            campTotal.Name = 'Camp total';
-            campTotal.TargetCallSale = numContract * 10 * 12;
-            campTotal.TargetMetting = numContract * 5 * 12;
-            campTotal.TargetPresentation = numContract * 3 * 12;
-            campTotal.TargetContractSale = numContract * 12;
-            campTotal.EndDate = moment(campaign.StartDate).add(12, 'M').endOf('d').toDate();
+
             camps = _.times(12, (val) => {
                 let camp: ICampaign = _.clone(campaign);
                 camp.Period = val + 1;
                 camp.StartDate = moment(campaign.StartDate).add(val, 'M').toDate();
                 camp.EndDate = moment(campaign.StartDate).add(val + 1, 'M').subtract(1, 'd').endOf('d').toDate();
 
-                camp.Name = `Camp ${val + 1}`;
                 camp.TargetCallSale = numContract * 10;
                 camp.TargetMetting = numContract * 5;
                 camp.TargetPresentation = numContract * 3;
@@ -372,7 +320,7 @@ class CampaignService {
                     camp.CurrentCallSale = camp.TargetCallSale;
                     camp.CurrentMetting = camp.TargetMetting;
                     camp.CurrentPresentation = camp.TargetPresentation;
-                    camp.CurentContract = camp.TargetContractSale;
+                    camp.CurrentContract = camp.TargetContractSale;
                 }
                 return camp;
             });
@@ -396,16 +344,16 @@ class CampaignService {
             totalCampaign.TargetPresentation,
             'TargetContractSale',
             totalCampaign.TargetContractSale,
-            'IncomeMonthly',
-            totalCampaign.IncomeMonthly,
+            // 'IncomeMonthly',
+            // totalCampaign.IncomeMonthly,
             'CurrentCallSale',
             totalCampaign.CurrentCallSale,
             'CurrentMetting',
             totalCampaign.CurrentMetting,
             'CurrentPresentation',
             totalCampaign.CurrentPresentation,
-            'CurentContract',
-            totalCampaign.CurentContract,
+            'CurrentContract',
+            totalCampaign.CurrentContract,
             'StartDate',
             moment(totalCampaign.StartDate).format('YYYY-MM-DD'),
             'EndDate',
