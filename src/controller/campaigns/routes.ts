@@ -67,6 +67,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             },
             plugins: {
                 'hapi-swagger': {
+                    deprecated: true,
                     responses: {
                         200: {
                             description: '',
@@ -103,7 +104,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             handler: campaignController.getTotalCamp,
             auth: "jwt",
             tags: ['api', 'campaigns'],
-            description: 'Get campaign total of user',
+            description: '#flow Get campaign total of user',
             validate: {
                 params: {
                     key: Joi.string()
