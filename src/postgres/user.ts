@@ -68,7 +68,7 @@ const User = db.define('manulife_users', {
 
   },
   ReportToList: {
-    type: Sequelize.ARRAY(Sequelize.INTEGER),
+    type: Sequelize.STRING,
     allowNull: true,
   },
   Label: {

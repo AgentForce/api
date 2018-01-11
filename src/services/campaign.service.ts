@@ -61,7 +61,7 @@ interface ICampaign {
     FypRaito: number;
     Results: number;
     ReportTo: number;
-    ReportToList: Array<number>;
+    ReportToList: string;
 }
 
 // var logger = new (Logger)({
@@ -274,11 +274,11 @@ class CampaignService {
      * create new user
      * @param user IUser
      */
-    static createOfFA(campaign: ICampaign) {
+    static createOfFA(campaign: ICampaign, userId: number) {
         return Bluebird
             .all([
-                UserService.findById(campaign.UserId),
-                this.findByUserIdAndDate(campaign.UserId, campaign.StartDate)
+                UserService.findById(userId),
+                this.findByUserIdAndDate(userId, campaign.StartDate)
             ])
             .spread(async (user: IIUser, camps) => {
                 if (user == null) {
@@ -293,7 +293,14 @@ class CampaignService {
                         msg: `this user have campaign in ${campaign.StartDate}.`
                     });
                 }
-                let campsPrepare = <Array<ICampaign>>await this.prepareCamp(campaign, user)
+                campaign.UserId = userId;
+                campaign.ReportTo = user.Id;
+                if (user.ReportToList === '') {
+                    campaign.ReportToList = '';
+                } else {
+                    campaign.ReportToList = user.ReportToList;
+                }
+                let campsPrepare = <Array<ICampaign>>await this.prepareCamp(campaign)
                     .catch(ex => {
                         throw ex;
                     });
@@ -334,10 +341,8 @@ class CampaignService {
             });
     }
 
-    private static prepareCamp(campaign: ICampaign, user: IIUser) {
+    private static prepareCamp(campaign: ICampaign) {
         return new Promise((resolve, reject) => {
-            campaign.ReportTo = user.ReportTo;
-            campaign.ReportToList = user.ReportToList;
             let camps = [];
             // TODO: number contract
             // (Thu nhập x 100 / tỉ lệ hoa hồng)/loan
@@ -369,7 +374,6 @@ class CampaignService {
                     camp.CurrentPresentation = camp.TargetPresentation;
                     camp.CurentContract = camp.TargetContractSale;
                 }
-
                 return camp;
             });
             resolve(camps);

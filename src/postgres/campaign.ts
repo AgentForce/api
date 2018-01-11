@@ -224,7 +224,7 @@ const Campaign = db.define('manulife_campaigns', {
     type: Sequelize.INTEGER
   },
   ReportToList: {
-    type: Sequelize.ARRAY(Sequelize.INTEGER),
+    type: Sequelize.STRING,
     allowNull: true
   },
   IsDeleted: {

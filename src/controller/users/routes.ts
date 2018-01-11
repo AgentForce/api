@@ -26,11 +26,11 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
 
     server.route({
         method: 'GET',
-        path: '/users/{username}',
+        path: '/users/profile',
         config: {
             handler: userController.getByUsername,
             auth: "jwt",
-            description: 'Get user by username.',
+            description: 'Get user by username',
             tags: ['api', 'users'],
             validate: {
                 // headers: UserValidator.jwtValidator,
@@ -53,7 +53,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                 }
                             )
                         },
-                        '401': {
+                        401: {
                             'description': 'Please login.',
                             schema: Joi.object({
                                 "statusCode": 401,
@@ -93,6 +93,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             },
             plugins: {
                 'hapi-swagger': {
+                    deprecated: true,
                     responses: {
                         200: {
                             description: '',
@@ -152,6 +153,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             },
             plugins: {
                 'hapi-swagger': {
+                    deprecated: true,
                     responses: {
                         200: {
                             description: '',
@@ -212,6 +214,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             },
             plugins: {
                 'hapi-swagger': {
+                    deprecated: true,
                     responses: {
                         200: {
                             description: '',
@@ -236,59 +239,60 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
     /**
      * create account for resource
      */
-    server.route({
-        method: 'POST',
-        path: '/authen',
-        config: {
-            handler: userController.authorize,
-            tags: ['api', 'users'],
-            description: 'Create account for access resource',
-            validate: {
-                payload: UserValidator.ResourceModel,
-                failAction: (request, reply, source, error) => {
-                    let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        error: {
-                            code: 'ex_payload',
-                            msg: 'payload dont valid',
-                            details: error
-                        }
-                    };
-                    LogUser.create({
-                        type: 'updateprofile',
-                        dataInput: request.payload,
-                        msg: 'payload do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        },
-                    });
-                    return reply(res);
-                }
-            },
-            plugins: {
-                'hapi-swagger': {
-                    responses: {
-                        200: {
-                            description: '',
-                            schema: Joi.object(
-                                {
-                                    status: Joi
-                                        .number()
-                                        .example(200),
-                                    data: Joi
-                                        .object(),
-                                }
-                            )
-                        },
-                    },
-                    security: [{
-                        'jwt': []
-                    }]
-                }
-            }
-        }
-    });
+    // server.route({
+    //     method: 'POST',
+    //     path: '/authen',
+    //     config: {
+    //         handler: userController.authorize,
+    //         tags: ['api', 'users'],
+    //         description: 'Create account for access resource',
+    //         validate: {
+    //             payload: UserValidator.ResourceModel,
+    //             failAction: (request, reply, source, error) => {
+    //                 let res = {
+    //                     status: HTTP_STATUS.BAD_REQUEST,
+    //                     error: {
+    //                         code: 'ex_payload',
+    //                         msg: 'payload dont valid',
+    //                         details: error
+    //                     }
+    //                 };
+    //                 LogUser.create({
+    //                     type: 'updateprofile',
+    //                     dataInput: request.payload,
+    //                     msg: 'payload do not valid',
+    //                     meta: {
+    //                         exception: error,
+    //                         response: res
+    //                     },
+    //                 });
+    //                 return reply(res);
+    //             }
+    //         },
+    //         plugins: {
+    //             'hapi-swagger': {
+    //                 deprecated: true,
+    //                 responses: {
+    //                     200: {
+    //                         description: '',
+    //                         schema: Joi.object(
+    //                             {
+    //                                 status: Joi
+    //                                     .number()
+    //                                     .example(200),
+    //                                 data: Joi
+    //                                     .object(),
+    //                             }
+    //                         )
+    //                     },
+    //                 },
+    //                 security: [{
+    //                     'jwt': []
+    //                 }]
+    //             }
+    //         }
+    //     }
+    // });
 
     /**
      * change password
@@ -330,6 +334,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             },
             plugins: {
                 'hapi-swagger': {
+                    deprecated: true,
                     responses: {
                         200: {
                             description: '',
@@ -366,9 +371,19 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'User logged in.'
-                        }
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    token: Joi
+                                        .string()
+                                        .required(),
+                                }
+                            )
+                        },
                     },
                 }
             }
@@ -378,25 +393,35 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
     /**
      * login authorize
      */
-    server.route({
-        method: 'POST',
-        path: '/authen/login',
-        config: {
-            handler: userController.loginAuthen,
-            tags: ['users', 'api'],
-            description: 'Authentication.',
-            validate: {
-                payload: UserValidator.loginResourceModel
-            },
-            plugins: {
-                'hapi-swagger': {
-                    responses: {
-                        '200': {
-                            'description': 'logged in.'
-                        }
-                    },
-                }
-            }
-        }
-    });
+    // server.route({
+    //     method: 'POST',
+    //     path: '/authen/login',
+    //     config: {
+    //         handler: userController.loginAuthen,
+    //         tags: ['users', 'api'],
+    //         description: 'Authentication.',
+    //         validate: {
+    //             payload: UserValidator.loginResourceModel
+    //         },
+    //         plugins: {
+    //             'hapi-swagger': {
+    //                 responses: {
+    //                     200: {
+    //                         description: '',
+    //                         schema: Joi.object(
+    //                             {
+    //                                 status: Joi
+    //                                     .number()
+    //                                     .example(200),
+    //                                 token: Joi
+    //                                     .string()
+    //                                     .required(),
+    //                             }
+    //                         )
+    //                     },
+    //                 },
+    //             }
+    //         }
+    //     }
+    // });
 }

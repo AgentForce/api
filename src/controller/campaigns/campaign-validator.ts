@@ -10,17 +10,17 @@ const createCampaignFAModel = Joi.object().keys({
         .required()
         .example(1)
         .description('metatypes: type=camp-camptype'),
-    Name: Joi.string()
-        .required(),
-    Label: Joi.string()
-        .valid(['fc', 'fa'])
-        .required(),
-    Experience: Joi
-        .string()
-        .valid(['old', 'new'])
-        .required(),
-    UserId: Joi.number()
-        .required(),
+    // Name: Joi.string()
+    //     .required(),
+    // Label: Joi.string()
+    //     .valid(['fc', 'fa'])
+    //     .required(),
+    // Experience: Joi
+    //     .string()
+    //     .valid(['old', 'new'])
+    //     .required(),
+    // UserId: Joi.number()
+    //     .required(),
     StartDate: Joi.date()
         .required()
         .example(currentDate),
