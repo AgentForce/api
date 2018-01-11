@@ -81,8 +81,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 }
                             )
                         },
-                        '404': {
-                            'description': 'Campaign does not exists.'
+                        404: {
+                            'description': 'Campaign does not exists'
                         }
                     },
                     security: [{
