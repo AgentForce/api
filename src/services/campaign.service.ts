@@ -202,10 +202,16 @@ class CampaignService {
             .findById(campid)
             .then((campDb: ICampaign) => {
                 if (campDb == null) {
-                    throw { code: Ex.EX_CAMPID_NOT_FOUND, msg: 'campaignid not found' };
+                    throw {
+                        code: Ex.EX_CAMPID_NOT_FOUND,
+                        msg: 'campaignid not found'
+                    };
                 }
                 if (campDb.EndDate < moment().toDate()) {
-                    throw { code: Ex.EX_CAMP_FINISH, msg: 'campaign completed' };
+                    throw {
+                        code: Ex.EX_CAMP_FINISH,
+                        msg: 'campaign completed'
+                    };
                 }
                 return Campaign
                     .update(payload, {
@@ -247,11 +253,7 @@ class CampaignService {
                 }
                 campaign.UserId = userId;
                 campaign.ReportTo = user.ReportTo;
-                if (user.ReportToList === '') {
-                    campaign.ReportToList = '';
-                } else {
-                    campaign.ReportToList = `${user.ReportToList}.${user.ReportTo}`;
-                }
+                campaign.ReportToList = user.ReportToList;
                 let campsPrepare = <Array<ICampaign>>await this.prepareCamp(campaign)
                     .catch(ex => {
                         throw ex;
@@ -297,6 +299,10 @@ class CampaignService {
             });
     }
 
+    /**
+     * prepare campaign from input client to create 12 campaign insert into database
+     * @param campaign campaign
+     */
     private static prepareCamp(campaign: ICampaign) {
         return new Promise((resolve, reject) => {
             let camps = [];
