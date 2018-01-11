@@ -8,11 +8,13 @@ const createLeadModel = Joi.object().keys({
     Phone: Joi.string()
         .regex(/^[0-9]*$/)
         .required()
+        .example('01693248887')
         .description('number phone of customer'),
     Name: Joi.string()
         .description('Full name'),
     Age: Joi.number().required()
         .valid([1, 2, 3, 4])
+        .example(1)
         .description('Get info from api /types, key=age'),
     Gender: Joi.number().required()
         .valid([0, 1])
@@ -21,14 +23,16 @@ const createLeadModel = Joi.object().keys({
         .valid([1, 2, 3, 4])
         .required()
         .description('Get info from api /types, key=IncomeMonthly')
-        .default(1),
+        .example(1),
     Type: Joi.number()
         .required()
         .valid([1, 2, 3, 4])
+        .example(1)
         .description('4 type of activity'),
     MaritalStatus: Joi.number()
         .valid([1, 2, 3, 4])
         .required()
+        .example(1)
         .description('Get info from api /types, key=MaritalStatus'),
     Address: Joi.string().max(500),
     City: Joi.number()
@@ -46,7 +50,9 @@ const createLeadModel = Joi.object().keys({
     LeadType: Joi.number()
         .required()
         .description('Get info from api /types, key=LeadType'),
-    Description: Joi.string().max(500)
+    Description: Joi
+        .string()
+        .max(500)
 });
 
 const updateModel = Joi.object().keys({

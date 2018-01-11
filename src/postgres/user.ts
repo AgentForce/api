@@ -1,7 +1,8 @@
 import { db } from './db';
 // const Sequelize = require('sequelize');
 import { IDatabase } from '../database';
-import * as Sequelize from 'sequelize';
+// import * as Sequelize from 'sequelize';
+var Sequelize = require('sequelize-hierarchy')();
 const User = db.define('manulife_users', {
   Id: {
     allowNull: false,
@@ -63,11 +64,12 @@ const User = db.define('manulife_users', {
   },
   ReportTo: {
     type: Sequelize.INTEGER,
-    allowNull: true
+    allowNull: true,
+
   },
   ReportToList: {
     type: Sequelize.ARRAY(Sequelize.INTEGER),
-    allowNull: true
+    allowNull: true,
   },
   Label: {
     type: Sequelize.INTEGER,
@@ -109,7 +111,7 @@ const User = db.define('manulife_users', {
     // freezeTableName: true,
     timestamps: true,
     createdAt: 'CreatedAt',
-    updatedAt: 'UpdatedAt'
-  });
+    updatedAt: 'UpdatedAt',
 
+  });
 export { User };

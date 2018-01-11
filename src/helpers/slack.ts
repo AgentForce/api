@@ -1,5 +1,5 @@
 import * as Slack from 'slack-node';
-const apiToken = 'xoxb-34408154039-wKjRLaQaWQHAa9chC2gHMOqd';
+const apiToken = 'xoxb-293816437472-tHbZebODcKuyPZZnvS01ProU';
 
 const slack = new Slack(apiToken);
 
@@ -8,9 +8,9 @@ const slack = new Slack(apiToken);
 // });
 const SlackAlert = (text) => {
     slack.api('chat.postMessage', {
-        as_user: 'oggy',
+        as_user: 'alex',
         text: text,
-        channel: '#apimanulife'
+        channel: '#api-notify'
     }, (err, response) => {
     });
 };

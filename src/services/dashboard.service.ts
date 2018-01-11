@@ -33,7 +33,7 @@ class DashboardService {
                     };
                 }
                 let activities = await Activity
-                    .findAll({
+                    .findAndCountAll({
                         where: {
                             UserId: userId,
                             CampId: camp.Id,
@@ -51,7 +51,7 @@ class DashboardService {
                 };
 
                 if (activities !== null) {
-                    _.reduce(activities, (group, value: IActivity, key) => {
+                    _.reduce(activities, (group, value: IActivity, key: number) => {
                         if (value.Type === Constants.ACTIVITY_TYPE_CALL) {
                             groupActivities.call.push(value);
                         }

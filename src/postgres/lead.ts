@@ -2,6 +2,7 @@ import { db } from './db';
 // const Sequelize = require('sequelize');
 import * as Sequelize from 'sequelize';
 import { Activity } from './activity';
+require('sequelize-hierarchy')(Sequelize);
 const Lead = db.define('manulife_leads', {
   Id: {
     allowNull: false,
@@ -103,6 +104,11 @@ const Lead = db.define('manulife_leads', {
     type: Sequelize.BOOLEAN,
     allowNull: false,
     defaultValue: 1 // 1= active, 0 = deactive
+  },
+  StatusProcessStep: {
+    allowNull: false,
+    type: Sequelize.INTEGER,
+    defaultValue: 0
   },
   CreatedAt: {
     allowNull: false,

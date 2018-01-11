@@ -17,41 +17,136 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
 
 
 
-    // /**
-    //  * lấy 1 campaign theo campaignid
-    //  */
-    // server.route({
-    //     method: 'GET',
-    //     path: '/campaigns/{id}',
-    //     config: {
-    //         handler: campaignController.getCampaignById,
-    //         auth: "jwt",
-    //         tags: ['api', 'campaigns'],
-    //         description: 'Get campaigns by id.',
-    //         validate: {
-    //             params: {
-    //                 id: Joi.string().required()
-    //             },
-    //             headers: jwtValidator
-    //         },
-    //         plugins: {
-    //             'hapi-swagger': {
-    //                 responses: {
-    //                     '200': {
-    //                         'description': 'Campaign founded.'
-    //                     },
-    //                     '404': {
-    //                         'description': 'Campaign does not exists.'
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // });
+    /**
+     * history activity of a lead
+     */
+    server.route({
+        method: 'GET',
+        path: '/activities/lead/{leadid}/{processstep}',
+        config: {
+            handler: activitiesController.historyOfLead,
+            // auth: "jwt",
+            tags: ['api', 'activities'],
+            description: 'Get activities by leadid, paginate by parameter limit and page',
+            validate: {
+                params: {
+                    leadid: Joi
+                        .number()
+                        .integer()
+                        .required(),
+                    processstep: Joi
+                        .number()
+                        .integer()
+                        .valid([-1, 1, 2, 3, 4, 5])
+                        .description('-1 to get all'),
+                },
+                query: Joi.object({
+                    limit: Joi
+                        .number()
+                        .integer()
+                        .default(20)
+                        .required(),
+                    page: Joi
+                        .number()
+                        .integer()
+                        .default(1)
+                        .required()
+                })
+                // headers: jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object({
+                                            data: Joi.array().example([]),
+                                            limit: Joi.number(),
+                                            page: Joi.number()
+                                        })
+                                }
+                            )
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    /**
+    * history activity of a lead
+    */
+    server.route({
+        method: 'GET',
+        path: '/activities/{id}',
+        config: {
+            handler: activitiesController.findById,
+            // auth: "jwt",
+            tags: ['api', 'activities'],
+            description: 'Get a activity by id',
+            validate: {
+                params: {
+                    id: Joi
+                        .number()
+                        .integer()
+                        .required(),
+                }
+                // headers: jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object({
+                                            data: Joi.object(),
+                                        })
+                                }
+                            )
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    });
 
 
     /**
-     * Tạo mới goal
+     * create new activity
      */
     server.route({
         method: 'POST',
@@ -67,7 +162,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: Ex.EX_PAYLOAD, msg: 'payload dont valid',
+                            code: Ex.EX_PAYLOAD,
+                            msg: 'payload dont valid',
                             details: error
                         }
                     };
@@ -87,8 +183,27 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        201: {
-                            'description': 'activity created.'
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.OK),
+                                    data: Joi.object(),
+                                }
+                            )
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
+                                }
+                            )
                         }
                     },
                     security: [{
@@ -100,7 +215,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     });
 
 
-
+    /**
+     * update a activity
+     */
     server.route({
         method: 'PUT',
         path: '/activities/{id}',
@@ -140,11 +257,27 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Updated info.',
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.OK),
+                                    data: Joi.object(),
+                                }
+                            )
                         },
-                        '400': {
-                            'description': 'User does not have authorization.'
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
+                                }
+                            )
                         }
                     },
                     security: [{

@@ -2,6 +2,7 @@ import { Lead } from '../postgres/lead';
 import { IActivity, ActivityService } from './activity.service';
 import { Promise as Bluebird } from 'bluebird';
 import * as moment from 'moment';
+import * as Sequelize from 'sequelize';
 import { UserService, IIUser } from './user.service';
 import { IDatabase } from '../database';
 import { Campaign } from '../postgres/campaign';
@@ -48,6 +49,88 @@ class LeadService {
         }
     }
 
+    /**
+     * get leads by group count processStep and where campid
+     */
+    static async groupProcessStepInCamp(campId: number) {
+        try {
+            let leads = await Lead.findAll({
+                attributes: ['ProcessStep', 'CampId', [Sequelize.fn('Count', Sequelize.col('*')), 'Count']],
+                where: {
+                    CampId: campId,
+                    IsDeleted: false,
+                    Status: true, // dount count lead have reject
+                },
+                group: ['ProcessStep', 'CampId']
+            });
+            return leads;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+
+    /**
+     * get list leads reject by campId, filter by processtep
+     * @param phone string
+     */
+    static async getLeadReject(campId: number, processStep: number) {
+        try {
+            let leads = await Lead.findAll({
+                where: {
+                    CampId: campId,
+                    IsDeleted: false,
+                    ProcessStep: processStep,
+                    Status: false
+                }
+            });
+            return leads;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /**
+    * list leads of a campainid, filter by processttep
+    * @param campId
+    * @param processStep
+    */
+    static async listByCampaignId(campId: number, processStep: number, limit: number, page: number) {
+        try {
+            let offset = limit * (page - 1);
+            let activities = await Lead.findAll({
+                where: {
+                    ProcessStep: processStep,
+                    CampId: campId,
+                    IsDeleted: false,
+
+                },
+                include: [{
+                    model: Activity,
+                    where: {
+                        IsDeleted: false,
+                        ProcessStep: processStep
+                    },
+                    attributes: {
+                        exclude: ['IsDeleted']
+                    },
+                }],
+                attributes: {
+                    exclude: ['IsDeleted']
+                },
+                // number row skip
+                offset: offset,
+                limit: limit
+            });
+            return {
+                data: activities,
+                page: page,
+                limit: limit
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
 
     /**
     * Tìm một lead dựa vào Id
@@ -67,24 +150,6 @@ class LeadService {
         }
     }
 
-    static async detailLeadActivity(Id: number) {
-        return Lead
-            .findOne({
-                where: {
-                    Id: Id,
-                    IsDeleted: false
-                },
-                include: [{
-                    model: Activity,
-                    attributes: {
-                        exclude: ['IsDeleted']
-                    }
-                }]
-            })
-            .then(lead => {
-                return lead;
-            });
-    }
 
 
     static async update(leadId: number, lead: IPayloadUpdate) {

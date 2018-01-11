@@ -1,20 +1,42 @@
 import * as Joi from "joi";
+import * as moment from 'moment';
+const currentDate = moment().format('YYYY-MM-DD');
+
+/**
+ * model create camp
+ */
 const createCampaignFAModel = Joi.object().keys({
-    CampType: Joi.number().required()
-        .default(1)
+    CampType: Joi.number()
+        .required()
+        .example(1)
         .description('metatypes: type=camp-camptype'),
-    Name: Joi.string().required(),
+    Name: Joi.string()
+        .required(),
     Label: Joi.string()
-        .valid(['fc', 'fa']).required(),
-    Experience: Joi.string()
-        .valid(['old', 'new']).required(),
-    UserId: Joi.number().required(),
-    StartDate: Joi.date().required()
-        .default('2017-11-12')
-        .example('2017-11-12'),
-    CaseSize: Joi.number().min(1).required(),
-    IncomeMonthly: Joi.number().min(1).required(),
-    CommissionRate: Joi.number().min(1).required()
+        .valid(['fc', 'fa'])
+        .required(),
+    Experience: Joi
+        .string()
+        .valid(['old', 'new'])
+        .required(),
+    UserId: Joi.number()
+        .required(),
+    StartDate: Joi.date()
+        .required()
+        .example(currentDate),
+    CaseSize: Joi.number()
+        .min(1)
+        .required()
+        .example(1000000),
+    IncomeMonthly: Joi
+        .number()
+        .min(1)
+        .required()
+        .example(10000000),
+    CommissionRate: Joi.number()
+        .min(1)
+        .example(10)
+        .required()
 });
 
 /**

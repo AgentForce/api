@@ -31,29 +31,64 @@ interface IActivity {
 }
 class ActivityService {
 
-
     /**
-    * Tìm một lead dựa vào số điện thoại
+    * get a activity by activityId
     * @param phone string
     */
-    static async findById(phone: string) {
+    static async findById(id: number) {
         try {
-            let lead = await Activity.findOne({
+            let activity = await Activity.findOne({
                 where: {
-                    Phone: phone,
+                    Id: id,
                     IsDeleted: false
+                },
+                attributes:{
+                    exclude: ['IsDeleted', 'ReportTo', 'ReportToList']
                 }
             });
-            return lead;
+            return activity;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /**
+    * list activities of a leadid
+    * @param campId
+    * @param processStep
+    * @param limit: number row of page
+    */
+    static async listByCampaignId(leadId: number, limit: number, page: number) {
+        try {
+            let offset = limit * (page - 1);
+            let activities = await Activity.findAll({
+                where: {
+                    LeadId: leadId,
+                    IsDeleted: false,
+                },
+                order: [
+                    ['StartDate', 'DESC']
+                ],
+                attributes: {
+                    exclude: ['IsDeleted', 'ReportTo', 'ReportToList']
+                },
+                // number row skip
+                offset: offset,
+                limit: limit
+            });
+            return {
+                data: activities,
+                page: page,
+                limit: limit
+            };
         } catch (error) {
             throw error;
         }
     }
 
 
-
     /**
-     * Tạo mới activiy
+     * create new  activiy
      * @param activiy activiy
      */
     static create(payload: IPayloadCreate) {

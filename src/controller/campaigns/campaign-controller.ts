@@ -82,7 +82,61 @@ export default class CampaignController {
             reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
-
+    /**
+     * get total campaign info from cache
+     * parameter:
+     * @key: userid-yyyy
+     */
+    public async getTotalCamp(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let key = request.params.key;
+            console.log(key);
+            let obj = await CampaignService.getTotalCamp(key);
+            if (obj) {
+                reply({
+                    status: HTTP_STATUS.OK,
+                    data: obj,
+                }).code(HTTP_STATUS.OK);
+            } else {
+                reply({
+                    status: HTTP_STATUS.NOT_FOUND,
+                    msg: 'not found anything'
+                }).code(HTTP_STATUS.NOT_FOUND);
+            }
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    url: request.url.path,
+                    error: {
+                        code: Ex.EX_GENERAL,
+                        msg: 'get camptotal have errors'
+                    }
+                };
+            }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+            LogCamp.create({
+                type: 'leadsOfCamp',
+                dataInput: {
+                    payload: request.payload,
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
     /**
      *  list leads of a campaign
      */
@@ -173,7 +227,7 @@ export default class CampaignController {
 
 
     /**
-     * get a campaign by campaignid
+     * get by campaignid
      */
     public async getByCampaignId(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {

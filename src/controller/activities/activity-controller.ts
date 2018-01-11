@@ -19,6 +19,104 @@ export default class ActivitiesController {
         this.database = database;
     }
 
+
+    /**
+     * get activity by Id
+     */
+    public async findById(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let id = parseInt(request.params.id, 10);
+            let activities: any = await ActivityService.findById(id);
+            reply({
+                status: HTTP_STATUS.OK,
+                data: activities
+            }).code(HTTP_STATUS.OK);
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    url: request.url.path,
+                    error: {
+                        code: EX.EX_GENERAL,
+                        msg: 'activity findById have errors'
+                    }
+                };
+            }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+            LogActivity.create({
+                type: 'activity findById have errors',
+                dataInput: {
+                    payload: request.payload,
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * get list activities by campaignid, filter by processstep
+     */
+    public async historyOfLead(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let leadId = parseInt(request.params.leadid, 10);
+            let limit = parseInt(request.query.limit, 10);
+            let page = parseInt(request.query.page, 10);
+            let activities: any = await ActivityService.listByCampaignId(leadId, limit, page);
+            reply({
+                status: HTTP_STATUS.OK,
+                data: activities
+            }).code(HTTP_STATUS.OK);
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    url: request.url.path,
+                    error: {
+                        code: EX.EX_GENERAL,
+                        msg: 'historyOfLead have errors'
+                    }
+                };
+            }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+            LogActivity.create({
+                type: 'historyOfLead have errors',
+                dataInput: {
+                    payload: request.payload,
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Update activity
+     */
     public async update(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let iAc = request.payload as IPayloadUpdate;
@@ -76,7 +174,9 @@ export default class ActivitiesController {
         }
     }
 
-
+    /**
+     * create new actiivty
+     */
     public async create(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let iAc = request.payload as IPayloadCreate;

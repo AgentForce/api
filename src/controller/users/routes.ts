@@ -41,11 +41,25 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'User founded.'
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
                         },
                         '401': {
-                            'description': 'Please login.'
+                            'description': 'Please login.',
+                            schema: Joi.object({
+                                "statusCode": 401,
+                                "error": "Unauthorized",
+                                "message": "Missing authentication"
+                            })
                         }
                     },
                     security: [{
@@ -71,14 +85,26 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             validate: {
                 // headers: UserValidator.jwtValidator,
                 payload: {
-                    Email: Joi.string().email().required().default('tunguyenq@gmail.com')
+                    Email: Joi.string()
+                        .email()
+                        .required()
+                        .example('tunguyenq@gmail.com')
                 }
             },
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'User founded.'
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
                         },
                         '401': {
                             'description': 'Please login.'
@@ -88,6 +114,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             }
         }
     });
+
 
 
 
@@ -104,8 +131,10 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 // headers: UserValidator.jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: 'ex_payload', msg: 'payload dont valid',
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        error: {
+                            code: 'ex_payload',
+                            msg: 'payload dont valid',
                             details: error
                         }
                     };
@@ -124,8 +153,17 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Updated info.',
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
                         },
                         '401': {
                             'description': 'User does not have authorization.'
@@ -175,9 +213,18 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'User created.'
-                        }
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
+                        },
                     },
                     security: [{
                         'jwt': []
@@ -222,9 +269,18 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'User created.'
-                        }
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
+                        },
                     },
                     security: [{
                         'jwt': []
@@ -275,8 +331,17 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'change password success'
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
                         },
                     },
                     security: [{
