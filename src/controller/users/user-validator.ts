@@ -116,14 +116,54 @@ const updateProfileModel = Joi.object().keys({
 
 
 const loginUserModel = Joi.object().keys({
-    Username: Joi.string().required(),
-    Password: Joi.string().trim().required()
+    UserName: Joi
+        .string()
+        .required(),
+    Password: Joi
+        .string()
+        .trim()
+        .required(),
+    ClientId: Joi.string()
+        .required(),
+    VersionOs: Joi
+        .string()
+        .required(),
+    VersionApp: Joi
+        .string()
+        .required(),
+    GrantType: Joi
+        .string()
+        .required(),
+    Scope: Joi
+        .array(),
+    Emei: Joi
+        .string()
+        .required()
 });
 
 
 const loginResourceModel = Joi.object().keys({
-    Email: Joi.string().required(),
-    Password: Joi.string().trim().required()
+    UserName: Joi.string().required(),
+    ClientId: Joi.string()
+        .required(),
+    VersionOs: Joi
+        .string()
+        .required(),
+    VersionApp: Joi
+        .string()
+        .required(),
+    GrantType: Joi
+        .string()
+        .required(),
+    Scope: Joi
+        .array(),
+    Emei: Joi
+        .string()
+        .required(),
+    Password: Joi
+        .string()
+        .trim()
+        .required()
 });
 const jwtValidator = Joi.object({ 'authorization': Joi.string().required() }).unknown();
 export {

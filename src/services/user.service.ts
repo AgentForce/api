@@ -4,6 +4,7 @@ import { IPayloadCreate, IPayloadChangePass } from '../controller/users/user';
 import * as Bcrypt from "bcryptjs";
 import { ManulifeErrors as Ex } from '../helpers/code-errors';
 interface IIUser {
+    Id?: number;
     Password: string;
     Email: string;
     Phone: string;
@@ -12,7 +13,7 @@ interface IIUser {
     Gender: string;
     Birthday: Date;
     GroupId: string;
-    ReportToList: number[];
+    ReportToList: string;
     Address: string;
     City: number;
     District: number;
@@ -158,7 +159,7 @@ class UserService {
             Phone: payload.Phone,
             Password: payload.Password,
             ReportTo: ReportTo,
-            ReportToList: [],
+            ReportToList: '',
         };
         return User
             .create(user)

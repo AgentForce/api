@@ -55,6 +55,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             },
             plugins: {
                 'hapi-swagger': {
+                    deprecated: true,
                     responses: {
                         200: {
                             description: 'success',
