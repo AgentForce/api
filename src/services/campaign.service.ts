@@ -2,6 +2,8 @@ import { Campaign } from '../postgres';
 import { UserService, IIUser } from '../services/user.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { Sequelize } from 'sequelize';
+
 import { Promise as Bluebird } from 'bluebird';
 import { use } from 'nconf';
 import { Lead } from '../postgres/lead';
@@ -13,6 +15,7 @@ import { IPayloadUpdate } from '../controller/campaigns/campaign';
 
 import redis from '../cache/redis';
 import { max } from 'moment';
+import { db } from '../postgres/db';
 interface ICampaign {
     UserId?: number;
     Period?: number;
@@ -197,6 +200,11 @@ class CampaignService {
      * @param campaignId number
      */
     static findById(campaignId) {
+        db
+            .query('select * from manulife_users ',
+            { replacements: { email: 42 } })
+            .then(v => console.log(v));
+
         return Campaign
             .findOne({
                 where: {

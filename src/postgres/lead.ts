@@ -2,6 +2,7 @@ import { db } from './db';
 // const Sequelize = require('sequelize');
 import * as Sequelize from 'sequelize';
 import { Activity } from './activity';
+require('sequelize-hierarchy')(Sequelize);
 const Lead = db.define('manulife_leads', {
   Id: {
     allowNull: false,

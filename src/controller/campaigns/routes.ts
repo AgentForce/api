@@ -136,6 +136,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             },
             plugins: {
                 'hapi-swagger': {
+                    deprecated: true,
                     responses: {
                         200: {
                             description: '',
@@ -188,7 +189,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/campaigns/{id}',
         config: {
             handler: campaignController.getByCampaignId,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'campaigns'],
             description: 'Get campaign by campaignid.',
             validate: {

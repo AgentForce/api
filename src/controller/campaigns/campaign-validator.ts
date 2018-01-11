@@ -2,6 +2,9 @@ import * as Joi from "joi";
 import * as moment from 'moment';
 const currentDate = moment().format('YYYY-MM-DD');
 
+/**
+ * model create camp
+ */
 const createCampaignFAModel = Joi.object().keys({
     CampType: Joi.number()
         .required()
