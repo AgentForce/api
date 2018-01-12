@@ -152,21 +152,23 @@ class CampaignService {
      * @param campaignId number
      */
     static findById(campaignId) {
-        // db
-        //     .query('select * from manulife_users ',
-        //     { replacements: { email: 42 } })
-        //     .then(v => console.log(v));
-
-        return Campaign
-            .findOne({
-                where: {
-                    Id: campaignId,
-                    IsDeleted: false
-                }
-            })
-            .catch(ex => {
-                throw ex;
+        return db
+            .query(`select * from reporttolist(5, lquery_in('*'))`,
+            { replacements: { email: 42 } })
+            .spread((output, records: any) => {
+                return records.rows;
             });
+
+        // return Campaign
+        //     .findOne({
+        //         where: {
+        //             Id: campaignId,
+        //             IsDeleted: false
+        //         }
+        //     })
+        //     .catch(ex => {
+        //         throw ex;
+        //     });
     }
 
     /**

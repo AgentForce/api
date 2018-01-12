@@ -93,6 +93,18 @@ const User = db.define('manulife_users', {
   UpdatedAt: {
     allowNull: false,
     type: Sequelize.DATE
+  },
+  LastLogin: {
+    type: Sequelize.DATE,
+    allowNull: true
+  },
+  Experience: {
+    type: Sequelize.DATE,
+    allowNull: true
+  },
+  Credit: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
   }
 }, {
     hooks: {
