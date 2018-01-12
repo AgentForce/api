@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 const dashboard_controller_1 = require("./dashboard-controller");
 const HTTP_STATUS = require("http-status");
-const code_errors_1 = require("../../helpers/code-errors");
+const code_errors_1 = require("../../common/code-errors");
 const index_1 = require("../../mongo/index");
 function default_1(server, configs, database) {
     const dashboardController = new dashboard_controller_1.default(configs, database);

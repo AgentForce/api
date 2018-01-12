@@ -5,8 +5,8 @@ const activity_controller_1 = require("./activity-controller");
 const ActivitiesValidator = require("./activity-validator");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
-const code_errors_1 = require("../../helpers/code-errors");
-const index_2 = require("../../helpers/index");
+const code_errors_1 = require("../../common/code-errors");
+const index_2 = require("../../common/index");
 function default_1(server, configs, database) {
     const activitiesController = new activity_controller_1.default(configs, database);
     server.bind(activitiesController);

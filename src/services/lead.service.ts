@@ -8,7 +8,7 @@ import { IDatabase } from '../database';
 import { Campaign } from '../postgres/campaign';
 import { CampaignService, ICampaign } from './campaign.service';
 import { IPayloadUpdate } from '../controller/leads/lead';
-import { ManulifeErrors as Ex } from '../helpers/code-errors';
+import { ManulifeErrors as Ex } from '../common/code-errors';
 import { Activity } from '../postgres/activity';
 interface ILead {
     Id: number;

@@ -7,8 +7,8 @@ import { ActivityService, IActivity } from '../../services/activity.service';
 import * as HTTP_STATUS from 'http-status';
 import { IPayloadCreate, IPayloadUpdate } from "./activity";
 import { LogActivity } from "../../mongo/index";
-import { ManulifeErrors as EX } from '../../helpers/code-errors';
-import { SlackAlert } from "../../helpers/index";
+import { ManulifeErrors as EX } from '../../common/code-errors';
+import { SlackAlert } from "../../common/index";
 export default class ActivitiesController {
 
     private database: IDatabase;

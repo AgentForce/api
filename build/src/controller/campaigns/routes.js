@@ -4,9 +4,9 @@ const Joi = require("joi");
 const campaign_controller_1 = require("./campaign-controller");
 const CampaignValidator = require("./campaign-validator");
 const HTTP_STATUS = require("http-status");
-const code_errors_1 = require("../../helpers/code-errors");
+const code_errors_1 = require("../../common/code-errors");
 const index_1 = require("../../mongo/index");
-const index_2 = require("../../helpers/index");
+const index_2 = require("../../common/index");
 function default_1(server, configs, database) {
     const campaignController = new campaign_controller_1.default(configs, database);
     server.bind(campaignController);

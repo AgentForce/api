@@ -12,11 +12,11 @@ const postgres_1 = require("../postgres");
 const campaign_service_1 = require("./campaign.service");
 const user_service_1 = require("./user.service");
 const lead_1 = require("../postgres/lead");
-const code_errors_1 = require("../helpers/code-errors");
+const code_errors_1 = require("../common/code-errors");
 const campaign_1 = require("../postgres/campaign");
 const moment = require("moment");
 const _ = require("lodash");
-const helpers_1 = require("../helpers");
+const helpers_1 = require("../common");
 class ActivityService {
     /**
     * Tìm một lead dựa vào số điện thoại

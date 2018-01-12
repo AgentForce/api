@@ -15,7 +15,7 @@ const moment = require("moment");
 const bluebird_1 = require("bluebird");
 const lead_1 = require("../postgres/lead");
 const winston_1 = require("winston");
-const code_errors_1 = require("../helpers/code-errors");
+const code_errors_1 = require("../common/code-errors");
 var logger = new (winston_1.Logger)({
     transports: [
         new (winston_1.transports.Console)({ level: 'error' }),

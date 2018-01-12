@@ -6,9 +6,9 @@ import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
 import { LogLead } from "../../mongo/index";
-import { ManulifeErrors as Ex } from '../../helpers/code-errors';
+import { ManulifeErrors as Ex } from '../../common/code-errors';
 import * as LeadValidator from "./lead-validator";
-import { Constants, ManulifeErrors } from "../../helpers/index";
+import { Constants, ManulifeErrors } from "../../common/index";
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
     const leadController = new LeadController(configs, database);
     server.bind(leadController);

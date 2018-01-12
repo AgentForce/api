@@ -10,7 +10,7 @@ import { Campaign } from "../../postgres/campaign";
 import { LogCamp } from "../../mongo/index";
 import { IPayloadUpdate } from "./campaign";
 import * as _ from 'lodash';
-import { SlackAlert, ManulifeErrors as Ex } from "../../helpers/index";
+import { SlackAlert, ManulifeErrors as Ex } from "../../common/index";
 export default class CampaignController {
 
     private database: IDatabase;

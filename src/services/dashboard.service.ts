@@ -3,11 +3,11 @@ import { IPayloadCreate, IPayloadUpdate } from '../controller/activities/activit
 import { LeadService, ILead } from './lead.service';
 import { UserService, IIUser } from './user.service';
 import { Lead } from '../postgres/lead';
-import { ManulifeErrors as Ex } from '../helpers/code-errors';
+import { ManulifeErrors as Ex } from '../common/code-errors';
 import { Campaign } from '../postgres/campaign';
 import * as moment from 'moment';
 import * as _ from 'lodash';
-import { Constants, SlackAlert } from '../helpers';
+import { Constants, SlackAlert } from '../common';
 import { IActivity } from './activity.service';
 
 class DashboardService {

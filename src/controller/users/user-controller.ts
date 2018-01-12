@@ -10,12 +10,12 @@ import { IServerConfigurations } from "../../configurations";
 import * as Joi from 'joi';
 import * as HTTP_STATUS from 'http-status';
 import { LogUser } from "../../mongo/index";
-import { ManulifeErrors as Ex } from '../../helpers/code-errors';
+import { ManulifeErrors as Ex } from '../../common/code-errors';
 const nodemailer = require('nodemailer');
 import * as EmailTemplate from 'email-templates';
 import { User } from "../../postgres/user";
 import * as Faker from 'faker';
-import { SlackAlert } from "../../helpers/index";
+import { SlackAlert } from "../../common/index";
 
 import * as path from 'path';
 import * as fs from 'fs';
@@ -23,7 +23,7 @@ import * as Loki from 'lokijs';
 import {
     imageFilter, loadCollection, cleanFolder,
     uploader
-} from '../../helpers/utils';
+} from '../../common/utils';
 
 // setup
 const DB_NAME = 'db.json';

@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const postgres_1 = require("../postgres");
-const code_errors_1 = require("../helpers/code-errors");
+const code_errors_1 = require("../common/code-errors");
 const campaign_1 = require("../postgres/campaign");
 const _ = require("lodash");
-const helpers_1 = require("../helpers");
+const helpers_1 = require("../common");
 class DashboardService {
     /**
      * dash board in current

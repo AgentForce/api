@@ -2,7 +2,7 @@ import { User } from '../postgres';
 import * as _ from 'lodash';
 import { IPayloadCreate, IPayloadChangePass } from '../controller/users/user';
 import * as Bcrypt from "bcryptjs";
-import { ManulifeErrors as Ex } from '../helpers/code-errors';
+import { ManulifeErrors as Ex } from '../common/code-errors';
 interface IIUser {
     Id?: number;
     Password: string;

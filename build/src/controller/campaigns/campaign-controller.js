@@ -12,7 +12,7 @@ const campaign_service_1 = require("../../services/campaign.service");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
 const _ = require("lodash");
-const index_2 = require("../../helpers/index");
+const index_2 = require("../../common/index");
 class CampaignController {
     constructor(configs, database) {
         this.configs = configs;

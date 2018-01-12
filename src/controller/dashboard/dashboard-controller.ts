@@ -8,7 +8,7 @@ import * as HTTP_STATUS from 'http-status';
 import { Campaign } from "../../postgres/campaign";
 import { LogCamp } from "../../mongo/index";
 import * as _ from 'lodash';
-import { SlackAlert, ManulifeErrors as Ex } from "../../helpers/index";
+import { SlackAlert, ManulifeErrors as Ex } from "../../common/index";
 import { DashboardService } from "../../services/dashboard.service";
 export default class DashboardController {
 

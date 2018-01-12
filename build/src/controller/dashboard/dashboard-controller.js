@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
-const index_2 = require("../../helpers/index");
+const index_2 = require("../../common/index");
 const dashboard_service_1 = require("../../services/dashboard.service");
 class DashboardController {
     constructor(configs, database) {

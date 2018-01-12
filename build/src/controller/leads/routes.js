@@ -4,7 +4,7 @@ const Joi = require("joi");
 const lead_controller_1 = require("./lead-controller");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
-const code_errors_1 = require("../../helpers/code-errors");
+const code_errors_1 = require("../../common/code-errors");
 const LeadValidator = require("./lead-validator");
 function default_1(server, configs, database) {
     const leadController = new lead_controller_1.default(configs, database);

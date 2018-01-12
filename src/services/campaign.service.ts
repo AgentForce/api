@@ -10,7 +10,7 @@ import { Lead } from '../postgres/lead';
 import { log } from 'util';
 import { Logger, transports, Winston } from 'winston';
 import { LogCamp } from '../mongo';
-import { ManulifeErrors as Ex } from '../helpers/code-errors';
+import { ManulifeErrors as Ex } from '../common/code-errors';
 import { IPayloadUpdate } from '../controller/campaigns/campaign';
 import { ICampaign, ICampTotal } from './ICampaign';
 import redis from '../cache/redis';

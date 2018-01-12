@@ -14,7 +14,7 @@ const bluebird_1 = require("bluebird");
 const moment = require("moment");
 const user_service_1 = require("./user.service");
 const campaign_service_1 = require("./campaign.service");
-const code_errors_1 = require("../helpers/code-errors");
+const code_errors_1 = require("../common/code-errors");
 const activity_1 = require("../postgres/activity");
 class LeadService {
     /**

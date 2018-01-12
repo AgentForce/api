@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const lead_service_1 = require("../../services/lead.service");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
-const index_2 = require("../../helpers/index");
+const index_2 = require("../../common/index");
 class LeadController {
     constructor(configs, database) {
         this.configs = configs;

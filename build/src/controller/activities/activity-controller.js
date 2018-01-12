@@ -11,8 +11,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const activity_service_1 = require("../../services/activity.service");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
-const code_errors_1 = require("../../helpers/code-errors");
-const index_2 = require("../../helpers/index");
+const code_errors_1 = require("../../common/code-errors");
+const index_2 = require("../../common/index");
 class ActivitiesController {
     constructor(configs, database) {
         this.configs = configs;

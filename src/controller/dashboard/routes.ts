@@ -5,9 +5,9 @@ import { jwtValidator } from "../users/user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
-import { ManulifeErrors as Ex } from '../../helpers/code-errors';
+import { ManulifeErrors as Ex } from '../../common/code-errors';
 import { LogCamp } from "../../mongo/index";
-import { SlackAlert } from "../../helpers/index";
+import { SlackAlert } from "../../common/index";
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
 
     const dashboardController = new DashboardController(configs, database);
