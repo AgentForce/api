@@ -1,6 +1,6 @@
 {
     "database": {
-        "connectionString": "mongodb://manulife:manulife!!!@103.48.191.254:27017/manulife"
+        "connectionString": "mongodb://192.168.0.105:27017/manulife"
     },
     "server": {
         "port": 5000,
@@ -12,5 +12,8 @@
             "jwt-auth",
             "swagger"
         ]
+    },
+    "redis": {
+        "url": "//redis:manulife@192.168.0.105:6379"
     }
 }

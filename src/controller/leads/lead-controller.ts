@@ -69,7 +69,7 @@ export default class LeadController {
 
     /**
      * caculator and group processStep in leads in a campaignid
-     * 
+     *
      */
     public async groupProcessStepInCamp(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {

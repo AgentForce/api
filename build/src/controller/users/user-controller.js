@@ -22,6 +22,7 @@ const Faker = require("faker");
 const index_2 = require("../../common/index");
 const fs = require("fs");
 const Loki = require("lokijs");
+const db_1 = require("../../postgres/db");
 const utils_1 = require("../../common/utils");
 // setup
 const DB_NAME = 'db.json';
@@ -247,22 +248,57 @@ class UserController {
      */
     loginUser(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
-            const username = request.payload.Username;
-            const password = request.payload.Password;
-            let user = yield this.database
-                .userModel
-                .findOne({ username: username });
-            if (!user) {
-                return reply(Boom.unauthorized("User does not exists."));
-            }
-            if (!user.validatePassword(password)) {
-                return reply(Boom.unauthorized("Password is invalid."));
-            }
-            let userPg = yield user_service_1.UserService.findByCode(username);
-            reply({
-                token: this.generateToken(user),
-                info: userPg
+            return reply({
+                status: HTTP_STATUS.OK,
+                token: 'EYnlcWGuXfYTZohm6oVoKM86oATLwpeX1jqjky4uwT4nysDZe8HgBbczZW'
             });
+            // const username = request.payload.Username;
+            // const password = request.payload.Password;
+            // let user: IUser = await this.database
+            //     .userModel
+            //     .findOne({ username: username });
+            // if (!user) {
+            //     return reply({
+            //         status: HTTP_STATUS.OK,
+            //         token: Faker.random.alphaNumeric(250)
+            //     });
+            // }
+            // if (!user.validatePassword(password)) {
+            //     return reply(Boom.unauthorized("Password is invalid."));
+            // }
+            // let userPg = await UserService.findByCode(username);
+            // reply({
+            //     token: this.generateToken(user),
+            //     info: userPg
+            // });
+        });
+    }
+    testUser(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return db_1.db
+                .query(`select * from reporttolist(${request.params.userid}, lquery_in('${request.params.query}'))`, { replacements: { email: 42 } })
+                .spread((output, records) => {
+                return records.rows;
+            });
+            // const username = request.payload.Username;
+            // const password = request.payload.Password;
+            // let user: IUser = await this.database
+            //     .userModel
+            //     .findOne({ username: username });
+            // if (!user) {
+            //     return reply({
+            //         status: HTTP_STATUS.OK,
+            //         token: Faker.random.alphaNumeric(250)
+            //     });
+            // }
+            // if (!user.validatePassword(password)) {
+            //     return reply(Boom.unauthorized("Password is invalid."));
+            // }
+            // let userPg = await UserService.findByCode(username);
+            // reply({
+            //     token: this.generateToken(user),
+            //     info: userPg
+            // });
         });
     }
     /**

@@ -18,6 +18,109 @@ class ActivitiesController {
         this.configs = configs;
         this.database = database;
     }
+    /**
+     * get activity by Id
+     */
+    findById(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let id = parseInt(request.params.id, 10);
+                let activities = yield activity_service_1.ActivityService.findById(id);
+                reply({
+                    status: HTTP_STATUS.OK,
+                    data: activities
+                }).code(HTTP_STATUS.OK);
+            }
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        url: request.url.path,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        url: request.url.path,
+                        error: {
+                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
+                            msg: 'activity findById have errors'
+                        }
+                    };
+                }
+                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                index_1.LogActivity.create({
+                    type: 'activity findById have errors',
+                    dataInput: {
+                        payload: request.payload,
+                        params: request.params
+                    },
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            }
+        });
+    }
+    /**
+     * get list activities by campaignid, filter by processstep
+     */
+    historyOfLead(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let leadId = parseInt(request.params.leadid, 10);
+                let limit = parseInt(request.query.limit, 10);
+                let page = parseInt(request.query.page, 10);
+                let activities = yield activity_service_1.ActivityService.listByCampaignId(leadId, limit, page);
+                reply({
+                    status: HTTP_STATUS.OK,
+                    data: activities
+                }).code(HTTP_STATUS.OK);
+            }
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        url: request.url.path,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        url: request.url.path,
+                        error: {
+                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
+                            msg: 'historyOfLead have errors'
+                        }
+                    };
+                }
+                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                index_1.LogActivity.create({
+                    type: 'historyOfLead have errors',
+                    dataInput: {
+                        payload: request.payload,
+                        params: request.params
+                    },
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            }
+        });
+    }
+    /**
+     * Update activity
+     */
     update(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -78,6 +181,9 @@ class ActivitiesController {
             }
         });
     }
+    /**
+     * create new actiivty
+     */
     create(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

@@ -21,7 +21,7 @@ interface IActivity {
     EndDate: Date;
     Description: string;
     ReportTo: number;
-    ReportToList: Array<number>;
+    ReportToList: string;
     Type: number;
     Status: number;
     FullDate: boolean;
@@ -174,7 +174,7 @@ class ActivityService {
                 }
                 let updateCamp = {
                     CurrentCallSale: camp.CurrentCallSale,
-                    CurentContract: camp.CurentContract,
+                    CurentContract: camp.CurrentContract,
                     CurrentMetting: camp.CurrentMetting,
                     CurrentPresentation: camp.CurrentPresentation
                 };

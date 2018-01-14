@@ -16,22 +16,25 @@ const code_errors_1 = require("../common/code-errors");
 const campaign_1 = require("../postgres/campaign");
 const moment = require("moment");
 const _ = require("lodash");
-const helpers_1 = require("../common");
+const common_1 = require("../common");
 class ActivityService {
     /**
-    * Tìm một lead dựa vào số điện thoại
+    * get a activity by activityId
     * @param phone string
     */
-    static findById(phone) {
+    static findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let lead = yield postgres_1.Activity.findOne({
+                let activity = yield postgres_1.Activity.findOne({
                     where: {
-                        Phone: phone,
+                        Id: id,
                         IsDeleted: false
+                    },
+                    attributes: {
+                        exclude: ['IsDeleted', 'ReportTo', 'ReportToList']
                     }
                 });
-                return lead;
+                return activity;
             }
             catch (error) {
                 throw error;
@@ -39,7 +42,43 @@ class ActivityService {
         });
     }
     /**
-     * Tạo mới activiy
+    * list activities of a leadid
+    * @param campId
+    * @param processStep
+    * @param limit: number row of page
+    */
+    static listByCampaignId(leadId, limit, page) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let offset = limit * (page - 1);
+                let activities = yield postgres_1.Activity.findAll({
+                    where: {
+                        LeadId: leadId,
+                        IsDeleted: false,
+                    },
+                    order: [
+                        ['StartDate', 'DESC']
+                    ],
+                    attributes: {
+                        exclude: ['IsDeleted', 'ReportTo', 'ReportToList']
+                    },
+                    // number row skip
+                    offset: offset,
+                    limit: limit
+                });
+                return {
+                    data: activities,
+                    page: page,
+                    limit: limit
+                };
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    /**
+     * create new  activiy
      * @param activiy activiy
      */
     static create(payload) {
@@ -122,11 +161,11 @@ class ActivityService {
             }
             let updateCamp = {
                 CurrentCallSale: camp.CurrentCallSale,
-                CurentContract: camp.CurentContract,
+                CurentContract: camp.CurrentContract,
                 CurrentMetting: camp.CurrentMetting,
                 CurrentPresentation: camp.CurrentPresentation
             };
-            if (payload.Status === 1 && activity.Status === helpers_1.Constants.ACTIVITY_DEACTIVE) {
+            if (payload.Status === 1 && activity.Status === common_1.Constants.ACTIVITY_DEACTIVE) {
                 if (activity.Type === 1) {
                     updateCamp.CurrentCallSale += 1;
                 }
@@ -140,7 +179,7 @@ class ActivityService {
                     updateCamp.CurrentPresentation += 1;
                 }
             }
-            else if (payload.Status === 0 && activity.Status === helpers_1.Constants.ACTIVITY_ACTIVE) {
+            else if (payload.Status === 0 && activity.Status === common_1.Constants.ACTIVITY_ACTIVE) {
                 if (activity.Type === 1) {
                     updateCamp.CurrentCallSale -= 1;
                 }

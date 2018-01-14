@@ -4,6 +4,7 @@ const db_1 = require("./db");
 // const Sequelize = require('sequelize');
 const Sequelize = require("sequelize");
 const activity_1 = require("./activity");
+require('sequelize-hierarchy')(Sequelize);
 const Lead = db_1.db.define('manulife_leads', {
     Id: {
         allowNull: false,
@@ -105,6 +106,11 @@ const Lead = db_1.db.define('manulife_leads', {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: 1 // 1= active, 0 = deactive
+    },
+    StatusProcessStep: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        defaultValue: 0
     },
     CreatedAt: {
         allowNull: false,

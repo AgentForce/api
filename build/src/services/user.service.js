@@ -133,7 +133,7 @@ class UserService {
                     ReportTo = parent.Id;
                 }
             }
-            console.log(ReportTo);
+            // console.log(ReportTo);
             let user = {
                 Address: payload.Address,
                 Birthday: payload.Birthday,
@@ -147,7 +147,8 @@ class UserService {
                 Phone: payload.Phone,
                 Password: payload.Password,
                 ReportTo: ReportTo,
-                ReportToList: [],
+                ReportToList: '',
+                Credit: 0
             };
             return postgres_1.User
                 .create(user)

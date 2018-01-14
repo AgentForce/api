@@ -112,13 +112,53 @@ const updateProfileModel = Joi.object().keys({
 });
 exports.updateProfileModel = updateProfileModel;
 const loginUserModel = Joi.object().keys({
-    Username: Joi.string().required(),
-    Password: Joi.string().trim().required()
+    UserName: Joi
+        .string()
+        .required(),
+    Password: Joi
+        .string()
+        .trim()
+        .required(),
+    ClientId: Joi.string()
+        .required(),
+    VersionOs: Joi
+        .string()
+        .required(),
+    VersionApp: Joi
+        .string()
+        .required(),
+    GrantType: Joi
+        .string()
+        .required(),
+    Scope: Joi
+        .array(),
+    Emei: Joi
+        .string()
+        .required()
 });
 exports.loginUserModel = loginUserModel;
 const loginResourceModel = Joi.object().keys({
-    Email: Joi.string().required(),
-    Password: Joi.string().trim().required()
+    UserName: Joi.string().required(),
+    ClientId: Joi.string()
+        .required(),
+    VersionOs: Joi
+        .string()
+        .required(),
+    VersionApp: Joi
+        .string()
+        .required(),
+    GrantType: Joi
+        .string()
+        .required(),
+    Scope: Joi
+        .array(),
+    Emei: Joi
+        .string()
+        .required(),
+    Password: Joi
+        .string()
+        .trim()
+        .required()
 });
 exports.loginResourceModel = loginResourceModel;
 const jwtValidator = Joi.object({ 'authorization': Joi.string().required() }).unknown();

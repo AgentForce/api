@@ -12,7 +12,7 @@ const postgres_1 = require("../postgres");
 const code_errors_1 = require("../common/code-errors");
 const campaign_1 = require("../postgres/campaign");
 const _ = require("lodash");
-const helpers_1 = require("../common");
+const common_1 = require("../common");
 class DashboardService {
     /**
      * dash board in current
@@ -36,7 +36,7 @@ class DashboardService {
                     };
                 }
                 let activities = yield postgres_1.Activity
-                    .findAll({
+                    .findAndCountAll({
                     where: {
                         UserId: userId,
                         CampId: camp.Id,
@@ -54,16 +54,16 @@ class DashboardService {
                 };
                 if (activities !== null) {
                     _.reduce(activities, (group, value, key) => {
-                        if (value.Type === helpers_1.Constants.ACTIVITY_TYPE_CALL) {
+                        if (value.Type === common_1.Constants.ACTIVITY_TYPE_CALL) {
                             groupActivities.call.push(value);
                         }
-                        if (value.Type === helpers_1.Constants.ACTIVITY_TYPE_METTING) {
+                        if (value.Type === common_1.Constants.ACTIVITY_TYPE_METTING) {
                             groupActivities.metting.push(value);
                         }
-                        if (value.Type === helpers_1.Constants.ACTIVITY_TYPE_PRESENTATION) {
+                        if (value.Type === common_1.Constants.ACTIVITY_TYPE_PRESENTATION) {
                             groupActivities.presentation.push(value);
                         }
-                        if (value.Type === helpers_1.Constants.ACTIVITY_TYPE_CLOSE) {
+                        if (value.Type === common_1.Constants.ACTIVITY_TYPE_CLOSE) {
                             groupActivities.close.push(value);
                         }
                         return group;

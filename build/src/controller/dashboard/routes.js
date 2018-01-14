@@ -16,12 +16,14 @@ function default_1(server, configs, database) {
         path: '/dashboard/{userid}',
         config: {
             handler: dashboardController.dashboard,
-            auth: "jwt",
-            tags: ['api', 'campaigns'],
+            // auth: "jwt",
+            tags: ['api', 'dashboard'],
             description: 'Dashboard',
             validate: {
                 params: {
-                    userid: Joi.number().required().description('userid')
+                    userid: Joi.number()
+                        .required()
+                        .description('userid')
                 },
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
@@ -48,12 +50,35 @@ function default_1(server, configs, database) {
             },
             plugins: {
                 'hapi-swagger': {
+                    deprecated: true,
                     responses: {
-                        '200': {
-                            'description': 'Campaign .'
+                        200: {
+                            description: 'success',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object({
+                                    call: Joi.array()
+                                        .example([]),
+                                    metting: Joi.array()
+                                        .example([]),
+                                    presentation: Joi.array()
+                                        .example([]),
+                                    close: Joi.array()
+                                        .example([]),
+                                }),
+                            })
                         },
-                        '404': {
-                            'description': 'Campaign does not exists.'
+                        400: {
+                            description: 'Error something',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(HTTP_STATUS.BAD_REQUEST),
+                                error: Joi.string(),
+                            })
                         }
                     },
                     security: [{

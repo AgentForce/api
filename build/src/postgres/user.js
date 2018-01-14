@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const db_1 = require("./db");
-const Sequelize = require("sequelize");
+// import * as Sequelize from 'sequelize';
+var Sequelize = require('sequelize-hierarchy')();
 const User = db_1.db.define('manulife_users', {
     Id: {
         allowNull: false,
@@ -62,11 +63,11 @@ const User = db_1.db.define('manulife_users', {
     },
     ReportTo: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: true,
     },
     ReportToList: {
-        type: Sequelize.ARRAY(Sequelize.INTEGER),
-        allowNull: true
+        type: Sequelize.STRING,
+        allowNull: true,
     },
     Label: {
         type: Sequelize.INTEGER,
@@ -90,6 +91,18 @@ const User = db_1.db.define('manulife_users', {
     UpdatedAt: {
         allowNull: false,
         type: Sequelize.DATE
+    },
+    LastLogin: {
+        type: Sequelize.DATE,
+        allowNull: true
+    },
+    Experience: {
+        type: Sequelize.DATE,
+        allowNull: true
+    },
+    Credit: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
     }
 }, {
     hooks: {
@@ -108,7 +121,7 @@ const User = db_1.db.define('manulife_users', {
     // freezeTableName: true,
     timestamps: true,
     createdAt: 'CreatedAt',
-    updatedAt: 'UpdatedAt'
+    updatedAt: 'UpdatedAt',
 });
 exports.User = User;
 //# sourceMappingURL=user.js.map

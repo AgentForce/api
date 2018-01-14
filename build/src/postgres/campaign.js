@@ -29,18 +29,18 @@ const Campaign = db_1.db.define('manulife_campaigns', {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    Name: {
-        type: Sequelize.STRING(255),
-        allowNull: false
-    },
-    Label: {
-        type: Sequelize.STRING(50),
-        allowNull: false
-    },
-    Experience: {
-        type: Sequelize.STRING(50),
-        allowNull: false
-    },
+    // Name: {
+    //   type: Sequelize.STRING(255),
+    //   allowNull: false
+    // },
+    // Label: {
+    //   type: Sequelize.STRING(50),
+    //   allowNull: false
+    // },
+    // Experience: {
+    //   type: Sequelize.STRING(50),
+    //   allowNull: false
+    // },
     StartDate: {
         type: Sequelize.DATE,
         allowNull: false
@@ -99,7 +99,7 @@ const Campaign = db_1.db.define('manulife_campaigns', {
         allowNull: false,
         defaultValue: 0
     },
-    CurentContract: {
+    CurrentContract: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0
@@ -226,7 +226,7 @@ const Campaign = db_1.db.define('manulife_campaigns', {
         type: Sequelize.INTEGER
     },
     ReportToList: {
-        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        type: Sequelize.STRING,
         allowNull: true
     },
     IsDeleted: {
@@ -241,6 +241,15 @@ const Campaign = db_1.db.define('manulife_campaigns', {
     UpdatedAt: {
         allowNull: false,
         type: Sequelize.DATE
+    },
+    NumGoal: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+    },
+    Credit: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        defaultValue: 0
     }
 }, {
     // tableName: 'campaign',
