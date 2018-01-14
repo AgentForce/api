@@ -18,6 +18,9 @@ interface IIUser {
     City: number;
     District: number;
     ReportTo: number;
+    LastLogin?: Date;
+    Experience?: Date;
+    Credit: number;
 }
 
 
@@ -145,7 +148,7 @@ class UserService {
                 ReportTo = parent.Id;
             }
         }
-        console.log(ReportTo);
+        // console.log(ReportTo);
         let user: IIUser = {
             Address: payload.Address,
             Birthday: payload.Birthday,
@@ -160,6 +163,7 @@ class UserService {
             Password: payload.Password,
             ReportTo: ReportTo,
             ReportToList: '',
+            Credit: 0
         };
         return User
             .create(user)

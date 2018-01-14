@@ -26,6 +26,53 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
 
     server.route({
         method: 'GET',
+        path: '/users/testdb',
+        config: {
+            handler: userController.testUser,
+            auth: "jwt",
+            description: 'Get user by username',
+            tags: ['api', 'users'],
+            validate: {
+                // headers: UserValidator.jwtValidator,
+                params: {
+                    userid: Joi.string().required(),
+                    query: Joi.string().required()
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
+                        },
+                        401: {
+                            'description': 'Please login.',
+                            schema: Joi.object({
+                                "statusCode": 401,
+                                "error": "Unauthorized",
+                                "message": "Missing authentication"
+                            })
+                        }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
+    server.route({
+        method: 'GET',
         path: '/users/profile',
         config: {
             handler: userController.getByUsername,

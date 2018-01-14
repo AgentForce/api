@@ -20,6 +20,10 @@ import { SlackAlert } from "../../common/index";
 import * as path from 'path';
 import * as fs from 'fs';
 import * as Loki from 'lokijs';
+
+import { db as dbPostgres } from '../../postgres/db';
+
+
 import {
     imageFilter, loadCollection, cleanFolder,
     uploader
@@ -286,6 +290,36 @@ export default class UserController {
     }
 
 
+    public async testUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        return dbPostgres
+            .query(`select * from reporttolist(${request.params.userid}, lquery_in('${request.params.query}'))`,
+            { replacements: { email: 42 } })
+            .spread((output, records: any) => {
+                return records.rows;
+            });
+
+        // const username = request.payload.Username;
+        // const password = request.payload.Password;
+        // let user: IUser = await this.database
+        //     .userModel
+        //     .findOne({ username: username });
+        // if (!user) {
+        //     return reply({
+        //         status: HTTP_STATUS.OK,
+        //         token: Faker.random.alphaNumeric(250)
+        //     });
+        // }
+
+        // if (!user.validatePassword(password)) {
+        //     return reply(Boom.unauthorized("Password is invalid."));
+        // }
+        // let userPg = await UserService.findByCode(username);
+
+        // reply({
+        //     token: this.generateToken(user),
+        //     info: userPg
+        // });
+    }
     /**
     * Authentication
     */

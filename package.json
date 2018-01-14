@@ -22,7 +22,8 @@
     "watch": "tsc-w&&nodemon build/src/index.js",
     "compile": "tsc & ENV_PORT 3000 node build/src/index.js ",
     "runtime": "set PORT=3000&&set NODE_ENV=dev&&ts-node src/index.ts",
-    "serve": "nodemon -e ts -w ./src -x \"npm run runtime\""
+    "serve": "nodemon -e ts -w ./src -x \"npm run runtime\"",
+    "gen": "set PORT=3000&&set NODE_ENV=test&&ts-node src/generate.ts"
   },
   "dependencies": {
     "@types/bluebird": "^3.5.18",
