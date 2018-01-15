@@ -243,6 +243,11 @@ const Campaign = db.define('manulife_campaigns', {
   NumGoal: {
     allowNull: false,
     type: Sequelize.INTEGER,
+  },
+  Credit: {
+    allowNull: false,
+    type: Sequelize.INTEGER,
+    defaultValue: 0
   }
 }, {
     // tableName: 'campaign',

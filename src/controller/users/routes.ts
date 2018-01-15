@@ -8,6 +8,7 @@ import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
 import { LogUser } from "../../mongo/index";
 import { jwtValidator } from "./user-validator";
+import { checkToken } from "../../common/authentication";
 export default function (server: Hapi.Server, serverConfigs: IServerConfigurations, database: IDatabase) {
 
     const userController = new UserController(serverConfigs, database);
@@ -24,19 +25,64 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
     });
 
 
+    // server.route({
+    //     method: 'GET',
+    //     path: '/users/testdb',
+    //     config: {
+    //         handler: userController.testUser,
+    //         auth: "jwt",
+    //         description: 'Get user by username',
+    //         tags: ['api', 'users'],
+    //         validate: {
+    //             // headers: UserValidator.jwtValidator,
+    //             params: {
+    //                 userid: Joi.string().required(),
+    //                 query: Joi.string().required()
+    //             }
+    //         },
+    //         plugins: {
+    //             'hapi-swagger': {
+    //                 responses: {
+    //                     200: {
+    //                         description: '',
+    //                         schema: Joi.object(
+    //                             {
+    //                                 status: Joi
+    //                                     .number()
+    //                                     .example(200),
+    //                                 data: Joi
+    //                                     .object(),
+    //                             }
+    //                         )
+    //                     },
+    //                     401: {
+    //                         'description': 'Please login.',
+    //                         schema: Joi.object({
+    //                             "statusCode": 401,
+    //                             "error": "Unauthorized",
+    //                             "message": "Missing authentication"
+    //                         })
+    //                     }
+    //                 },
+    //                 security: [{
+    //                     'jwt': []
+    //                 }]
+    //             }
+    //         }
+    //     }
+    // });
+
     server.route({
         method: 'GET',
         path: '/users/profile',
         config: {
-            handler: userController.getByUsername,
-            auth: "jwt",
-            description: 'Get user by username',
+            handler: userController.profile,
+            // auth: "jwt",
+            description: '#mockapi return info profile of a user',
             tags: ['api', 'users'],
             validate: {
                 // headers: UserValidator.jwtValidator,
-                params: {
-                    username: Joi.string().required()
-                }
+
             },
             plugins: {
                 'hapi-swagger': {
@@ -364,7 +410,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         config: {
             handler: userController.loginUser,
             tags: ['users', 'api'],
-            description: 'Login a user.',
+            description: '#mockapi Login a user.',
             validate: {
                 payload: UserValidator.loginUserModel
             },

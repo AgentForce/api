@@ -22,7 +22,8 @@
     "watch": "tsc-w&&nodemon build/src/index.js",
     "compile": "tsc & ENV_PORT 3000 node build/src/index.js ",
     "runtime": "set PORT=3000&&set NODE_ENV=dev&&ts-node src/index.ts",
-    "serve": "nodemon -e ts -w ./src -x \"npm run runtime\""
+    "serve": "nodemon -e ts -w ./src -x \"npm run runtime\"",
+    "gen": "set PORT=3000&&set NODE_ENV=test&&ts-node src/generate.ts"
   },
   "dependencies": {
     "@types/bluebird": "^3.5.18",
@@ -36,6 +37,7 @@
     "@types/sequelize": "^4.0.78",
     "@types/slack-node": "^0.1.2",
     "@types/winston": "^2.3.7",
+    "axios": "^0.17.1",
     "bcryptjs": "^2.4.3",
     "boom": "^4.3.1",
     "del": "^3.0.0",
@@ -48,6 +50,7 @@
     "good-squeeze": "^5.0.2",
     "gulp-util": "^3.0.8",
     "hapi": "^16.6.2",
+    "hapi-auth-basic": "^5.0.0",
     "hapi-auth-jwt2": "^7.2.4",
     "hapi-swagger": "^7.7.0",
     "hapi-swaggered": "^2.12.2",
@@ -76,6 +79,7 @@
     "winston": "^2.4.0"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/bcryptjs": "^2.4.0",
     "@types/boom": "^4.3.8",
     "@types/chai": "^3.5.2",

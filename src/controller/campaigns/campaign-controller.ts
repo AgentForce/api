@@ -10,7 +10,7 @@ import { Campaign } from "../../postgres/campaign";
 import { LogCamp } from "../../mongo/index";
 import { IPayloadUpdate } from "./campaign";
 import * as _ from 'lodash';
-import { SlackAlert, ManulifeErrors as Ex } from "../../helpers/index";
+import { SlackAlert, ManulifeErrors as Ex } from "../../common/index";
 export default class CampaignController {
 
     private database: IDatabase;
@@ -197,7 +197,8 @@ export default class CampaignController {
             if (campaign == null) {
                 return reply({
                     status: HTTP_STATUS.NOT_FOUND,
-                    data: campaign
+                    data: campaign,
+                    code: Ex.EX_CAMPID_NOT_FOUND
                 }).code(HTTP_STATUS.NOT_FOUND);
             } else {
                 return reply({

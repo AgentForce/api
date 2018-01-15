@@ -18,7 +18,7 @@ export function init(configs: IServerConfigurations, database: IDatabase): Promi
 
     return new Promise<Hapi.Server>(resolve => {
 
-        const port = process.env.PORT;
+        const port = process.env.PORT || 3200;
         const server = new Hapi.Server();
 
         server.connection({

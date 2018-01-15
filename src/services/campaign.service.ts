@@ -10,7 +10,7 @@ import { Lead } from '../postgres/lead';
 import { log } from 'util';
 import { Logger, transports, Winston } from 'winston';
 import { LogCamp } from '../mongo';
-import { ManulifeErrors as Ex } from '../helpers/code-errors';
+import { ManulifeErrors as Ex } from '../common/code-errors';
 import { IPayloadUpdate } from '../controller/campaigns/campaign';
 import { ICampaign, ICampTotal } from './ICampaign';
 import redis from '../cache/redis';
@@ -152,16 +152,44 @@ class CampaignService {
      * @param campaignId number
      */
     static findById(campaignId) {
-        // db
-        //     .query('select * from manulife_users ',
+        // return db
+        //     .query(`select * from reporttolist(5, lquery_in('*'))`,
         //     { replacements: { email: 42 } })
-        //     .then(v => console.log(v));
+        //     .spread((output, records: any) => {
+        //         return records.rows;
+        //     });
 
         return Campaign
             .findOne({
                 where: {
                     Id: campaignId,
                     IsDeleted: false
+                },
+                attributes: {
+                    exclude: [
+                        'IsDeleted',
+                        'NumGoal',
+                        'Credit',
+                        'ReportToList',
+                        'ReportTo',
+                        'Results',
+                        'FypRaito',
+                        'M3AA',
+                        'AverageCC',
+                        'AgentTer',
+                        'CurrentMit',
+                        'CreatedAt',
+                        'UpdatedAt',
+                        'ActiveRaito',
+                        'M3AARaito',
+                        'TargetPamphlet',
+                        'TargetCop',
+                        'TargetAgentCode',
+                        'Description',
+                        'CurrentTest',
+                        'CurentTer',
+                        'CurrentPamphlet'
+                    ]
                 }
             })
             .catch(ex => {
@@ -202,10 +230,16 @@ class CampaignService {
             .findById(campid)
             .then((campDb: ICampaign) => {
                 if (campDb == null) {
-                    throw { code: Ex.EX_CAMPID_NOT_FOUND, msg: 'campaignid not found' };
+                    throw {
+                        code: Ex.EX_CAMPID_NOT_FOUND,
+                        msg: 'campaignid not found'
+                    };
                 }
                 if (campDb.EndDate < moment().toDate()) {
-                    throw { code: Ex.EX_CAMP_FINISH, msg: 'campaign completed' };
+                    throw {
+                        code: Ex.EX_CAMP_FINISH,
+                        msg: 'campaign completed'
+                    };
                 }
                 return Campaign
                     .update(payload, {
@@ -247,11 +281,7 @@ class CampaignService {
                 }
                 campaign.UserId = userId;
                 campaign.ReportTo = user.ReportTo;
-                if (user.ReportToList === '') {
-                    campaign.ReportToList = '';
-                } else {
-                    campaign.ReportToList = `${user.ReportToList}.${user.ReportTo}`;
-                }
+                campaign.ReportToList = user.ReportToList;
                 let campsPrepare = <Array<ICampaign>>await this.prepareCamp(campaign)
                     .catch(ex => {
                         throw ex;
@@ -297,6 +327,10 @@ class CampaignService {
             });
     }
 
+    /**
+     * prepare campaign from input client to create 12 campaign insert into database
+     * @param campaign campaign
+     */
     private static prepareCamp(campaign: ICampaign) {
         return new Promise((resolve, reject) => {
             let camps = [];

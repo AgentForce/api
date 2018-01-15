@@ -9,12 +9,12 @@ import * as HTTP_STATUS from 'http-status';
 /**
  * constant error
  */
-import { ManulifeErrors as Ex } from '../../helpers/code-errors';
+import { ManulifeErrors as Ex } from '../../common/code-errors';
 /**
  * plugin log campaign
  */
 import { LogCamp } from "../../mongo/index";
-import { SlackAlert } from "../../helpers/index";
+import { SlackAlert } from "../../common/index";
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
 
     const campaignController = new CampaignController(configs, database);

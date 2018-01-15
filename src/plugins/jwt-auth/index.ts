@@ -9,8 +9,11 @@ export default (): IPlugin => {
             const serverConfig = options.serverConfigs;
 
             const validateUser = (decoded, request, cb) => {
-                database.userModel.findById(decoded.id).lean(true)
+                cb('hello');
+                database.userModel
+                    .findById(decoded.id).lean(true)
                     .then((user: IUser) => {
+                        console.log('object');
                         if (!user) {
                             return cb(null, false);
                         }

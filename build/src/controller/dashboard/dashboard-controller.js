@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
-const index_2 = require("../../helpers/index");
+const index_2 = require("../../common/index");
 const dashboard_service_1 = require("../../services/dashboard.service");
 class DashboardController {
     constructor(configs, database) {
@@ -23,8 +23,9 @@ class DashboardController {
     dashboard(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let UserId = parseInt(request.params.userid, 10);
-                let dashboard = yield dashboard_service_1.DashboardService.dashboard(UserId);
+                let type = request.params.type;
+                let UserId = 5;
+                let dashboard = yield dashboard_service_1.DashboardService.dashboard(type, UserId);
                 if (dashboard == null) {
                     return reply({
                         status: HTTP_STATUS.NOT_FOUND,

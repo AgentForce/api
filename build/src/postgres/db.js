@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // const path = require('path');
 const Sequelize = require("sequelize");
 const config = require('./config/config');
-const objconfig = config[process.env.NODE_ENV || 'local'];
+const objconfig = config[process.env.NODE_ENV || 'aws'];
 const db = new Sequelize(objconfig.database, objconfig.username, objconfig.password, objconfig);
 exports.db = db;
 // export { db, Farmer };

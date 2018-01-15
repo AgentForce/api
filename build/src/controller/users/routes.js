@@ -18,28 +18,81 @@ function default_1(server, serverConfigs, database) {
             }
         }
     });
+    // server.route({
+    //     method: 'GET',
+    //     path: '/users/testdb',
+    //     config: {
+    //         handler: userController.testUser,
+    //         auth: "jwt",
+    //         description: 'Get user by username',
+    //         tags: ['api', 'users'],
+    //         validate: {
+    //             // headers: UserValidator.jwtValidator,
+    //             params: {
+    //                 userid: Joi.string().required(),
+    //                 query: Joi.string().required()
+    //             }
+    //         },
+    //         plugins: {
+    //             'hapi-swagger': {
+    //                 responses: {
+    //                     200: {
+    //                         description: '',
+    //                         schema: Joi.object(
+    //                             {
+    //                                 status: Joi
+    //                                     .number()
+    //                                     .example(200),
+    //                                 data: Joi
+    //                                     .object(),
+    //                             }
+    //                         )
+    //                     },
+    //                     401: {
+    //                         'description': 'Please login.',
+    //                         schema: Joi.object({
+    //                             "statusCode": 401,
+    //                             "error": "Unauthorized",
+    //                             "message": "Missing authentication"
+    //                         })
+    //                     }
+    //                 },
+    //                 security: [{
+    //                     'jwt': []
+    //                 }]
+    //             }
+    //         }
+    //     }
+    // });
     server.route({
         method: 'GET',
-        path: '/users/{username}',
+        path: '/users/profile',
         config: {
-            handler: userController.getByUsername,
-            auth: "jwt",
-            description: 'Get user by username.',
+            handler: userController.profile,
+            // auth: "jwt",
+            description: '#mockapi return info profile of a user',
             tags: ['api', 'users'],
-            validate: {
-                // headers: UserValidator.jwtValidator,
-                params: {
-                    username: Joi.string().required()
-                }
-            },
+            validate: {},
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'User founded.'
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object(),
+                            })
                         },
-                        '401': {
-                            'description': 'Please login.'
+                        401: {
+                            'description': 'Please login.',
+                            schema: Joi.object({
+                                "statusCode": 401,
+                                "error": "Unauthorized",
+                                "message": "Missing authentication"
+                            })
                         }
                     },
                     security: [{
@@ -63,14 +116,25 @@ function default_1(server, serverConfigs, database) {
             validate: {
                 // headers: UserValidator.jwtValidator,
                 payload: {
-                    Email: Joi.string().email().required().default('tunguyenq@gmail.com')
+                    Email: Joi.string()
+                        .email()
+                        .required()
+                        .example('tunguyenq@gmail.com')
                 }
             },
             plugins: {
                 'hapi-swagger': {
+                    deprecated: true,
                     responses: {
-                        '200': {
-                            'description': 'User founded.'
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object(),
+                            })
                         },
                         '401': {
                             'description': 'Please login.'
@@ -93,8 +157,10 @@ function default_1(server, serverConfigs, database) {
                 // headers: UserValidator.jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: 'ex_payload', msg: 'payload dont valid',
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        error: {
+                            code: 'ex_payload',
+                            msg: 'payload dont valid',
                             details: error
                         }
                     };
@@ -112,9 +178,17 @@ function default_1(server, serverConfigs, database) {
             },
             plugins: {
                 'hapi-swagger': {
+                    deprecated: true,
                     responses: {
-                        '200': {
-                            'description': 'Updated info.',
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object(),
+                            })
                         },
                         '401': {
                             'description': 'User does not have authorization.'
@@ -162,10 +236,18 @@ function default_1(server, serverConfigs, database) {
             },
             plugins: {
                 'hapi-swagger': {
+                    deprecated: true,
                     responses: {
-                        '200': {
-                            'description': 'User created.'
-                        }
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object(),
+                            })
+                        },
                     },
                     security: [{
                             'jwt': []
@@ -177,50 +259,60 @@ function default_1(server, serverConfigs, database) {
     /**
      * create account for resource
      */
-    server.route({
-        method: 'POST',
-        path: '/authen',
-        config: {
-            handler: userController.authorize,
-            tags: ['api', 'users'],
-            description: 'Create account for access resource',
-            validate: {
-                payload: UserValidator.ResourceModel,
-                failAction: (request, reply, source, error) => {
-                    let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        error: {
-                            code: 'ex_payload',
-                            msg: 'payload dont valid',
-                            details: error
-                        }
-                    };
-                    index_1.LogUser.create({
-                        type: 'updateprofile',
-                        dataInput: request.payload,
-                        msg: 'payload do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        },
-                    });
-                    return reply(res);
-                }
-            },
-            plugins: {
-                'hapi-swagger': {
-                    responses: {
-                        '200': {
-                            'description': 'User created.'
-                        }
-                    },
-                    security: [{
-                            'jwt': []
-                        }]
-                }
-            }
-        }
-    });
+    // server.route({
+    //     method: 'POST',
+    //     path: '/authen',
+    //     config: {
+    //         handler: userController.authorize,
+    //         tags: ['api', 'users'],
+    //         description: 'Create account for access resource',
+    //         validate: {
+    //             payload: UserValidator.ResourceModel,
+    //             failAction: (request, reply, source, error) => {
+    //                 let res = {
+    //                     status: HTTP_STATUS.BAD_REQUEST,
+    //                     error: {
+    //                         code: 'ex_payload',
+    //                         msg: 'payload dont valid',
+    //                         details: error
+    //                     }
+    //                 };
+    //                 LogUser.create({
+    //                     type: 'updateprofile',
+    //                     dataInput: request.payload,
+    //                     msg: 'payload do not valid',
+    //                     meta: {
+    //                         exception: error,
+    //                         response: res
+    //                     },
+    //                 });
+    //                 return reply(res);
+    //             }
+    //         },
+    //         plugins: {
+    //             'hapi-swagger': {
+    //                 deprecated: true,
+    //                 responses: {
+    //                     200: {
+    //                         description: '',
+    //                         schema: Joi.object(
+    //                             {
+    //                                 status: Joi
+    //                                     .number()
+    //                                     .example(200),
+    //                                 data: Joi
+    //                                     .object(),
+    //                             }
+    //                         )
+    //                     },
+    //                 },
+    //                 security: [{
+    //                     'jwt': []
+    //                 }]
+    //             }
+    //         }
+    //     }
+    // });
     /**
      * change password
      */
@@ -261,9 +353,17 @@ function default_1(server, serverConfigs, database) {
             },
             plugins: {
                 'hapi-swagger': {
+                    deprecated: true,
                     responses: {
-                        '200': {
-                            'description': 'change password success'
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object(),
+                            })
                         },
                     },
                     security: [{
@@ -279,16 +379,24 @@ function default_1(server, serverConfigs, database) {
         config: {
             handler: userController.loginUser,
             tags: ['users', 'api'],
-            description: 'Login a user.',
+            description: '#mockapi Login a user.',
             validate: {
                 payload: UserValidator.loginUserModel
             },
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'User logged in.'
-                        }
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                token: Joi
+                                    .string()
+                                    .required(),
+                            })
+                        },
                     },
                 }
             }
@@ -297,27 +405,37 @@ function default_1(server, serverConfigs, database) {
     /**
      * login authorize
      */
-    server.route({
-        method: 'POST',
-        path: '/authen/login',
-        config: {
-            handler: userController.loginAuthen,
-            tags: ['users', 'api'],
-            description: 'Authentication.',
-            validate: {
-                payload: UserValidator.loginResourceModel
-            },
-            plugins: {
-                'hapi-swagger': {
-                    responses: {
-                        '200': {
-                            'description': 'logged in.'
-                        }
-                    },
-                }
-            }
-        }
-    });
+    // server.route({
+    //     method: 'POST',
+    //     path: '/authen/login',
+    //     config: {
+    //         handler: userController.loginAuthen,
+    //         tags: ['users', 'api'],
+    //         description: 'Authentication.',
+    //         validate: {
+    //             payload: UserValidator.loginResourceModel
+    //         },
+    //         plugins: {
+    //             'hapi-swagger': {
+    //                 responses: {
+    //                     200: {
+    //                         description: '',
+    //                         schema: Joi.object(
+    //                             {
+    //                                 status: Joi
+    //                                     .number()
+    //                                     .example(200),
+    //                                 token: Joi
+    //                                     .string()
+    //                                     .required(),
+    //                             }
+    //                         )
+    //                     },
+    //                 },
+    //             }
+    //         }
+    //     }
+    // });
 }
 exports.default = default_1;
 //# sourceMappingURL=routes.js.map

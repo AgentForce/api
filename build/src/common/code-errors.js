@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * author: tunguyene
  */
@@ -10,15 +12,15 @@ const ManulifeErrors = {
     EX_USERNAME_EXIST: 'EX_USERNAME_EXIST',
     EX_LEADID_NOT_FOUND: 'EX_LEADID_NOT_FOUND',
     EX_CAMP_FINISH: 'EX_CAMP_FINISH',
+    EX_CAMP_NOT_FOUND: 'CAMP_NOT_FOUND',
     EX_PHONE_EXISTS: 'EX_PHONE_EXISTS',
     EX_ACTIVITYID_NOT_FOUND: 'EX_ACTIVITYID_NOT_FOUND',
     EX_LEAD_PROCESS_STEP: 'EX_LEAD_PROCESS_STEP',
     EX_OLDPASSWORD_DONT_CORRECT: 'EX_OLDPASSWORD_DONT_CORRECT',
     EX_DASHBOARD_CAMP_NOT_FOUND: 'EX_DASHBOARD_CAMP_NOT_FOUND',
-
     //Authorize
     EX_EMAIL_AUTHORIZE_EXIST: 'EX_EMAIL_AUTHORIZE_EXIST',
     EX_USER_EMAIL_NOT_EXIST: 'EX_USER_EMAIL_NOT_EXIST',
-
 };
-export { ManulifeErrors };
+exports.ManulifeErrors = ManulifeErrors;
+//# sourceMappingURL=code-errors.js.map

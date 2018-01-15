@@ -4,11 +4,11 @@ import { CampaignService, ICampaign } from './campaign.service';
 import { LeadService, ILead } from './lead.service';
 import { UserService, IIUser } from './user.service';
 import { Lead } from '../postgres/lead';
-import { ManulifeErrors as Ex } from '../helpers/code-errors';
+import { ManulifeErrors as Ex } from '../common/code-errors';
 import { Campaign } from '../postgres/campaign';
 import * as moment from 'moment';
 import * as _ from 'lodash';
-import { Constants, SlackAlert } from '../helpers';
+import { Constants, SlackAlert } from '../common';
 interface IActivity {
     UserId: number;
     CampId: number;
@@ -21,7 +21,7 @@ interface IActivity {
     EndDate: Date;
     Description: string;
     ReportTo: number;
-    ReportToList: Array<number>;
+    ReportToList: string;
     Type: number;
     Status: number;
     FullDate: boolean;
@@ -174,7 +174,7 @@ class ActivityService {
                 }
                 let updateCamp = {
                     CurrentCallSale: camp.CurrentCallSale,
-                    CurentContract: camp.CurentContract,
+                    CurentContract: camp.CurrentContract,
                     CurrentMetting: camp.CurrentMetting,
                     CurrentPresentation: camp.CurrentPresentation
                 };

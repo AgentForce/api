@@ -12,9 +12,10 @@ const lead_1 = require("../postgres/lead");
 const activity_service_1 = require("./activity.service");
 const bluebird_1 = require("bluebird");
 const moment = require("moment");
+const Sequelize = require("sequelize");
 const user_service_1 = require("./user.service");
 const campaign_service_1 = require("./campaign.service");
-const code_errors_1 = require("../helpers/code-errors");
+const code_errors_1 = require("../common/code-errors");
 const activity_1 = require("../postgres/activity");
 class LeadService {
     /**
@@ -31,6 +32,94 @@ class LeadService {
                     }
                 });
                 return lead;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    /**
+     * get leads by group count processStep and where campid
+     */
+    static groupProcessStepInCamp(campId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let leads = yield lead_1.Lead.findAll({
+                    attributes: ['ProcessStep', 'CampId', [Sequelize.fn('Count', Sequelize.col('*')), 'Count']],
+                    where: {
+                        CampId: campId,
+                        IsDeleted: false,
+                        Status: true,
+                    },
+                    group: ['ProcessStep', 'CampId']
+                });
+                return leads;
+            }
+            catch (error) {
+                console.log(error);
+                throw error;
+            }
+        });
+    }
+    /**
+     * get list leads reject by campId, filter by processtep
+     * @param phone string
+     */
+    static getLeadReject(campId, processStep) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let leads = yield lead_1.Lead.findAll({
+                    where: {
+                        CampId: campId,
+                        IsDeleted: false,
+                        ProcessStep: processStep,
+                        Status: false
+                    }
+                });
+                return leads;
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    /**
+    * list leads of a campainid, filter by processttep
+    * @param campId
+    * @param processStep
+    */
+    static listByCampaignId(campId, processStep, limit, page) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let offset = limit * (page - 1);
+                let activities = yield lead_1.Lead.findAll({
+                    where: {
+                        ProcessStep: processStep,
+                        CampId: campId,
+                        IsDeleted: false,
+                    },
+                    include: [{
+                            model: activity_1.Activity,
+                            where: {
+                                IsDeleted: false,
+                                ProcessStep: processStep
+                            },
+                            attributes: {
+                                exclude: ['IsDeleted']
+                            },
+                        }],
+                    attributes: {
+                        exclude: ['IsDeleted']
+                    },
+                    // number row skip
+                    offset: offset,
+                    limit: limit
+                });
+                return {
+                    data: activities,
+                    page: page,
+                    limit: limit
+                };
             }
             catch (error) {
                 throw error;
@@ -55,26 +144,6 @@ class LeadService {
             catch (error) {
                 throw error;
             }
-        });
-    }
-    static detailLeadActivity(Id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return lead_1.Lead
-                .findOne({
-                where: {
-                    Id: Id,
-                    IsDeleted: false
-                },
-                include: [{
-                        model: activity_1.Activity,
-                        attributes: {
-                            exclude: ['IsDeleted']
-                        }
-                    }]
-            })
-                .then(lead => {
-                return lead;
-            });
         });
     }
     static update(leadId, lead) {

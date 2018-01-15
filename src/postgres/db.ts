@@ -15,6 +15,7 @@ const db = new Sequelize(objconfig.database, objconfig.username, objconfig.passw
 //     console.log(err);
 
 // });
+
 export { db };
 // export { db, Farmer };
 // export { User };

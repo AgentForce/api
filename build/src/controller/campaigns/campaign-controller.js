@@ -12,7 +12,7 @@ const campaign_service_1 = require("../../services/campaign.service");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
 const _ = require("lodash");
-const index_2 = require("../../helpers/index");
+const index_2 = require("../../common/index");
 class CampaignController {
     constructor(configs, database) {
         this.configs = configs;
@@ -26,7 +26,8 @@ class CampaignController {
             // 1. Router Checking data input : commission > 0, loan > 0, monthly > 0
             try {
                 let iCamp = request.payload;
-                const camps = yield campaign_service_1.CampaignService.createOfFA(iCamp);
+                let userId = 5;
+                const camps = yield campaign_service_1.CampaignService.createOfFA(iCamp, userId);
                 let logcamps = _.map(camps, (camp) => {
                     return {
                         type: 'createcampaign',
@@ -71,6 +72,66 @@ class CampaignController {
                     type: 'createcampaign',
                     dataInput: {
                         payload: request.payload
+                    },
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            }
+        });
+    }
+    /**
+     * get total campaign info from cache
+     * parameter:
+     * @key: userid-yyyy
+     */
+    getTotalCamp(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let key = request.params.key;
+                console.log(key);
+                let obj = yield campaign_service_1.CampaignService.getTotalCamp(key);
+                if (obj) {
+                    reply({
+                        status: HTTP_STATUS.OK,
+                        data: obj,
+                    }).code(HTTP_STATUS.OK);
+                }
+                else {
+                    reply({
+                        status: HTTP_STATUS.NOT_FOUND,
+                        msg: 'not found anything'
+                    }).code(HTTP_STATUS.NOT_FOUND);
+                }
+            }
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        url: request.url.path,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        url: request.url.path,
+                        error: {
+                            code: index_2.ManulifeErrors.EX_GENERAL,
+                            msg: 'get camptotal have errors'
+                        }
+                    };
+                }
+                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                index_1.LogCamp.create({
+                    type: 'leadsOfCamp',
+                    dataInput: {
+                        payload: request.payload,
+                        params: request.params
                     },
                     msg: 'errors',
                     meta: {
@@ -132,48 +193,8 @@ class CampaignController {
             }
         });
     }
-    bk() {
-        // 2. Checking permision create camp : start join and end of year (after finish 12 months)
-        // let currentCamps = await db.Language
-        //     .findAll()
-        //     .catch((error) => {
-        //         throw ('CreateCamp Step 2:' + JSON.stringify(error));
-        //     });
-        // if (currentCamps.length === 0) {
-        //     // 3. Accouting Số khách hàng tiềm năng phải có (x10), hẹn gặp (x5) , Tư vấn trực tiếp (x3), chốt HD (x1)
-        //     dataInput.contracts = Math.ceil((dataInput.monthly * 100 / dataInput.commission) / dataInput.loan);
-        //     // (Thu nhập x 100 / tỉ lệ hoa hồng)/loan
-        //     dataInput.maxCustomers = dataInput.contracts * 10;
-        //     dataInput.callCustomers = dataInput.contracts * 5;
-        //     dataInput.meetingCustomers = dataInput.contracts * 3;
-        //     // 4. Insert DB (12 months ~ 12 new camps)
-        //     let listCamps = [];
-        //     // Xử lý date
-        //     const currentDate = moment().format('DD-MM-YYYY');
-        //     const months = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-        //     await Promise.all(
-        //         months.map(async (index) => {
-        //             await listCamps.push({
-        //                 name: "Camp ",
-        //                 ownerid: '0057F000000eEkSQAU', policy_amount__c: dataInput.loan,
-        //                 commission_rate__c: dataInput.commission,
-        //                 actual_collected__c: dataInput.monthly,
-        //                 startdate: moment().add(index, 'M').format('MM/DD/YYYY'),
-        //                 enddate: moment().add(index + 1, 'M').format('MM/DD/YYYY'),
-        //                 target_contacts__c: dataInput.maxCustomers,
-        //                 leads__c: dataInput.meetingCustomers,
-        //                 opportunities__c: dataInput.callCustomers,
-        //                 number_of_contracts_closed_in_period__c: dataInput.contracts
-        //             });
-        //         })
-        //     );
-        //     return reply(listCamps).code(201);
-        // } else {
-        //     return reply('Campaigns exist!!!').code(200);
-        // }
-    }
     /**
-     * get a campaign by campaignid
+     * get by campaignid
      */
     getByCampaignId(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -183,7 +204,8 @@ class CampaignController {
                 if (campaign == null) {
                     return reply({
                         status: HTTP_STATUS.NOT_FOUND,
-                        data: campaign
+                        data: campaign,
+                        code: index_2.ManulifeErrors.EX_CAMPID_NOT_FOUND
                     }).code(HTTP_STATUS.NOT_FOUND);
                 }
                 else {

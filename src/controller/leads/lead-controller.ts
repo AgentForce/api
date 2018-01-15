@@ -8,7 +8,7 @@ import * as HTTP_STATUS from 'http-status';
 import { createLeadModel } from './lead-validator';
 import { LogLead } from "../../mongo/index";
 import { IPayloadUpdate } from "./lead";
-import { SlackAlert, ManulifeErrors as Ex, ManulifeErrors } from "../../helpers/index";
+import { SlackAlert, ManulifeErrors as Ex, ManulifeErrors } from "../../common/index";
 export default class LeadController {
 
     private database: IDatabase;
@@ -69,7 +69,7 @@ export default class LeadController {
 
     /**
      * caculator and group processStep in leads in a campaignid
-     * 
+     *
      */
     public async groupProcessStepInCamp(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {

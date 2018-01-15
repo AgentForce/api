@@ -4,9 +4,15 @@ const Joi = require("joi");
 const campaign_controller_1 = require("./campaign-controller");
 const CampaignValidator = require("./campaign-validator");
 const HTTP_STATUS = require("http-status");
-const code_errors_1 = require("../../helpers/code-errors");
+/**
+ * constant error
+ */
+const code_errors_1 = require("../../common/code-errors");
+/**
+ * plugin log campaign
+ */
 const index_1 = require("../../mongo/index");
-const index_2 = require("../../helpers/index");
+const index_2 = require("../../common/index");
 function default_1(server, configs, database) {
     const campaignController = new campaign_controller_1.default(configs, database);
     server.bind(campaignController);
@@ -19,12 +25,17 @@ function default_1(server, configs, database) {
         config: {
             handler: campaignController.leadsOfCamp,
             auth: "jwt",
-            tags: ['api', 'campaigns'],
+            tags: ['campaigns'],
             description: 'Get Customer(leads) in a campaigns by id.',
             validate: {
                 params: {
-                    id: Joi.number().required().description('Campaignid'),
-                    type: Joi.number().required().valid([1, 2, 3, 4])
+                    id: Joi.number()
+                        .required()
+                        .description('Campaignid'),
+                    type: Joi
+                        .number()
+                        .required()
+                        .valid([1, 2, 3, 4])
                         .description('4 processtep in lead')
                 },
                 // headers: jwtValidator,
@@ -52,12 +63,101 @@ function default_1(server, configs, database) {
             },
             plugins: {
                 'hapi-swagger': {
+                    deprecated: true,
                     responses: {
-                        '200': {
-                            'description': 'Campaign .'
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .array(),
+                            })
+                        },
+                        404: {
+                            'description': 'Campaign does not exists'
+                        }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
+                }
+            }
+        }
+    });
+    /**
+    * get list leads of campaign with type and campaignid
+    */
+    server.route({
+        method: 'GET',
+        path: '/campaigns/totalcamp/{key}',
+        config: {
+            handler: campaignController.getTotalCamp,
+            auth: "jwt",
+            tags: ['api', 'campaigns'],
+            description: '#flow Get campaign total of user',
+            validate: {
+                params: {
+                    key: Joi.string()
+                        .required()
+                        .example('userid')
+                        .description('key=userid'),
+                },
+                // headers: jwtValidator,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
+                            msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    index_1.LogCamp.create({
+                        type: '/campaigns/totalcamp/{key}',
+                        dataInput: {
+                            params: request.params,
+                        },
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    deprecated: true,
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .array(),
+                            })
                         },
                         '404': {
-                            'description': 'Campaign does not exists.'
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(HTTP_STATUS.NOT_FOUND),
+                                msg: Joi.string().example('not found anything'),
+                            })
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(HTTP_STATUS.BAD_REQUEST),
+                                error: Joi.string(),
+                            })
                         }
                     },
                     security: [{
@@ -75,13 +175,15 @@ function default_1(server, configs, database) {
         path: '/campaigns/{id}',
         config: {
             handler: campaignController.getByCampaignId,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'campaigns'],
             description: 'Get campaign by campaignid.',
             validate: {
                 // headers: jwtValidator,
                 params: {
-                    id: Joi.number().required().description('campaignid')
+                    id: Joi.number()
+                        .required()
+                        .description('campaignid')
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
@@ -100,7 +202,7 @@ function default_1(server, configs, database) {
                         meta: {
                             exception: error,
                             response: res
-                        },
+                        }
                     });
                     reply(res);
                 }
@@ -109,12 +211,26 @@ function default_1(server, configs, database) {
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Campaign founded.'
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object(),
+                            })
                         },
-                        '404': {
-                            'description': 'Campaign does not exists.'
-                        }
+                        404: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(HTTP_STATUS.NOT_FOUND),
+                                data: Joi
+                                    .object(),
+                            })
+                        },
                     },
                     security: [{
                             'jwt': []
@@ -166,11 +282,25 @@ function default_1(server, configs, database) {
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Campaign founded.'
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .array().items({}),
+                            })
                         },
                         '404': {
-                            'description': 'Campaign does not exists.'
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(HTTP_STATUS.NOT_FOUND),
+                                data: Joi
+                                    .array().items({}),
+                            })
                         }
                     },
                     security: [{
@@ -188,9 +318,9 @@ function default_1(server, configs, database) {
         path: '/campaigns',
         config: {
             handler: campaignController.createCampaign,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'campaigns'],
-            description: 'Create a campaign.',
+            description: 'Create a campaign #flowsetgoal',
             validate: {
                 payload: CampaignValidator.createCampaignFAModel,
                 // headers: jwtValidator,
@@ -218,8 +348,24 @@ function default_1(server, configs, database) {
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Created campaign.'
+                        200: {
+                            description: 'success',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object(),
+                            })
+                        },
+                        400: {
+                            description: 'Error something',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(HTTP_STATUS.BAD_REQUEST),
+                                error: Joi.string(),
+                            })
                         }
                     },
                     security: [{

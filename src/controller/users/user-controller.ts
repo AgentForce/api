@@ -10,20 +10,24 @@ import { IServerConfigurations } from "../../configurations";
 import * as Joi from 'joi';
 import * as HTTP_STATUS from 'http-status';
 import { LogUser } from "../../mongo/index";
-import { ManulifeErrors as Ex } from '../../helpers/code-errors';
+import { ManulifeErrors as Ex } from '../../common/code-errors';
 const nodemailer = require('nodemailer');
 import * as EmailTemplate from 'email-templates';
 import { User } from "../../postgres/user";
-import * as Faker from 'faker';
-import { SlackAlert } from "../../helpers/index";
+import * as faker from 'faker';
+import { SlackAlert } from "../../common/index";
 
 import * as path from 'path';
 import * as fs from 'fs';
 import * as Loki from 'lokijs';
+
+import { db as dbPostgres } from '../../postgres/db';
+
+
 import {
     imageFilter, loadCollection, cleanFolder,
     uploader
-} from '../../helpers/utils';
+} from '../../common/utils';
 
 // setup
 const DB_NAME = 'db.json';
@@ -90,7 +94,7 @@ export default class UserController {
                 SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                 reply(res).code(HTTP_STATUS.BAD_GATEWAY);
             }
-            let randPass = Faker.random.alphaNumeric(6);
+            let randPass = faker.random.alphaNumeric(6);
             let passwordHash = Bcrypt.hashSync(randPass, Bcrypt.genSaltSync(8));
             let userPg: any = await User
                 .update({
@@ -260,7 +264,7 @@ export default class UserController {
     public async loginUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         return reply({
             status: HTTP_STATUS.OK,
-            token: 'EYnlcWGuXfYTZohm6oVoKM86oATLwpeX1jqjky4uwT4nysDZe8HgBbczZW'
+            token: '#manulife$123$123'
         });
         // const username = request.payload.Username;
         // const password = request.payload.Password;
@@ -286,6 +290,36 @@ export default class UserController {
     }
 
 
+    public async testUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        return dbPostgres
+            .query(`select * from reporttolist(${request.params.userid}, lquery_in('${request.params.query}'))`,
+            { replacements: { email: 42 } })
+            .spread((output, records: any) => {
+                return records.rows;
+            });
+
+        // const username = request.payload.Username;
+        // const password = request.payload.Password;
+        // let user: IUser = await this.database
+        //     .userModel
+        //     .findOne({ username: username });
+        // if (!user) {
+        //     return reply({
+        //         status: HTTP_STATUS.OK,
+        //         token: Faker.random.alphaNumeric(250)
+        //     });
+        // }
+
+        // if (!user.validatePassword(password)) {
+        //     return reply(Boom.unauthorized("Password is invalid."));
+        // }
+        // let userPg = await UserService.findByCode(username);
+
+        // reply({
+        //     token: this.generateToken(user),
+        //     info: userPg
+        // });
+    }
     /**
     * Authentication
     */
@@ -309,21 +343,35 @@ export default class UserController {
     }
 
 
-    public async getByUsername(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+    public async profile(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             const username = request.params.username;
-            const user = <any>await UserService.findByCode(username);
-            if (user !== null) {
-                reply({
-                    status: HTTP_STATUS.OK,
-                    data: user
-                }).code(HTTP_STATUS.OK);
-            } else {
-                throw {
-                    code: Ex.EX_USERNAME_NOT_FOUND,
-                    msg: 'UserName not found'
-                };
-            }
+            // const user = <any>await UserService.findByCode(username);
+            console.log(request.params.hihi);
+            let fakerUser = {
+                FullName: faker.name.firstName(),
+                Phone: '+841693248887',
+                Email: faker.internet.email(),
+                Credit: 10,
+                Gender: 'male',
+                Address: faker.address.city,
+
+            };
+            reply({
+                status: HTTP_STATUS.OK,
+                data: fakerUser
+            }).code(HTTP_STATUS.OK);
+            // if (user !== null) {
+            //     reply({
+            //         status: HTTP_STATUS.OK,
+            //         data: user
+            //     }).code(HTTP_STATUS.OK);
+            // } else {
+            //     throw {
+            //         code: Ex.EX_USERNAME_NOT_FOUND,
+            //         msg: 'UserName not found'
+            //     };
+            // }
         } catch (ex) {
             let res = {};
             if (ex.code) {
