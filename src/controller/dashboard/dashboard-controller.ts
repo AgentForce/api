@@ -9,7 +9,7 @@ import { Campaign } from "../../postgres/campaign";
 import { LogCamp } from "../../mongo/index";
 import * as _ from 'lodash';
 import { SlackAlert, ManulifeErrors as Ex } from "../../common/index";
-import { DashboardService } from "../../services/dashboard.service";
+import { DashboardService, typeTarget } from "../../services/dashboard.service";
 export default class DashboardController {
 
     private database: IDatabase;
@@ -27,8 +27,9 @@ export default class DashboardController {
      */
     public async dashboard(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let UserId = parseInt(request.params.userid, 10);
-            let dashboard: any = await DashboardService.dashboard(UserId);
+            let type = request.params.type as typeTarget;
+            let UserId = 5;
+            let dashboard: any = await DashboardService.dashboard(type, UserId);
             if (dashboard == null) {
                 return reply({
                     status: HTTP_STATUS.NOT_FOUND,

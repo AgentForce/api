@@ -23,8 +23,9 @@ class DashboardController {
     dashboard(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let UserId = parseInt(request.params.userid, 10);
-                let dashboard = yield dashboard_service_1.DashboardService.dashboard(UserId);
+                let type = request.params.type;
+                let UserId = 5;
+                let dashboard = yield dashboard_service_1.DashboardService.dashboard(type, UserId);
                 if (dashboard == null) {
                     return reply({
                         status: HTTP_STATUS.NOT_FOUND,

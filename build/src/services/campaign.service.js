@@ -16,7 +16,6 @@ const bluebird_1 = require("bluebird");
 const lead_1 = require("../postgres/lead");
 const code_errors_1 = require("../common/code-errors");
 const redis_1 = require("../cache/redis");
-const db_1 = require("../postgres/db");
 // var logger = new (Logger)({
 //     transports: [
 //         new (transports.Console)({ level: 'error' }),
@@ -147,21 +146,48 @@ class CampaignService {
      * @param campaignId number
      */
     static findById(campaignId) {
-        return db_1.db
-            .query(`select * from reporttolist(5, lquery_in('*'))`, { replacements: { email: 42 } })
-            .spread((output, records) => {
-            return records.rows;
-        });
-        // return Campaign
-        //     .findOne({
-        //         where: {
-        //             Id: campaignId,
-        //             IsDeleted: false
-        //         }
-        //     })
-        //     .catch(ex => {
-        //         throw ex;
+        // return db
+        //     .query(`select * from reporttolist(5, lquery_in('*'))`,
+        //     { replacements: { email: 42 } })
+        //     .spread((output, records: any) => {
+        //         return records.rows;
         //     });
+        return postgres_1.Campaign
+            .findOne({
+            where: {
+                Id: campaignId,
+                IsDeleted: false
+            },
+            attributes: {
+                exclude: [
+                    'IsDeleted',
+                    'NumGoal',
+                    'Credit',
+                    'ReportToList',
+                    'ReportTo',
+                    'Results',
+                    'FypRaito',
+                    'M3AA',
+                    'AverageCC',
+                    'AgentTer',
+                    'CurrentMit',
+                    'CreatedAt',
+                    'UpdatedAt',
+                    'ActiveRaito',
+                    'M3AARaito',
+                    'TargetPamphlet',
+                    'TargetCop',
+                    'TargetAgentCode',
+                    'Description',
+                    'CurrentTest',
+                    'CurentTer',
+                    'CurrentPamphlet'
+                ]
+            }
+        })
+            .catch(ex => {
+            throw ex;
+        });
     }
     /**
      * return leads of campaign, filter by processtep

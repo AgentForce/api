@@ -18,64 +18,61 @@ function default_1(server, serverConfigs, database) {
             }
         }
     });
-    server.route({
-        method: 'GET',
-        path: '/users/testdb',
-        config: {
-            handler: userController.testUser,
-            auth: "jwt",
-            description: 'Get user by username',
-            tags: ['api', 'users'],
-            validate: {
-                // headers: UserValidator.jwtValidator,
-                params: {
-                    userid: Joi.string().required(),
-                    query: Joi.string().required()
-                }
-            },
-            plugins: {
-                'hapi-swagger': {
-                    responses: {
-                        200: {
-                            description: '',
-                            schema: Joi.object({
-                                status: Joi
-                                    .number()
-                                    .example(200),
-                                data: Joi
-                                    .object(),
-                            })
-                        },
-                        401: {
-                            'description': 'Please login.',
-                            schema: Joi.object({
-                                "statusCode": 401,
-                                "error": "Unauthorized",
-                                "message": "Missing authentication"
-                            })
-                        }
-                    },
-                    security: [{
-                            'jwt': []
-                        }]
-                }
-            }
-        }
-    });
+    // server.route({
+    //     method: 'GET',
+    //     path: '/users/testdb',
+    //     config: {
+    //         handler: userController.testUser,
+    //         auth: "jwt",
+    //         description: 'Get user by username',
+    //         tags: ['api', 'users'],
+    //         validate: {
+    //             // headers: UserValidator.jwtValidator,
+    //             params: {
+    //                 userid: Joi.string().required(),
+    //                 query: Joi.string().required()
+    //             }
+    //         },
+    //         plugins: {
+    //             'hapi-swagger': {
+    //                 responses: {
+    //                     200: {
+    //                         description: '',
+    //                         schema: Joi.object(
+    //                             {
+    //                                 status: Joi
+    //                                     .number()
+    //                                     .example(200),
+    //                                 data: Joi
+    //                                     .object(),
+    //                             }
+    //                         )
+    //                     },
+    //                     401: {
+    //                         'description': 'Please login.',
+    //                         schema: Joi.object({
+    //                             "statusCode": 401,
+    //                             "error": "Unauthorized",
+    //                             "message": "Missing authentication"
+    //                         })
+    //                     }
+    //                 },
+    //                 security: [{
+    //                     'jwt': []
+    //                 }]
+    //             }
+    //         }
+    //     }
+    // });
     server.route({
         method: 'GET',
         path: '/users/profile',
         config: {
-            handler: userController.getByUsername,
-            auth: "jwt",
-            description: 'Get user by username',
+            handler: userController.profile,
+            // auth: "jwt",
+            description: '#mockapi return info profile of a user',
             tags: ['api', 'users'],
-            validate: {
-                // headers: UserValidator.jwtValidator,
-                params: {
-                    username: Joi.string().required()
-                }
-            },
+            validate: {},
             plugins: {
                 'hapi-swagger': {
                     responses: {
@@ -382,7 +379,7 @@ function default_1(server, serverConfigs, database) {
         config: {
             handler: userController.loginUser,
             tags: ['users', 'api'],
-            description: 'Login a user.',
+            description: '#mockapi Login a user.',
             validate: {
                 payload: UserValidator.loginUserModel
             },

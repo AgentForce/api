@@ -18,7 +18,7 @@ const code_errors_1 = require("../../common/code-errors");
 const nodemailer = require('nodemailer');
 const EmailTemplate = require("email-templates");
 const user_1 = require("../../postgres/user");
-const Faker = require("faker");
+const faker = require("faker");
 const index_2 = require("../../common/index");
 const fs = require("fs");
 const Loki = require("lokijs");
@@ -81,7 +81,7 @@ class UserController {
                     index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                     reply(res).code(HTTP_STATUS.BAD_GATEWAY);
                 }
-                let randPass = Faker.random.alphaNumeric(6);
+                let randPass = faker.random.alphaNumeric(6);
                 let passwordHash = Bcrypt.hashSync(randPass, Bcrypt.genSaltSync(8));
                 let userPg = yield user_1.User
                     .update({
@@ -250,7 +250,7 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             return reply({
                 status: HTTP_STATUS.OK,
-                token: 'EYnlcWGuXfYTZohm6oVoKM86oATLwpeX1jqjky4uwT4nysDZe8HgBbczZW'
+                token: '#manulife$123$123'
             });
             // const username = request.payload.Username;
             // const password = request.payload.Password;
@@ -322,23 +322,35 @@ class UserController {
             });
         });
     }
-    getByUsername(request, reply) {
+    profile(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const username = request.params.username;
-                const user = yield user_service_1.UserService.findByCode(username);
-                if (user !== null) {
-                    reply({
-                        status: HTTP_STATUS.OK,
-                        data: user
-                    }).code(HTTP_STATUS.OK);
-                }
-                else {
-                    throw {
-                        code: code_errors_1.ManulifeErrors.EX_USERNAME_NOT_FOUND,
-                        msg: 'UserName not found'
-                    };
-                }
+                // const user = <any>await UserService.findByCode(username);
+                console.log(request.params.hihi);
+                let fakerUser = {
+                    FullName: faker.name.firstName(),
+                    Phone: '+841693248887',
+                    Email: faker.internet.email(),
+                    Credit: 10,
+                    Gender: 'male',
+                    Address: faker.address.city,
+                };
+                reply({
+                    status: HTTP_STATUS.OK,
+                    data: fakerUser
+                }).code(HTTP_STATUS.OK);
+                // if (user !== null) {
+                //     reply({
+                //         status: HTTP_STATUS.OK,
+                //         data: user
+                //     }).code(HTTP_STATUS.OK);
+                // } else {
+                //     throw {
+                //         code: Ex.EX_USERNAME_NOT_FOUND,
+                //         msg: 'UserName not found'
+                //     };
+                // }
             }
             catch (ex) {
                 let res = {};

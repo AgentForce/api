@@ -6,8 +6,11 @@ exports.default = () => {
             const database = options.database;
             const serverConfig = options.serverConfigs;
             const validateUser = (decoded, request, cb) => {
-                database.userModel.findById(decoded.id).lean(true)
+                cb('hello');
+                database.userModel
+                    .findById(decoded.id).lean(true)
                     .then((user) => {
+                    console.log('object');
                     if (!user) {
                         return cb(null, false);
                     }

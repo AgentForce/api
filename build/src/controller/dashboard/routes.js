@@ -13,15 +13,16 @@ function default_1(server, configs, database) {
      */
     server.route({
         method: 'GET',
-        path: '/dashboard/{userid}',
+        path: '/dashboard/{type}',
         config: {
             handler: dashboardController.dashboard,
             // auth: "jwt",
             tags: ['api', 'dashboard'],
-            description: 'Dashboard',
+            description: '#screenhomepage',
             validate: {
                 params: {
-                    userid: Joi.number()
+                    type: Joi.string()
+                        .valid(['week', 'month', 'year'])
                         .required()
                         .description('userid')
                 },
@@ -35,7 +36,7 @@ function default_1(server, configs, database) {
                         }
                     };
                     index_1.LogCamp.create({
-                        type: '/campaigns/{id}/customers/{type}',
+                        type: '/dashboard/{type}',
                         dataInput: {
                             params: request.params,
                         },
@@ -50,7 +51,7 @@ function default_1(server, configs, database) {
             },
             plugins: {
                 'hapi-swagger': {
-                    deprecated: true,
+                    // deprecated: true,
                     responses: {
                         200: {
                             description: 'success',
@@ -60,13 +61,13 @@ function default_1(server, configs, database) {
                                     .example(200),
                                 data: Joi
                                     .object({
-                                    call: Joi.array()
-                                        .example([]),
-                                    metting: Joi.array()
-                                        .example([]),
-                                    presentation: Joi.array()
-                                        .example([]),
-                                    close: Joi.array()
+                                    targetType: Joi
+                                        .string(),
+                                    target: Joi.object()
+                                        .example({}),
+                                    campaign: Joi.object()
+                                        .example({}),
+                                    activities: Joi.array()
                                         .example([]),
                                 }),
                             })
@@ -78,6 +79,7 @@ function default_1(server, configs, database) {
                                     .number()
                                     .example(HTTP_STATUS.BAD_REQUEST),
                                 error: Joi.string(),
+                                code: Joi.string()
                             })
                         }
                     },

@@ -204,7 +204,8 @@ class CampaignController {
                 if (campaign == null) {
                     return reply({
                         status: HTTP_STATUS.NOT_FOUND,
-                        data: campaign
+                        data: campaign,
+                        code: index_2.ManulifeErrors.EX_CAMPID_NOT_FOUND
                     }).code(HTTP_STATUS.NOT_FOUND);
                 }
                 else {
