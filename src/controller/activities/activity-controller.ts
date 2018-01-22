@@ -67,6 +67,51 @@ export default class ActivitiesController {
     }
 
     /**
+        * get activity by perild
+        */
+    public async historyPeriod(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let res = {};
+            reply({
+                statusCode: HTTP_STATUS.OK,
+                data: {}
+            });
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    url: request.url.path,
+                    error: {
+                        code: EX.EX_GENERAL,
+                        msg: 'activity findById have errors'
+                    }
+                };
+            }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+            LogActivity.create({
+                type: 'activity findById have errors',
+                dataInput: {
+                    payload: request.payload,
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
+
+    /**
      * get list activities by campaignid, filter by processstep
      */
     public async historyOfLead(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {

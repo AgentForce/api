@@ -28,6 +28,7 @@ class DashboardService {
      */
     static async campDashboard(type: typeTarget, userId: number) {
         let camp: any = {};
+        let period = 0;
         let target: ITarget = {
             TargetCallSale: 0,
             TargetContractSale: 0,
@@ -79,6 +80,7 @@ class DashboardService {
                     msg: `campaign not found`
                 };
             }
+            period = camp.Period;
 
             // TODO:
             if (type === 'week') {
@@ -109,12 +111,13 @@ class DashboardService {
             // });
         } else {
             camp = await CampaignService.getTotalCamp(userId.toString());
+            period = 13;
             target.TargetCallSale = camp.TargetCallSale;
             target.TargetMetting = camp.TargetMetting;
             target.TargetPresentation = camp.TargetPresentation;
             target.TargetContractSale = camp.TargetContractSale;
         }
-        return { campaign: camp, target: target };
+        return { period: period, target: target };
 
     }
 
@@ -163,11 +166,13 @@ class DashboardService {
                 let response = {
                     targetType: type,
                     target: camp.target,
-                    campaign: camp.campaign,
+                    period: camp.period,
                     activities: activities
                 };
-
                 return response;
+            })
+            .catch(ex => {
+                throw ex;
             });
 
 

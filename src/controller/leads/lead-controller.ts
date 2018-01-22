@@ -8,6 +8,8 @@ import * as HTTP_STATUS from 'http-status';
 import { createLeadModel } from './lead-validator';
 import { LogLead } from "../../mongo/index";
 import { IPayloadUpdate } from "./lead";
+import * as Faker from 'faker';
+import * as _ from 'lodash';
 import { SlackAlert, ManulifeErrors as Ex, ManulifeErrors } from "../../common/index";
 export default class LeadController {
 
@@ -20,19 +22,42 @@ export default class LeadController {
 
     public async findById(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let idEvent = parseInt(request.params.id, 10);
-            let lead: any = await LeadService.findById(idEvent);
-            if (lead == null) {
-                return reply({
-                    status: HTTP_STATUS.NOT_FOUND,
-                    data: null,
-                }).code(HTTP_STATUS.NOT_FOUND);
-            } else {
-                return reply({
-                    status: HTTP_STATUS.OK,
-                    data: lead,
-                }).code(HTTP_STATUS.OK);
-            }
+            let res = {
+                statusCode: 200,
+                data: {
+                    CampId: 1,
+                    Phone: '+841603248887',
+                    Name: Faker.name.firstName(),
+                    Age: _.sample([1, 2, 3, 4]),
+                    Gender: 1,
+                    IncomMontly: _.sample([1, 2, 3, 4]),
+                    MaritalStatus: 1,
+                    Address: 'Quận 8',
+                    City: 1,
+                    District: 1,
+                    Relationship: _.sample([1, 2, 3, 4]),
+                    source: 1,
+                    LeadType: 1,
+                    ProcessStep: 1,
+                    Description: 'lorem...',
+                    StatusProcessStep: 1,
+                    Status: false
+                }
+            };
+            reply(res);
+            // let idEvent = parseInt(request.params.id, 10);
+            // let lead: any = await LeadService.findById(idEvent);
+            // if (lead == null) {
+            //     return reply({
+            //         status: HTTP_STATUS.NOT_FOUND,
+            //         data: null,
+            //     }).code(HTTP_STATUS.NOT_FOUND);
+            // } else {
+            //     return reply({
+            //         status: HTTP_STATUS.OK,
+            //         data: lead,
+            //     }).code(HTTP_STATUS.OK);
+            // }
         } catch (ex) {
             let res = {};
             if (ex.code) {
@@ -125,15 +150,45 @@ export default class LeadController {
         */
     public async list(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let processStep = parseInt(request.params.processstep, 10);
-            let campaignId = parseInt(request.params.campid, 10);
-            let limit = parseInt(request.query.limit, 10);
-            let page = parseInt(request.query.page, 10);
-            let activities: any = await LeadService.listByCampaignId(campaignId, processStep, limit, page);
-            reply({
-                status: HTTP_STATUS.OK,
-                data: activities
-            }).code(HTTP_STATUS.OK);
+            let res = {
+                statusCode: 200,
+                data: [{
+                    Id: 1,
+                    CampId: 1,
+                    Phone: '+841603248887',
+                    Name: Faker.name.firstName(),
+                    activities: [{
+                        Id: 1,
+                        ProcessStep: 1,
+                        Location: Faker.lorem.sentence(),
+                        Description: Faker.lorem.lines(),
+                        Type: 1,
+                        StartDate: '2018-01-26',
+                        EndDate: '2018-01-26',
+                        FullDate: true,
+                        Repeat: 1, // daily, monthly,week
+                        Notification: 3600
+                    }]
+                }, {
+                    Id: 2,
+                    CampId: 1,
+                    Phone: '+841603248888',
+                    Name: Faker.name.firstName(),
+                    activities: [{
+                        Id: 1,
+                        ProcessStep: 1,
+                        Location: Faker.lorem.sentence(),
+                        Description: Faker.lorem.lines(),
+                        Type: 1,
+                        StartDate: '2018-01-26',
+                        EndDate: '2018-01-26',
+                        FullDate: true,
+                        Repeat: 1, // daily, monthly,week
+                        Notification: 3600
+                    }]
+                }]
+            };
+            reply(res);
         } catch (ex) {
             let res = {};
             if (ex.code) {
@@ -281,16 +336,25 @@ export default class LeadController {
      */
     public async create(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let iLead = request.payload as ILead;
-            let lead: any = await LeadService.create(iLead)
-                .catch(ex => {
-                    throw ex;
-                });
-            // log mongo create success
-            reply({
-                status: HTTP_STATUS.OK,
-                data: lead
-            }).code(HTTP_STATUS.OK);
+            let res = {
+                statusCode: 200,
+                data: {
+                    success: 5,
+                    fail: 0,
+                    total: 5
+                }
+            };
+            reply(res);
+            // let iLead = request.payload as ILead;
+            // let lead: any = await LeadService.create(iLead)
+            //     .catch(ex => {
+            //         throw ex;
+            //     });
+            // // log mongo create success
+            // reply({
+            //     status: HTTP_STATUS.OK,
+            //     data: lead
+            // }).code(HTTP_STATUS.OK);
         } catch (ex) {
             let res = {};
             if (ex.code) {

@@ -1,7 +1,5 @@
 import * as Joi from "joi";
-const createLeadModel = Joi.object().keys({
-    UserId: Joi.number().required()
-        .description('user id'),
+const createLeadModel = Joi.array().items({
     CampId: Joi.number()
         .required()
         .description('Campaign id'),

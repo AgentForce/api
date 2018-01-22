@@ -13,15 +13,14 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     const leadController = new LeadController(configs, database);
     server.bind(leadController);
 
-
     server.route({
         method: 'GET',
         path: '/leads/{id}',
         config: {
             handler: leadController.findById,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'Find a lead by leadId',
+            description: '#googledrive #KH-lienhe14 Find a lead by leadId',
             validate: {
                 params: {
                     id: Joi.number()
@@ -32,7 +31,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
                             code: Ex.EX_PAYLOAD, msg:
                                 'payload dont valid',
                             details: error
@@ -57,7 +56,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
                                         .example(200),
                                     data: Joi
@@ -69,7 +68,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: 'not found',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.NOT_FOUND),
                                     code: Joi.string().example(ManulifeErrors.EX_LEADID_NOT_FOUND),
@@ -88,19 +87,19 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     });
 
     /**
-   * lấy 1 campaign theo campaignid
+   * lấy 1 campaign theo period
    */
     server.route({
         method: 'GET',
-        path: '/leads/camp/{campid}/{processstep}',
+        path: '/leads/{period}/{processstep}',
         config: {
             handler: leadController.list,
             // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'Get leads and activities of lead by campaignid',
+            description: '#driveKH-lienhe, #screen 12,13 Get leads and activities of lead by period',
             validate: {
                 params: {
-                    campid: Joi
+                    period: Joi
                         .number()
                         .integer()
                         .default(1)
@@ -132,7 +131,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
                                         .example(200),
                                     data: Joi
@@ -148,7 +147,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
                                     error: Joi.string(),
@@ -226,15 +225,15 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     */
     server.route({
         method: 'GET',
-        path: '/leads/group/processstep/{campid}',
+        path: '/leads/group/{period}/{proccesstep}',
         config: {
             handler: leadController.groupProcessStepInCamp,
             // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'group count leads in a campaign',
+            description: '#driveKH-lienhe #screen 1. get group count leads in a period(month)',
             validate: {
                 params: {
-                    campid: Joi
+                    period: Joi
                         .number()
                         .integer()
                         .default(1)
@@ -361,7 +360,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             handler: leadController.create,
             // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'Create new lead',
+            description: '#driveKH-lienhe #screen 11Create list lead ',
             validate: {
                 payload: LeadValidator.createLeadModel,
                 // headers: jwtValidator,
