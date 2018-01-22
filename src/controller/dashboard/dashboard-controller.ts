@@ -1,5 +1,4 @@
 import * as Hapi from "hapi";
-import * as Boom from "boom";
 import * as moment from "moment";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
@@ -10,6 +9,7 @@ import { LogCamp } from "../../mongo/index";
 import * as _ from 'lodash';
 import { SlackAlert, ManulifeErrors as Ex } from "../../common/index";
 import { DashboardService, typeTarget } from "../../services/dashboard.service";
+import { boomify } from "boom";
 export default class DashboardController {
 
     private database: IDatabase;
@@ -32,12 +32,14 @@ export default class DashboardController {
             let dashboard: any = await DashboardService.dashboard(type, UserId);
             if (dashboard == null) {
                 return reply({
-                    status: HTTP_STATUS.NOT_FOUND,
+                    statusCode: HTTP_STATUS.NOT_FOUND,
                     data: dashboard
-                }).code(HTTP_STATUS.NOT_FOUND);
+                })
+                    .code(HTTP_STATUS.NOT_FOUND);
             } else {
+
                 return reply({
-                    status: HTTP_STATUS.OK,
+                    statusCode: HTTP_STATUS.OK,
                     data: dashboard
                 }).code(HTTP_STATUS.OK);
             }
@@ -46,13 +48,13 @@ export default class DashboardController {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: 400,
+                    statusCode: HTTP_STATUS.BAD_GATEWAY,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: 400,
+                    statusCode: HTTP_STATUS.BAD_GATEWAY,
                     url: request.url.path,
                     error: {
                         code: Ex.EX_GENERAL,
@@ -73,7 +75,8 @@ export default class DashboardController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res)
+                .code(HTTP_STATUS.BAD_REQUEST);
         }
     }
 }

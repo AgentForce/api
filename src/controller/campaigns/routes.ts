@@ -1,5 +1,6 @@
 import * as Hapi from "hapi";
 import * as Joi from "joi";
+import * as Boom from 'boom';
 import CampaignController from "./campaign-controller";
 import * as CampaignValidator from "./campaign-validator";
 import { jwtValidator } from "../users/user-validator";
@@ -102,7 +103,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/campaigns/totalcamp/{key}',
         config: {
             handler: campaignController.getTotalCamp,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'campaigns'],
             description: '#flow Get campaign total of user',
             validate: {
@@ -219,7 +220,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             response: res
                         }
                     });
-                    reply(res);
+                    reply(Boom);
                 }
                 // headers: jwtValidator
 
@@ -260,85 +261,85 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         }
     });
 
-    /**
-     * get list campaign of 1 user
-     */
-    server.route({
-        method: 'GET',
-        path: '/campaigns/userid/{userid}',
-        config: {
-            handler: campaignController.getByUserId,
-            auth: "jwt",
-            tags: ['api', 'campaigns'],
-            description: 'Get all campaigns of 1 userid',
-            validate: {
-                // headers: jwtValidator,
-                params: {
-                    userid: Joi.string().required()
-                },
-                // headers: jwtValidator
-                failAction: (request, reply, source, error) => {
-                    let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: Ex.EX_PAYLOAD,
-                            msg: 'params dont valid',
-                            details: error
-                        }
-                    };
-                    SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                    LogCamp.create({
-                        type: '/campaigns/userid/{userid}',
-                        dataInput: {
-                            params: request.params,
-                        },
-                        msg: 'params do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        },
-                    });
-                    reply(res);
-                }
-            },
-            plugins: {
-                'hapi-swagger': {
-                    responses: {
-                        200: {
-                            description: '',
-                            schema: Joi.object(
-                                {
-                                    status: Joi
-                                        .number()
-                                        .example(200),
-                                    data: Joi
-                                        .array().items({
+    // /**
+    //  * get list campaign of 1 user
+    //  */
+    // server.route({
+    //     method: 'GET',
+    //     path: '/campaigns/userid/{userid}',
+    //     config: {
+    //         handler: campaignController.getByUserId,
+    //         auth: "jwt",
+    //         tags: ['api', 'campaigns'],
+    //         description: 'Get all campaigns of 1 userid',
+    //         validate: {
+    //             // headers: jwtValidator,
+    //             params: {
+    //                 userid: Joi.string().required()
+    //             },
+    //             // headers: jwtValidator
+    //             failAction: (request, reply, source, error) => {
+    //                 let res = {
+    //                     status: HTTP_STATUS.BAD_REQUEST, error: {
+    //                         code: Ex.EX_PAYLOAD,
+    //                         msg: 'params dont valid',
+    //                         details: error
+    //                     }
+    //                 };
+    //                 SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+    //                 LogCamp.create({
+    //                     type: '/campaigns/userid/{userid}',
+    //                     dataInput: {
+    //                         params: request.params,
+    //                     },
+    //                     msg: 'params do not valid',
+    //                     meta: {
+    //                         exception: error,
+    //                         response: res
+    //                     },
+    //                 });
+    //                 reply(res);
+    //             }
+    //         },
+    //         plugins: {
+    //             'hapi-swagger': {
+    //                 responses: {
+    //                     200: {
+    //                         description: '',
+    //                         schema: Joi.object(
+    //                             {
+    //                                 status: Joi
+    //                                     .number()
+    //                                     .example(200),
+    //                                 data: Joi
+    //                                     .array().items({
 
-                                        }),
-                                }
-                            )
-                        },
-                        '404': {
-                            description: '',
-                            schema: Joi.object(
-                                {
-                                    status: Joi
-                                        .number()
-                                        .example(HTTP_STATUS.NOT_FOUND),
-                                    data: Joi
-                                        .array().items({
+    //                                     }),
+    //                             }
+    //                         )
+    //                     },
+    //                     '404': {
+    //                         description: '',
+    //                         schema: Joi.object(
+    //                             {
+    //                                 status: Joi
+    //                                     .number()
+    //                                     .example(HTTP_STATUS.NOT_FOUND),
+    //                                 data: Joi
+    //                                     .array().items({
 
-                                        }),
-                                }
-                            )
-                        }
-                    },
-                    security: [{
-                        'jwt': []
-                    }]
-                }
-            }
-        }
-    });
+    //                                     }),
+    //                             }
+    //                         )
+    //                     }
+    //                 },
+    //                 security: [{
+    //                     'jwt': []
+    //                 }]
+    //             }
+    //         }
+    //     }
+    // });
 
     /**
      * creat new campaign

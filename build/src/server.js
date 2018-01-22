@@ -8,7 +8,7 @@ const Metatypes = require("./controller/metatype");
 const Dashboard = require("./controller/dashboard");
 function init(configs, database) {
     return new Promise(resolve => {
-        const port = process.env.PORT;
+        const port = process.env.PORT || 3200;
         const server = new Hapi.Server();
         server.connection({
             port: port,

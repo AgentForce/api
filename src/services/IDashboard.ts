@@ -8,4 +8,5 @@ interface ITarget {
     CurrentPresentation: number;
     CurrentContract: number;
 }
+
 export { ITarget };

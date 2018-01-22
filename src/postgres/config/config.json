@@ -36,14 +36,12 @@
     "timezone": "+07:00"
   },
   "production": {
-    "username": "postgres",
-    "password": "admin$123",
-    "database": "migrate_manulife",
-    "host": "127.0.0.1",
+    "username": "manulife",
+    "password": "ManuLife",
+    "database": "manulife",
+    "host": "103.48.191.251",
     "port": 5432,
     "dialect": "postgres",
-    "logging": true,
-    "force": true,
-    "timezone": "+00:00"
+    "timezone": "+07:00"
   }
 }

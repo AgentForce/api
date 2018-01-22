@@ -1,5 +1,5 @@
-import * as Hapi from "hapi";
-import * as Boom from "boom";
+import * as Hapi from 'hapi';
+import * as Boom from 'boom';
 import * as moment from "moment";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
@@ -195,12 +195,9 @@ export default class CampaignController {
             let campid = request.params.id;
             let campaign: any = await CampaignService.findById(campid);
             if (campaign == null) {
-                return reply({
-                    status: HTTP_STATUS.NOT_FOUND,
-                    data: campaign,
-                    code: Ex.EX_CAMPID_NOT_FOUND
-                }).code(HTTP_STATUS.NOT_FOUND);
+                reply(Boom.notFound(Ex.EX_CAMP_NOT_FOUND));
             } else {
+
                 return reply({
                     status: HTTP_STATUS.OK,
                     data: campaign
