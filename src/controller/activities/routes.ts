@@ -16,42 +16,24 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
 
 
 
-
     /**
-     * history activity of a lead
+     * history activity in  a period
      */
     server.route({
         method: 'GET',
-        path: '/activities/lead/{leadid}/{processstep}',
+        path: '/activities/calendar/{period}',
         config: {
-            handler: activitiesController.historyOfLead,
+            handler: activitiesController.historyPeriod,
             // auth: "jwt",
             tags: ['api', 'activities'],
-            description: 'Get activities by leadid, paginate by parameter limit and page',
+            description: 'Get activities in a period group by day',
             validate: {
                 params: {
-                    leadid: Joi
+                    period: Joi
                         .number()
                         .integer()
                         .required(),
-                    processstep: Joi
-                        .number()
-                        .integer()
-                        .valid([-1, 1, 2, 3, 4, 5])
-                        .description('-1 to get all'),
                 },
-                query: Joi.object({
-                    limit: Joi
-                        .number()
-                        .integer()
-                        .default(20)
-                        .required(),
-                    page: Joi
-                        .number()
-                        .integer()
-                        .default(1)
-                        .required()
-                })
                 // headers: jwtValidator
             },
             plugins: {
@@ -89,6 +71,80 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             }
         }
     });
+
+
+    // /**
+    //  * history activity of a lead
+    //  */
+    // server.route({
+    //     method: 'GET',
+    //     path: '/activities/lead/{leadid}/{processstep}',
+    //     config: {
+    //         handler: activitiesController.historyOfLead,
+    //         // auth: "jwt",
+    //         tags: ['api', 'activities'],
+    //         description: 'Get activities by leadid, paginate by parameter limit and page',
+    //         validate: {
+    //             params: {
+    //                 leadid: Joi
+    //                     .number()
+    //                     .integer()
+    //                     .required(),
+    //                 processstep: Joi
+    //                     .number()
+    //                     .integer()
+    //                     .valid([-1, 1, 2, 3, 4, 5])
+    //                     .description('-1 to get all'),
+    //             },
+    //             query: Joi.object({
+    //                 limit: Joi
+    //                     .number()
+    //                     .integer()
+    //                     .default(20)
+    //                     .required(),
+    //                 page: Joi
+    //                     .number()
+    //                     .integer()
+    //                     .default(1)
+    //                     .required()
+    //             })
+    //             // headers: jwtValidator
+    //         },
+    //         plugins: {
+    //             'hapi-swagger': {
+    //                 responses: {
+    //                     200: {
+    //                         description: '',
+    //                         schema: Joi.object(
+    //                             {
+    //                                 status: Joi
+    //                                     .number()
+    //                                     .example(200),
+    //                                 data: Joi
+    //                                     .object({
+    //                                         data: Joi.array().example([]),
+    //                                         limit: Joi.number(),
+    //                                         page: Joi.number()
+    //                                     })
+    //                             }
+    //                         )
+    //                     },
+    //                     400: {
+    //                         description: '',
+    //                         schema: Joi.object(
+    //                             {
+    //                                 status: Joi
+    //                                     .number()
+    //                                     .example(HTTP_STATUS.BAD_REQUEST),
+    //                                 error: Joi.string(),
+    //                             }
+    //                         )
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // });
 
     /**
     * history activity of a lead

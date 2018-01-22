@@ -51,8 +51,8 @@ export function init(configs: IServerConfigurations, database: IDatabase): Promi
             console.log('All plugins registered successfully.');
             Users.init(server, configs, database);
             Campaigns.init(server, configs, database);
-            // Leads.init(server, configs, database);
-            // Actvities.init(server, configs, database);
+            Leads.init(server, configs, database);
+            Actvities.init(server, configs, database);
             // Events.init(server, configs, database);
             Metatypes.init(server, configs, database);
             Dashboard.init(server, configs, database);

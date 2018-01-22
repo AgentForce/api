@@ -27,28 +27,36 @@ export default class CampaignController {
     public async createCampaign(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         // 1. Router Checking data input : commission > 0, loan > 0, monthly > 0
         try {
-            let iCamp: ICampaign = request.payload;
-            let userId = 5;
-            const camps = <any>await CampaignService.createOfFA(iCamp, userId);
-            let logcamps = _.map(camps, (camp: any) => {
-                return {
-                    type: 'createcampaign',
-                    dataInput: {
-                        payload: request.payload
-                    },
-                    msg: 'success',
-                    meta: {
-                        response: camp.dataValues
-                    },
-                };
-            });
-            // save mongo log
-            LogCamp
-                .insertMany(logcamps);
-            reply({
-                status: HTTP_STATUS.OK,
-                data: camps
-            }).code(200);
+            let res = {
+                statusCode: HTTP_STATUS.OK,
+                data: {
+
+                },
+                msg: 'Create success'
+            };
+            reply(res);
+            // let iCamp: ICampaign = request.payload;
+            // let userId = 5;
+            // const camps = <any>await CampaignService.createOfFA(iCamp, userId);
+            // let logcamps = _.map(camps, (camp: any) => {
+            //     return {
+            //         type: 'createcampaign',
+            //         dataInput: {
+            //             payload: request.payload
+            //         },
+            //         msg: 'success',
+            //         meta: {
+            //             response: camp.dataValues
+            //         },
+            //     };
+            // });
+            // // save mongo log
+            // LogCamp
+            //     .insertMany(logcamps);
+            // reply({
+            //     status: HTTP_STATUS.OK,
+            //     data: camps
+            // }).code(200);
 
         } catch (ex) {
             let res = {};
@@ -192,17 +200,58 @@ export default class CampaignController {
      */
     public async getByCampaignId(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let campid = request.params.id;
-            let campaign: any = await CampaignService.findById(campid);
-            if (campaign == null) {
-                reply(Boom.notFound(Ex.EX_CAMP_NOT_FOUND));
-            } else {
-
-                return reply({
-                    status: HTTP_STATUS.OK,
-                    data: campaign
-                }).code(HTTP_STATUS.OK);
-            }
+            let res = {
+                statusCode: HTTP_STATUS.OK,
+                data: [{
+                    Period: 1,
+                    Week: 1,
+                    TargetCallSale: 25,
+                    TargetContractSale: 10,
+                    TargetMetting: 5,
+                    TargetPresentation: 2,
+                    CurrentCallSale: 1,
+                    CurrentMetting: 1,
+                    CurrentPresentation: 8,
+                    CurrentContract: 0
+                }, {
+                    Period: 1,
+                    Week: 2,
+                    TargetCallSale: 25,
+                    TargetContractSale: 10,
+                    TargetMetting: 5,
+                    TargetPresentation: 2,
+                    CurrentCallSale: 1,
+                    CurrentMetting: 1,
+                    CurrentPresentation: 8,
+                    CurrentContract: 0
+                }, {
+                    Period: 1,
+                    Week: 3,
+                    TargetCallSale: 25,
+                    TargetContractSale: 10,
+                    TargetMetting: 5,
+                    TargetPresentation: 2,
+                    CurrentCallSale: 1,
+                    CurrentMetting: 1,
+                    CurrentPresentation: 8,
+                    CurrentContract: 0
+                }, {
+                    Period: 1,
+                    Week: 4,
+                    TargetCallSale: 25,
+                    TargetContractSale: 10,
+                    TargetMetting: 5,
+                    TargetPresentation: 2,
+                    CurrentCallSale: 1,
+                    CurrentMetting: 1,
+                    CurrentPresentation: 8,
+                    CurrentContract: 0
+                }]
+            };
+            reply({
+                statusCode: 200,
+                data: res,
+            });
         } catch (ex) {
             // log mongo create fail
             let res = {};
