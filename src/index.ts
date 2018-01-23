@@ -24,6 +24,7 @@ const database = Database.init(dbConfigs);
 // Starting Application Server
 const serverConfigs = Configs.getServerConfigs();
 
+
 Server.init(serverConfigs, database).then((server) => {
     server.start(() => {
         console.log(`server running at: ${server.info.uri} env ${process.env.NODE_ENV}`);
