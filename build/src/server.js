@@ -3,9 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Hapi = require("hapi");
 const Users = require("./controller/users");
 const Campaigns = require("./controller/campaigns");
+// import * as Events from './controller/event';
+const Leads = require("./controller/leads");
 const Metatypes = require("./controller/metatype");
 // import * as Invites from './controller/invites';
 const Dashboard = require("./controller/dashboard");
+const Actvities = require("./controller/activities");
 function init(configs, database) {
     return new Promise(resolve => {
         const port = process.env.PORT || 3200;
@@ -36,8 +39,8 @@ function init(configs, database) {
             console.log('All plugins registered successfully.');
             Users.init(server, configs, database);
             Campaigns.init(server, configs, database);
-            // Leads.init(server, configs, database);
-            // Actvities.init(server, configs, database);
+            Leads.init(server, configs, database);
+            Actvities.init(server, configs, database);
             // Events.init(server, configs, database);
             Metatypes.init(server, configs, database);
             Dashboard.init(server, configs, database);

@@ -94,4 +94,11 @@ const updateModel = Joi.object().keys({
         .description('Get info from api /types, key=LeadType'),
     Description: Joi.string().max(500)
 });
-export { createLeadModel, updateModel };
+
+
+
+const updateStatusModel = Joi.object().keys({
+    ProcessStep: Joi.number().required(),
+    StatusProcessStep: Joi.number().required()
+});
+export { createLeadModel, updateModel, updateStatusModel };

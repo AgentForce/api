@@ -23,6 +23,7 @@ class DashboardService {
     static campDashboard(type, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             let camp = {};
+            let period = 0;
             let target = {
                 TargetCallSale: 0,
                 TargetContractSale: 0,
@@ -71,6 +72,7 @@ class DashboardService {
                         msg: `campaign not found`
                     };
                 }
+                period = camp.Period;
                 // TODO:
                 if (type === 'week') {
                     target.TargetCallSale = camp.TargetCallSale / 4;
@@ -99,12 +101,13 @@ class DashboardService {
             }
             else {
                 camp = yield campaign_service_1.CampaignService.getTotalCamp(userId.toString());
+                period = 13;
                 target.TargetCallSale = camp.TargetCallSale;
                 target.TargetMetting = camp.TargetMetting;
                 target.TargetPresentation = camp.TargetPresentation;
                 target.TargetContractSale = camp.TargetContractSale;
             }
-            return { campaign: camp, target: target };
+            return { period: period, target: target };
         });
     }
     static activitiesDashboard(type, userId) {
@@ -154,10 +157,13 @@ class DashboardService {
                 let response = {
                     targetType: type,
                     target: camp.target,
-                    campaign: camp.campaign,
+                    period: camp.period,
                     activities: activities
                 };
                 return response;
+            })
+                .catch(ex => {
+                throw ex;
             });
         });
     }

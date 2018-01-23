@@ -92,25 +92,48 @@ export default class LeadController {
         }
     }
 
+
     /**
-     * caculator and group processStep in leads in a campaignid
-     *
+     *  get transaction of leadid
      */
-    public async groupProcessStepInCamp(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+    public async histories(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let campId = parseInt(request.params.campid, 10);
-            let lead: any = await LeadService.groupProcessStepInCamp(campId);
-            if (lead == null) {
-                return reply({
-                    status: HTTP_STATUS.NOT_FOUND,
-                    data: null,
-                }).code(HTTP_STATUS.NOT_FOUND);
-            } else {
-                return reply({
-                    status: HTTP_STATUS.OK,
-                    data: lead,
-                }).code(HTTP_STATUS.OK);
-            }
+            let res = {
+                statusCode: 200,
+                data: [{
+                    CampId: 1,
+                    Phone: '+841603248887',
+                    Name: Faker.name.firstName(),
+                    Age: _.sample([1, 2, 3, 4]),
+                    Gender: 1,
+                    IncomMontly: _.sample([1, 2, 3, 4]),
+                    MaritalStatus: 1,
+                    Address: 'Quận 8',
+                    City: 1,
+                    District: 1,
+                    Relationship: _.sample([1, 2, 3, 4]),
+                    source: 1,
+                    LeadType: 1,
+                    ProcessStep: 1,
+                    Description: 'lorem...',
+                    StatusProcessStep: 1,
+                    Status: false
+                }]
+            };
+            reply(res);
+            // let idEvent = parseInt(request.params.id, 10);
+            // let lead: any = await LeadService.findById(idEvent);
+            // if (lead == null) {
+            //     return reply({
+            //         status: HTTP_STATUS.NOT_FOUND,
+            //         data: null,
+            //     }).code(HTTP_STATUS.NOT_FOUND);
+            // } else {
+            //     return reply({
+            //         status: HTTP_STATUS.OK,
+            //         data: lead,
+            //     }).code(HTTP_STATUS.OK);
+            // }
         } catch (ex) {
             let res = {};
             if (ex.code) {
@@ -125,13 +148,13 @@ export default class LeadController {
                     url: request.url.path,
                     error: {
                         code: Ex.EX_GENERAL,
-                        msg: 'get group lead have errors'
+                        msg: 'find lead have errors'
                     }
                 };
             }
             SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
             LogLead.create({
-                type: 'groupProcessStepInCamp',
+                type: 'findById',
                 dataInput: {
                     params: request.params
                 },
@@ -145,6 +168,7 @@ export default class LeadController {
         }
     }
 
+
     /**
         * get list activities by campaignid, filter by processstep
         */
@@ -154,37 +178,29 @@ export default class LeadController {
                 statusCode: 200,
                 data: [{
                     Id: 1,
-                    CampId: 1,
                     Phone: '+841603248887',
+                    ProcessStep: 1,
                     Name: Faker.name.firstName(),
                     activities: [{
                         Id: 1,
                         ProcessStep: 1,
-                        Location: Faker.lorem.sentence(),
-                        Description: Faker.lorem.lines(),
                         Type: 1,
                         StartDate: '2018-01-26',
                         EndDate: '2018-01-26',
                         FullDate: true,
-                        Repeat: 1, // daily, monthly,week
-                        Notification: 3600
                     }]
                 }, {
                     Id: 2,
-                    CampId: 1,
                     Phone: '+841603248888',
+                    ProcessStep: 1,
                     Name: Faker.name.firstName(),
                     activities: [{
                         Id: 1,
                         ProcessStep: 1,
-                        Location: Faker.lorem.sentence(),
-                        Description: Faker.lorem.lines(),
                         Type: 1,
                         StartDate: '2018-01-26',
                         EndDate: '2018-01-26',
                         FullDate: true,
-                        Repeat: 1, // daily, monthly,week
-                        Notification: 3600
                     }]
                 }]
             };
@@ -280,23 +296,91 @@ export default class LeadController {
      */
     public async update(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let id = parseInt(request.params.id, 10);
-            let payload = request.payload as IPayloadUpdate;
-            let lead: any = await LeadService.update(id, payload);
-            // log mongo create success
-            LogLead
-                .create({
-                    type: 'create',
-                    msg: 'success',
-                    dataInput: request.payload,
-                    meta: {
-                        lead: lead.dataValues
-                    }
-                });
-            reply({
-                status: HTTP_STATUS.OK,
-                data: lead
-            }).code(HTTP_STATUS.OK);
+            let res = {
+                statusCode: 200,
+                data: [{
+                    CampId: 1,
+                    Phone: '+841603248887',
+                    Name: Faker.name.firstName(),
+                    Age: _.sample([1, 2, 3, 4]),
+                    Gender: 1,
+                    IncomMontly: _.sample([1, 2, 3, 4]),
+                    MaritalStatus: 1,
+                    Address: 'Quận 8',
+                    City: 1,
+                    District: 1,
+                    Relationship: _.sample([1, 2, 3, 4]),
+                    source: 1,
+                    LeadType: 1,
+                    ProcessStep: 1,
+                    Description: 'lorem...',
+                    StatusProcessStep: 1,
+                    Status: false
+                }]
+            };
+            reply(res);
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: { code: Ex.EX_GENERAL, msg: 'Create lead have errors' }
+                };
+            }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+            LogLead.create({
+                type: 'update lead',
+                dataInput: {
+                    payload: request.payload,
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
+
+
+
+    /**
+    * update status lead
+    */
+    public async updateStatus(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let res = {
+                statusCode: 200,
+                data: [{
+                    CampId: 1,
+                    Phone: '+841603248887',
+                    Name: Faker.name.firstName(),
+                    Age: _.sample([1, 2, 3, 4]),
+                    Gender: 1,
+                    IncomMontly: _.sample([1, 2, 3, 4]),
+                    MaritalStatus: 1,
+                    Address: 'Quận 8',
+                    City: 1,
+                    District: 1,
+                    Relationship: _.sample([1, 2, 3, 4]),
+                    source: 1,
+                    LeadType: 1,
+                    ProcessStep: 1,
+                    Description: 'lorem...',
+                    StatusProcessStep: 1,
+                    Status: false
+                }]
+            };
+            reply(res);
         } catch (ex) {
             let res = {};
             if (ex.code) {

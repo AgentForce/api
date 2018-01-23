@@ -11,41 +11,27 @@ function default_1(server, configs, database) {
     const activitiesController = new activity_controller_1.default(configs, database);
     server.bind(activitiesController);
     /**
-     * history activity of a lead
+     * history activity in  a period
      */
     server.route({
         method: 'GET',
-        path: '/activities/lead/{leadid}/{processstep}',
+        path: '/activities/rangedate/{from}/{to}',
         config: {
-            handler: activitiesController.historyOfLead,
+            handler: activitiesController.calendar,
             // auth: "jwt",
             tags: ['api', 'activities'],
-            description: 'Get activities by leadid, paginate by parameter limit and page',
+            description: '#v3/dangnhap:13 Get activities in rangeDate group by day',
             validate: {
                 params: {
-                    leadid: Joi
-                        .number()
-                        .integer()
+                    from: Joi
+                        .date()
+                        .default('2018-01-01')
                         .required(),
-                    processstep: Joi
-                        .number()
-                        .integer()
-                        .valid([-1, 1, 2, 3, 4, 5])
-                        .description('-1 to get all'),
+                    to: Joi
+                        .date()
+                        .default('2018-01-31')
+                        .required(),
                 },
-                query: Joi.object({
-                    limit: Joi
-                        .number()
-                        .integer()
-                        .default(20)
-                        .required(),
-                    page: Joi
-                        .number()
-                        .integer()
-                        .default(1)
-                        .required()
-                })
-                // headers: jwtValidator
             },
             plugins: {
                 'hapi-swagger': {
@@ -79,7 +65,129 @@ function default_1(server, configs, database) {
         }
     });
     /**
-    * history activity of a lead
+    * history activity in  a period
+    */
+    server.route({
+        method: 'GET',
+        path: '/activities/day/{date}',
+        config: {
+            handler: activitiesController.activitiesDay,
+            // auth: "jwt",
+            tags: ['api', 'activities'],
+            description: '#v3/dangnhap:13 Get activities in Day',
+            validate: {
+                params: {
+                    date: Joi
+                        .date()
+                        .default('2018-01-01')
+                        .required()
+                },
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object({
+                                    data: Joi.array().example([]),
+                                    limit: Joi.number(),
+                                    page: Joi.number()
+                                })
+                            })
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(HTTP_STATUS.BAD_REQUEST),
+                                error: Joi.string(),
+                            })
+                        }
+                    }
+                }
+            }
+        }
+    });
+    // /**
+    //  * history activity of a lead
+    //  */
+    // server.route({
+    //     method: 'GET',
+    //     path: '/activities/lead/{leadid}/{processstep}',
+    //     config: {
+    //         handler: activitiesController.historyOfLead,
+    //         // auth: "jwt",
+    //         tags: ['api', 'activities'],
+    //         description: 'Get activities by leadid, paginate by parameter limit and page',
+    //         validate: {
+    //             params: {
+    //                 leadid: Joi
+    //                     .number()
+    //                     .integer()
+    //                     .required(),
+    //                 processstep: Joi
+    //                     .number()
+    //                     .integer()
+    //                     .valid([-1, 1, 2, 3, 4, 5])
+    //                     .description('-1 to get all'),
+    //             },
+    //             query: Joi.object({
+    //                 limit: Joi
+    //                     .number()
+    //                     .integer()
+    //                     .default(20)
+    //                     .required(),
+    //                 page: Joi
+    //                     .number()
+    //                     .integer()
+    //                     .default(1)
+    //                     .required()
+    //             })
+    //             // headers: jwtValidator
+    //         },
+    //         plugins: {
+    //             'hapi-swagger': {
+    //                 responses: {
+    //                     200: {
+    //                         description: '',
+    //                         schema: Joi.object(
+    //                             {
+    //                                 status: Joi
+    //                                     .number()
+    //                                     .example(200),
+    //                                 data: Joi
+    //                                     .object({
+    //                                         data: Joi.array().example([]),
+    //                                         limit: Joi.number(),
+    //                                         page: Joi.number()
+    //                                     })
+    //                             }
+    //                         )
+    //                     },
+    //                     400: {
+    //                         description: '',
+    //                         schema: Joi.object(
+    //                             {
+    //                                 status: Joi
+    //                                     .number()
+    //                                     .example(HTTP_STATUS.BAD_REQUEST),
+    //                                 error: Joi.string(),
+    //                             }
+    //                         )
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // });
+    /**
+    * history activity by id
     */
     server.route({
         method: 'GET',
@@ -88,10 +196,59 @@ function default_1(server, configs, database) {
             handler: activitiesController.findById,
             // auth: "jwt",
             tags: ['api', 'activities'],
-            description: 'Get a activity by id',
+            description: '#screenv3/KH-lienhe:20 Get a activity by id',
             validate: {
                 params: {
                     id: Joi
+                        .number()
+                        .integer()
+                        .required(),
+                }
+                // headers: jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object({
+                                    data: Joi.object(),
+                                })
+                            })
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(HTTP_STATUS.BAD_REQUEST),
+                                error: Joi.string(),
+                            })
+                        }
+                    }
+                }
+            }
+        }
+    });
+    /**
+  * history activities of leads
+  */
+    server.route({
+        method: 'GET',
+        path: '/activities/leadid/{leadid}',
+        config: {
+            handler: activitiesController.activitiesLead,
+            // auth: "jwt",
+            tags: ['api', 'activities'],
+            description: '#screenv3/KH-hengap:19 Get list activities by leadid',
+            validate: {
+                params: {
+                    leadid: Joi
                         .number()
                         .integer()
                         .required(),
@@ -135,9 +292,9 @@ function default_1(server, configs, database) {
         path: '/activities',
         config: {
             handler: activitiesController.create,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'activities'],
-            description: 'Create a activity.',
+            description: '#screenv3/KH-hengap:18 Create a activity.',
             validate: {
                 payload: ActivitiesValidator.createModel,
                 // headers: jwtValidator,

@@ -7,10 +7,10 @@ const currentDate = moment().format('YYYY-MM-DD');
  * model create camp
  */
 const createCampaignFAModel = Joi.object().keys({
-    CampType: Joi.number()
-        .required()
-        .example(1)
-        .description('metatypes: type=camp-camptype'),
+    // CampType: Joi.number()
+    //     .required()
+    //     .example(1)
+    //     .description('metatypes: type=camp-camptype'),
     // Name: Joi.string()
     //     .required(),
     // Label: Joi.string()

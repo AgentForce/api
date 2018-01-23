@@ -9,6 +9,7 @@ import { IPayloadCreate, IPayloadUpdate } from "./activity";
 import { LogActivity } from "../../mongo/index";
 import { ManulifeErrors as EX } from '../../common/code-errors';
 import { SlackAlert } from "../../common/index";
+import * as Faker from 'faker';
 export default class ActivitiesController {
 
     private database: IDatabase;
@@ -25,12 +26,25 @@ export default class ActivitiesController {
      */
     public async findById(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let id = parseInt(request.params.id, 10);
-            let activities: any = await ActivityService.findById(id);
-            reply({
-                status: HTTP_STATUS.OK,
-                data: activities
-            }).code(HTTP_STATUS.OK);
+            let res = {
+                statusCode: 200,
+                data: {
+                    Id: 1,
+                    ProcessStep: 2,
+                    Type: 2,
+                    Phone: '01694248887',
+                    Name: 'Gặp khách hàng',
+                    StartDate: '2018-01-26',
+                    EndDate: '2018-01-26',
+                    FullDate: true,
+                    Repeat: 1,
+                    Notification: 3600,
+                    Status: true,
+                    Location: Faker.lorem.sentence(),
+                    Description: Faker.lorem.lines()
+                }
+            };
+            reply(res);
         } catch (ex) {
             let res = {};
             if (ex.code) {
@@ -69,13 +83,29 @@ export default class ActivitiesController {
     /**
         * get activity by perild
         */
-    public async historyPeriod(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+    public async calendar(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let res = {};
-            reply({
-                statusCode: HTTP_STATUS.OK,
-                data: {}
-            });
+            let res = {
+                statusCode: 200,
+                data: [{
+                    StartDate: '2018-01-18',
+                    Type: 1,
+                    count: 1
+                }, {
+                    StartDate: '2018-01-18',
+                    Type: 2,
+                    count: 2
+                }, {
+                    StartDate: '2018-01-18',
+                    Type: 3,
+                    count: 2
+                }, {
+                    StartDate: '2018-01-18',
+                    Type: 4,
+                    count: 2
+                }]
+            };
+            reply(res);
         } catch (ex) {
             let res = {};
             if (ex.code) {
@@ -112,18 +142,92 @@ export default class ActivitiesController {
     }
 
     /**
-     * get list activities by campaignid, filter by processstep
-     */
-    public async historyOfLead(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+      * get activitis in a day
+      */
+    public async activitiesDay(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let leadId = parseInt(request.params.leadid, 10);
-            let limit = parseInt(request.query.limit, 10);
-            let page = parseInt(request.query.page, 10);
-            let activities: any = await ActivityService.listByCampaignId(leadId, limit, page);
-            reply({
-                status: HTTP_STATUS.OK,
-                data: activities
-            }).code(HTTP_STATUS.OK);
+            let res = {
+                statusCode: 200,
+                data: [{
+                    Id: 1,
+                    ProcessStep: 1,
+                    Type: 1,
+                    Phone: '01694248887',
+                    Name: 'TuNguyen',
+                    StartDate: '2018-01-26',
+                    FullDate: true,
+                }, {
+                    Id: 1,
+                    ProcessStep: 1,
+                    Type: 1,
+                    Phone: '01694248888',
+                    Name: 'John',
+                    StartDate: '2018-01-26',
+                    FullDate: true,
+                }]
+            };
+            reply(res);
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    url: request.url.path,
+                    error: {
+                        code: EX.EX_GENERAL,
+                        msg: 'activity findById have errors'
+                    }
+                };
+            }
+            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+            LogActivity.create({
+                type: 'activity findById have errors',
+                dataInput: {
+                    payload: request.payload,
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * get list activities by leadid
+     */
+    public async activitiesLead(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let res = {
+                statusCode: 200,
+                data: [{
+                    Id: 1,
+                    ProcessStep: 1,
+                    Type: 1,
+                    Phone: '01694248887',
+                    Name: 'Tu Nguyen',
+                    StartDate: '2018-01-26',
+                    FullDate: true,
+                }, {
+                    Id: 2,
+                    ProcessStep: 1,
+                    Type: 1,
+                    Phone: '01694248888',
+                    Name: 'John',
+                    StartDate: '2018-01-26',
+                    FullDate: true,
+                }]
+            };
+            reply(res);
         } catch (ex) {
             let res = {};
             if (ex.code) {
@@ -164,26 +268,45 @@ export default class ActivitiesController {
      */
     public async update(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let iAc = request.payload as IPayloadUpdate;
-            let id = parseInt(request.params.id, 10);
-            let lead: any = await ActivityService.update(id, iAc);
-            // log mongo create success
-            LogActivity.create({
-                type: 'update activity',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
-                },
-                msg: 'success',
-                meta: {
-                    exception: '',
-                    response: JSON.parse(JSON.stringify(lead))
-                },
-            });
-            reply({
-                status: HTTP_STATUS.OK,
-                data: lead
-            }).code(HTTP_STATUS.OK);
+            let res = {
+                statusCode: 200,
+                data: {
+                    Id: 1,
+                    ProcessStep: 2,
+                    Type: 2,
+                    Phone: '01694248887',
+                    Name: 'Gặp khách hàng',
+                    StartDate: '2018-01-26',
+                    EndDate: '2018-01-26',
+                    FullDate: true,
+                    Repeat: 1,
+                    Notification: 3600,
+                    Status: true,
+                    Location: Faker.lorem.sentence(),
+                    Description: Faker.lorem.lines()
+                }
+            };
+            reply(res);
+            // let iAc = request.payload as IPayloadUpdate;
+            // let id = parseInt(request.params.id, 10);
+            // let lead: any = await ActivityService.update(id, iAc);
+            // // log mongo create success
+            // LogActivity.create({
+            //     type: 'update activity',
+            //     dataInput: {
+            //         payload: request.payload,
+            //         params: request.params
+            //     },
+            //     msg: 'success',
+            //     meta: {
+            //         exception: '',
+            //         response: JSON.parse(JSON.stringify(lead))
+            //     },
+            // });
+            // reply({
+            //     status: HTTP_STATUS.OK,
+            //     data: lead
+            // }).code(HTTP_STATUS.OK);
         } catch (ex) {
             let res = {};
             if (ex.code) {
@@ -224,13 +347,33 @@ export default class ActivitiesController {
      */
     public async create(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let iAc = request.payload as IPayloadCreate;
-            let lead: any = await ActivityService.create(iAc);
-            // log mongo create success
-            reply({
-                status: HTTP_STATUS.OK,
-                data: lead
-            }).code(HTTP_STATUS.OK);
+
+            let res = {
+                statusCode: 200,
+                data: {
+                    Id: 1,
+                    ProcessStep: 2,
+                    Type: 2,
+                    Phone: '01694248887',
+                    Name: 'Gặp khách hàng',
+                    StartDate: '2018-01-26',
+                    EndDate: '2018-01-26',
+                    FullDate: true,
+                    Repeat: 1,
+                    Notification: 3600,
+                    Status: true,
+                    Location: Faker.lorem.sentence(),
+                    Description: Faker.lorem.lines()
+                }
+            };
+            reply(res);
+            // let iAc = request.payload as IPayloadCreate;
+            // let lead: any = await ActivityService.create(iAc);
+            // // log mongo create success
+            // reply({
+            //     status: HTTP_STATUS.OK,
+            //     data: lead
+            // }).code(HTTP_STATUS.OK);
         } catch (ex) {
             let res = {};
             if (ex.code) {

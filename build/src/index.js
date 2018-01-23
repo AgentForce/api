@@ -17,7 +17,7 @@ const dbConfigs = Configs.getDatabaseConfig();
 const database = Database.init(dbConfigs);
 // Init DatabasePg
 //const databasepg = DatabasePg.init(dbConfigs);
-console.log(dbConfigs);
+// console.log(dbConfigs);
 // Starting Application Server
 const serverConfigs = Configs.getServerConfigs();
 Server.init(serverConfigs, database).then((server) => {

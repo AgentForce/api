@@ -23,23 +23,97 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
 
 
 
- 
+
     /**
-     * get a campaign by campaignid
+     * get a campaign by period
      */
     server.route({
         method: 'GET',
-        path: '/campaigns/current',
+        path: '/campaigns/period/{period}',
         config: {
             handler: campaignController.getByCampaignId,
             // auth: "jwt",
             tags: ['api', 'campaigns'],
-            description: '#googledrivev3/dangnhap #screen11,12,12copy2,12copy3. Trả về danh sách plan 4 tuần của một tháng',
+            description: '#drivev3/dangnhap,KH-lienhe:1 #screen11,12,12copy2,12copy3. Trả về danh sách plan 4 tuần của một tháng',
             validate: {
                 // headers: jwtValidator,
                 params: {
-
+                    period: Joi.number()
+                        .required()
                 },
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: Ex.EX_PAYLOAD,
+                            msg: 'params dont valid',
+                            details: error
+                        }
+                    };
+                    LogCamp.create({
+                        type: '/campaigns/current',
+                        dataInput: {
+                            params: request.params,
+                        },
+                        msg: 'params do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        }
+                    });
+                    reply(Boom);
+                }
+                // headers: jwtValidator
+
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
+                        },
+                        404: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.NOT_FOUND),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
+                        },
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
+    /**
+     * get a campaign by period
+     */
+    server.route({
+        method: 'GET',
+        path: '/campaigns/check',
+        config: {
+            handler: campaignController.checkCampaign,
+            // auth: "jwt",
+            tags: ['api', 'campaigns'],
+            description: '#screenv3/dangnhap:3 Check campaign exist in current day ',
+            validate: {
+                // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {

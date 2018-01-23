@@ -1,9 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
-const createLeadModel = Joi.object().keys({
-    UserId: Joi.number().required()
-        .description('user id'),
+const createLeadModel = Joi.array().items({
     CampId: Joi.number()
         .required()
         .description('Campaign id'),
@@ -99,4 +97,9 @@ const updateModel = Joi.object().keys({
     Description: Joi.string().max(500)
 });
 exports.updateModel = updateModel;
+const updateStatusModel = Joi.object().keys({
+    ProcessStep: Joi.number().required(),
+    StatusProcessStep: Joi.number().required()
+});
+exports.updateStatusModel = updateStatusModel;
 //# sourceMappingURL=lead-validator.js.map
