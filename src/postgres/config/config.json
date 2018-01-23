@@ -30,7 +30,7 @@
     "username": "manulife",
     "password": "ManuLife",
     "database": "manulife",
-    "host": "103.48.191.251",
+    "host": "13.250.129.169",
     "port": 5432,
     "dialect": "postgres",
     "timezone": "+07:00"
@@ -39,7 +39,7 @@
     "username": "manulife",
     "password": "ManuLife",
     "database": "manulife",
-    "host": "103.48.191.251",
+    "host": "13.250.129.169",
     "port": 5432,
     "dialect": "postgres",
     "timezone": "+07:00"

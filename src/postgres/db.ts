@@ -2,7 +2,7 @@
 // const fs = require('fs');
 // const path = require('path');
 import * as Sequelize from 'sequelize';
-const config = require('./config/config');
+const config = require('./config/config.json');
 const objconfig = config[process.env.NODE_ENV || 'aws'];
 const db = new Sequelize(objconfig.database, objconfig.username, objconfig.password, objconfig);
 // console.log(objconfig);
