@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
+const Boom = require("boom");
 const campaign_controller_1 = require("./campaign-controller");
 const CampaignValidator = require("./campaign-validator");
 const HTTP_STATUS = require("http-status");
@@ -17,173 +18,21 @@ function default_1(server, configs, database) {
     const campaignController = new campaign_controller_1.default(configs, database);
     server.bind(campaignController);
     /**
-     * get list leads of campaign with type and campaignid
+     * get a campaign by period
      */
     server.route({
         method: 'GET',
-        path: '/campaigns/{id}/customers/{type}',
-        config: {
-            handler: campaignController.leadsOfCamp,
-            auth: "jwt",
-            tags: ['campaigns'],
-            description: 'Get Customer(leads) in a campaigns by id.',
-            validate: {
-                params: {
-                    id: Joi.number()
-                        .required()
-                        .description('Campaignid'),
-                    type: Joi
-                        .number()
-                        .required()
-                        .valid([1, 2, 3, 4])
-                        .description('4 processtep in lead')
-                },
-                // headers: jwtValidator,
-                failAction: (request, reply, source, error) => {
-                    let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
-                            msg: 'payload dont valid',
-                            details: error
-                        }
-                    };
-                    index_1.LogCamp.create({
-                        type: '/campaigns/{id}/customers/{type}',
-                        dataInput: {
-                            params: request.params,
-                        },
-                        msg: 'payload do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        },
-                    });
-                    reply(res);
-                }
-            },
-            plugins: {
-                'hapi-swagger': {
-                    deprecated: true,
-                    responses: {
-                        200: {
-                            description: '',
-                            schema: Joi.object({
-                                status: Joi
-                                    .number()
-                                    .example(200),
-                                data: Joi
-                                    .array(),
-                            })
-                        },
-                        404: {
-                            'description': 'Campaign does not exists'
-                        }
-                    },
-                    security: [{
-                            'jwt': []
-                        }]
-                }
-            }
-        }
-    });
-    /**
-    * get list leads of campaign with type and campaignid
-    */
-    server.route({
-        method: 'GET',
-        path: '/campaigns/totalcamp/{key}',
-        config: {
-            handler: campaignController.getTotalCamp,
-            auth: "jwt",
-            tags: ['api', 'campaigns'],
-            description: '#flow Get campaign total of user',
-            validate: {
-                params: {
-                    key: Joi.string()
-                        .required()
-                        .example('userid')
-                        .description('key=userid'),
-                },
-                // headers: jwtValidator,
-                failAction: (request, reply, source, error) => {
-                    let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
-                            msg: 'payload dont valid',
-                            details: error
-                        }
-                    };
-                    index_1.LogCamp.create({
-                        type: '/campaigns/totalcamp/{key}',
-                        dataInput: {
-                            params: request.params,
-                        },
-                        msg: 'payload do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        },
-                    });
-                    reply(res);
-                }
-            },
-            plugins: {
-                'hapi-swagger': {
-                    deprecated: true,
-                    responses: {
-                        200: {
-                            description: '',
-                            schema: Joi.object({
-                                status: Joi
-                                    .number()
-                                    .example(200),
-                                data: Joi
-                                    .array(),
-                            })
-                        },
-                        '404': {
-                            description: '',
-                            schema: Joi.object({
-                                status: Joi
-                                    .number()
-                                    .example(HTTP_STATUS.NOT_FOUND),
-                                msg: Joi.string().example('not found anything'),
-                            })
-                        },
-                        400: {
-                            description: '',
-                            schema: Joi.object({
-                                status: Joi
-                                    .number()
-                                    .example(HTTP_STATUS.BAD_REQUEST),
-                                error: Joi.string(),
-                            })
-                        }
-                    },
-                    security: [{
-                            'jwt': []
-                        }]
-                }
-            }
-        }
-    });
-    /**
-     * get a campaign by campaignid
-     */
-    server.route({
-        method: 'GET',
-        path: '/campaigns/{id}',
+        path: '/campaigns/period/{period}',
         config: {
             handler: campaignController.getByCampaignId,
             // auth: "jwt",
             tags: ['api', 'campaigns'],
-            description: 'Get campaign by campaignid.',
+            description: '#drivev3/dangnhap,KH-lienhe:1 #screen11,12,12copy2,12copy3. Trả về danh sách plan 4 tuần của một tháng',
             validate: {
                 // headers: jwtValidator,
                 params: {
-                    id: Joi.number()
+                    period: Joi.number()
                         .required()
-                        .description('campaignid')
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
@@ -194,7 +43,7 @@ function default_1(server, configs, database) {
                         }
                     };
                     index_1.LogCamp.create({
-                        type: '/campaigns/{id}/customers/{type}',
+                        type: '/campaigns/current',
                         dataInput: {
                             params: request.params,
                         },
@@ -204,7 +53,7 @@ function default_1(server, configs, database) {
                             response: res
                         }
                     });
-                    reply(res);
+                    reply(Boom);
                 }
                 // headers: jwtValidator
             },
@@ -240,22 +89,18 @@ function default_1(server, configs, database) {
         }
     });
     /**
-     * get list campaign of 1 user
+     * get a campaign by period
      */
     server.route({
         method: 'GET',
-        path: '/campaigns/userid/{userid}',
+        path: '/campaigns/check',
         config: {
-            handler: campaignController.getByUserId,
-            auth: "jwt",
+            handler: campaignController.checkCampaign,
+            // auth: "jwt",
             tags: ['api', 'campaigns'],
-            description: 'Get all campaigns of 1 userid',
+            description: '#screenv3/dangnhap:3 Check campaign exist in current day ',
             validate: {
                 // headers: jwtValidator,
-                params: {
-                    userid: Joi.string().required()
-                },
-                // headers: jwtValidator
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST, error: {
@@ -264,9 +109,8 @@ function default_1(server, configs, database) {
                             details: error
                         }
                     };
-                    index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                     index_1.LogCamp.create({
-                        type: '/campaigns/userid/{userid}',
+                        type: '/campaigns/current',
                         dataInput: {
                             params: request.params,
                         },
@@ -274,10 +118,11 @@ function default_1(server, configs, database) {
                         meta: {
                             exception: error,
                             response: res
-                        },
+                        }
                     });
-                    reply(res);
+                    reply(Boom);
                 }
+                // headers: jwtValidator
             },
             plugins: {
                 'hapi-swagger': {
@@ -289,19 +134,19 @@ function default_1(server, configs, database) {
                                     .number()
                                     .example(200),
                                 data: Joi
-                                    .array().items({}),
+                                    .object(),
                             })
                         },
-                        '404': {
+                        404: {
                             description: '',
                             schema: Joi.object({
                                 status: Joi
                                     .number()
                                     .example(HTTP_STATUS.NOT_FOUND),
                                 data: Joi
-                                    .array().items({}),
+                                    .object(),
                             })
-                        }
+                        },
                     },
                     security: [{
                             'jwt': []
@@ -320,7 +165,7 @@ function default_1(server, configs, database) {
             handler: campaignController.createCampaign,
             // auth: "jwt",
             tags: ['api', 'campaigns'],
-            description: 'Create a campaign #flowsetgoal',
+            description: '#googledrive/dangky #screen10. Create a campaign',
             validate: {
                 payload: CampaignValidator.createCampaignFAModel,
                 // headers: jwtValidator,

@@ -268,26 +268,45 @@ export default class ActivitiesController {
      */
     public async update(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let iAc = request.payload as IPayloadUpdate;
-            let id = parseInt(request.params.id, 10);
-            let lead: any = await ActivityService.update(id, iAc);
-            // log mongo create success
-            LogActivity.create({
-                type: 'update activity',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
-                },
-                msg: 'success',
-                meta: {
-                    exception: '',
-                    response: JSON.parse(JSON.stringify(lead))
-                },
-            });
-            reply({
-                status: HTTP_STATUS.OK,
-                data: lead
-            }).code(HTTP_STATUS.OK);
+            let res = {
+                statusCode: 200,
+                data: {
+                    Id: 1,
+                    ProcessStep: 2,
+                    Type: 2,
+                    Phone: '01694248887',
+                    Name: 'Gặp khách hàng',
+                    StartDate: '2018-01-26',
+                    EndDate: '2018-01-26',
+                    FullDate: true,
+                    Repeat: 1,
+                    Notification: 3600,
+                    Status: true,
+                    Location: Faker.lorem.sentence(),
+                    Description: Faker.lorem.lines()
+                }
+            };
+            reply(res);
+            // let iAc = request.payload as IPayloadUpdate;
+            // let id = parseInt(request.params.id, 10);
+            // let lead: any = await ActivityService.update(id, iAc);
+            // // log mongo create success
+            // LogActivity.create({
+            //     type: 'update activity',
+            //     dataInput: {
+            //         payload: request.payload,
+            //         params: request.params
+            //     },
+            //     msg: 'success',
+            //     meta: {
+            //         exception: '',
+            //         response: JSON.parse(JSON.stringify(lead))
+            //     },
+            // });
+            // reply({
+            //     status: HTTP_STATUS.OK,
+            //     data: lead
+            // }).code(HTTP_STATUS.OK);
         } catch (ex) {
             let res = {};
             if (ex.code) {
@@ -328,13 +347,33 @@ export default class ActivitiesController {
      */
     public async create(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let iAc = request.payload as IPayloadCreate;
-            let lead: any = await ActivityService.create(iAc);
-            // log mongo create success
-            reply({
-                status: HTTP_STATUS.OK,
-                data: lead
-            }).code(HTTP_STATUS.OK);
+
+            let res = {
+                statusCode: 200,
+                data: {
+                    Id: 1,
+                    ProcessStep: 2,
+                    Type: 2,
+                    Phone: '01694248887',
+                    Name: 'Gặp khách hàng',
+                    StartDate: '2018-01-26',
+                    EndDate: '2018-01-26',
+                    FullDate: true,
+                    Repeat: 1,
+                    Notification: 3600,
+                    Status: true,
+                    Location: Faker.lorem.sentence(),
+                    Description: Faker.lorem.lines()
+                }
+            };
+            reply(res);
+            // let iAc = request.payload as IPayloadCreate;
+            // let lead: any = await ActivityService.create(iAc);
+            // // log mongo create success
+            // reply({
+            //     status: HTTP_STATUS.OK,
+            //     data: lead
+            // }).code(HTTP_STATUS.OK);
         } catch (ex) {
             let res = {};
             if (ex.code) {

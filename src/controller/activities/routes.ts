@@ -325,7 +325,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/activities',
         config: {
             handler: activitiesController.create,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'activities'],
             description: '#screenv3/KH-hengap:18 Create a activity.',
             validate: {

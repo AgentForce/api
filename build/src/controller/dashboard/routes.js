@@ -22,14 +22,14 @@ function default_1(server, configs, database) {
             validate: {
                 params: {
                     type: Joi.string()
-                        .valid(['week', 'month', 'year'])
+                        .valid(['weekmonth', 'year'])
                         .required()
                         .description('userid')
                 },
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
                             code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
                             msg: 'payload dont valid',
                             details: error
@@ -56,7 +56,7 @@ function default_1(server, configs, database) {
                         200: {
                             description: 'success',
                             schema: Joi.object({
-                                status: Joi
+                                statusCode: Joi
                                     .number()
                                     .example(200),
                                 data: Joi
@@ -75,7 +75,7 @@ function default_1(server, configs, database) {
                         400: {
                             description: 'Error something',
                             schema: Joi.object({
-                                status: Joi
+                                statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.BAD_REQUEST),
                                 error: Joi.string(),

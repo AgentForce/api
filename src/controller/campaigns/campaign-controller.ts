@@ -146,18 +146,19 @@ export default class CampaignController {
             reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
+
     /**
-     *  list leads of a campaign
+     *  Check campaign
      */
-    public async leadsOfCamp(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+    public async checkCampaign(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let campId = parseInt(request.params.id, 10);
-            let type = parseInt(request.params.type, 10);
-            const leads = await CampaignService.leadsOfcampaign(campId, type);
-            reply({
-                status: 200,
-                leads: leads
-            }).code(200);
+            let res = {
+                statusCode: 200,
+                data: {
+                    status: true
+                }
+            };
+            reply(res);
         } catch (ex) {
             let res = {};
             if (ex.code) {
@@ -192,6 +193,7 @@ export default class CampaignController {
             reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
+
 
 
 

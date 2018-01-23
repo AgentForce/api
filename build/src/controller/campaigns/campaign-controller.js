@@ -11,7 +11,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const campaign_service_1 = require("../../services/campaign.service");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
-const _ = require("lodash");
 const index_2 = require("../../common/index");
 class CampaignController {
     constructor(configs, database) {
@@ -25,28 +24,34 @@ class CampaignController {
         return __awaiter(this, void 0, void 0, function* () {
             // 1. Router Checking data input : commission > 0, loan > 0, monthly > 0
             try {
-                let iCamp = request.payload;
-                let userId = 5;
-                const camps = yield campaign_service_1.CampaignService.createOfFA(iCamp, userId);
-                let logcamps = _.map(camps, (camp) => {
-                    return {
-                        type: 'createcampaign',
-                        dataInput: {
-                            payload: request.payload
-                        },
-                        msg: 'success',
-                        meta: {
-                            response: camp.dataValues
-                        },
-                    };
-                });
-                // save mongo log
-                index_1.LogCamp
-                    .insertMany(logcamps);
-                reply({
-                    status: HTTP_STATUS.OK,
-                    data: camps
-                }).code(200);
+                let res = {
+                    statusCode: HTTP_STATUS.OK,
+                    data: {},
+                    msg: 'Create success'
+                };
+                reply(res);
+                // let iCamp: ICampaign = request.payload;
+                // let userId = 5;
+                // const camps = <any>await CampaignService.createOfFA(iCamp, userId);
+                // let logcamps = _.map(camps, (camp: any) => {
+                //     return {
+                //         type: 'createcampaign',
+                //         dataInput: {
+                //             payload: request.payload
+                //         },
+                //         msg: 'success',
+                //         meta: {
+                //             response: camp.dataValues
+                //         },
+                //     };
+                // });
+                // // save mongo log
+                // LogCamp
+                //     .insertMany(logcamps);
+                // reply({
+                //     status: HTTP_STATUS.OK,
+                //     data: camps
+                // }).code(200);
             }
             catch (ex) {
                 let res = {};
@@ -144,18 +149,18 @@ class CampaignController {
         });
     }
     /**
-     *  list leads of a campaign
+     *  Check campaign
      */
-    leadsOfCamp(request, reply) {
+    checkCampaign(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let campId = parseInt(request.params.id, 10);
-                let type = parseInt(request.params.type, 10);
-                const leads = yield campaign_service_1.CampaignService.leadsOfcampaign(campId, type);
-                reply({
-                    status: 200,
-                    leads: leads
-                }).code(200);
+                let res = {
+                    statusCode: 200,
+                    data: {
+                        status: true
+                    }
+                };
+                reply(res);
             }
             catch (ex) {
                 let res = {};
@@ -199,21 +204,58 @@ class CampaignController {
     getByCampaignId(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let campid = request.params.id;
-                let campaign = yield campaign_service_1.CampaignService.findById(campid);
-                if (campaign == null) {
-                    return reply({
-                        status: HTTP_STATUS.NOT_FOUND,
-                        data: campaign,
-                        code: index_2.ManulifeErrors.EX_CAMPID_NOT_FOUND
-                    }).code(HTTP_STATUS.NOT_FOUND);
-                }
-                else {
-                    return reply({
-                        status: HTTP_STATUS.OK,
-                        data: campaign
-                    }).code(HTTP_STATUS.OK);
-                }
+                let res = {
+                    statusCode: HTTP_STATUS.OK,
+                    data: [{
+                            Period: 1,
+                            Week: 1,
+                            TargetCallSale: 25,
+                            TargetContractSale: 10,
+                            TargetMetting: 5,
+                            TargetPresentation: 2,
+                            CurrentCallSale: 1,
+                            CurrentMetting: 1,
+                            CurrentPresentation: 8,
+                            CurrentContract: 0
+                        }, {
+                            Period: 1,
+                            Week: 2,
+                            TargetCallSale: 25,
+                            TargetContractSale: 10,
+                            TargetMetting: 5,
+                            TargetPresentation: 2,
+                            CurrentCallSale: 1,
+                            CurrentMetting: 1,
+                            CurrentPresentation: 8,
+                            CurrentContract: 0
+                        }, {
+                            Period: 1,
+                            Week: 3,
+                            TargetCallSale: 25,
+                            TargetContractSale: 10,
+                            TargetMetting: 5,
+                            TargetPresentation: 2,
+                            CurrentCallSale: 1,
+                            CurrentMetting: 1,
+                            CurrentPresentation: 8,
+                            CurrentContract: 0
+                        }, {
+                            Period: 1,
+                            Week: 4,
+                            TargetCallSale: 25,
+                            TargetContractSale: 10,
+                            TargetMetting: 5,
+                            TargetPresentation: 2,
+                            CurrentCallSale: 1,
+                            CurrentMetting: 1,
+                            CurrentPresentation: 8,
+                            CurrentContract: 0
+                        }]
+                };
+                reply({
+                    statusCode: 200,
+                    data: res,
+                });
             }
             catch (ex) {
                 // log mongo create fail

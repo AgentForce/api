@@ -76,6 +76,18 @@ const changePassModel = Joi.object().keys({
 });
 exports.changePassModel = changePassModel;
 /**
+ * change password model
+ */
+const verifyOTPModel = Joi.object().keys({
+    Code: Joi.string()
+        .trim()
+        .required(),
+    Phone: Joi
+        .string()
+        .required()
+});
+exports.verifyOTPModel = verifyOTPModel;
+/**
  * validate profile
  */
 const updateProfileModel = Joi.object().keys({
@@ -119,8 +131,8 @@ const loginUserModel = Joi.object().keys({
         .string()
         .trim()
         .required(),
-    ClientId: Joi.string()
-        .required(),
+    // ClientId: Joi.string()
+    //     .required(),
     VersionOs: Joi
         .string()
         .required(),

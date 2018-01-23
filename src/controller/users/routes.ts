@@ -120,47 +120,47 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
     /**
      * demo sendmail
      */
-    server.route({
-        method: 'POST',
-        path: '/users/resetpassword',
-        config: {
-            handler: userController.sendMail,
-            // auth: "jwt",
-            tags: ['api', 'users'],
-            description: 'send email(Just test, please dont try)',
-            validate: {
-                // headers: UserValidator.jwtValidator,
-                payload: {
-                    Email: Joi.string()
-                        .email()
-                        .required()
-                        .example('tunguyenq@gmail.com')
-                }
-            },
-            plugins: {
-                'hapi-swagger': {
-                    deprecated: true,
-                    responses: {
-                        200: {
-                            description: '',
-                            schema: Joi.object(
-                                {
-                                    status: Joi
-                                        .number()
-                                        .example(200),
-                                    data: Joi
-                                        .object(),
-                                }
-                            )
-                        },
-                        '401': {
-                            'description': 'Please login.'
-                        }
-                    }
-                }
-            }
-        }
-    });
+    // server.route({
+    //     method: 'POST',
+    //     path: '/users/resetpassword',
+    //     config: {
+    //         handler: userController.sendMail,
+    //         // auth: "jwt",
+    //         tags: ['api', 'users'],
+    //         description: 'send email(Just test, please dont try)',
+    //         validate: {
+    //             // headers: UserValidator.jwtValidator,
+    //             payload: {
+    //                 Email: Joi.string()
+    //                     .email()
+    //                     .required()
+    //                     .example('tunguyenq@gmail.com')
+    //             }
+    //         },
+    //         plugins: {
+    //             'hapi-swagger': {
+    //                 deprecated: true,
+    //                 responses: {
+    //                     200: {
+    //                         description: '',
+    //                         schema: Joi.object(
+    //                             {
+    //                                 status: Joi
+    //                                     .number()
+    //                                     .example(200),
+    //                                 data: Joi
+    //                                     .object(),
+    //                             }
+    //                         )
+    //                     },
+    //                     '401': {
+    //                         'description': 'Please login.'
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // });
 
 
 
@@ -170,7 +170,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         path: '/users/profile',
         config: {
             handler: userController.updateProfile,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'users'],
             description: 'Update user profile.',
             validate: {
@@ -199,7 +199,70 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             },
             plugins: {
                 'hapi-swagger': {
-                    deprecated: true,
+                    // deprecated: true,
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                }
+                            )
+                        },
+                        '401': {
+                            'description': 'User does not have authorization.'
+                        }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
+    server.route({
+        method: 'POST',
+        path: '/users/verify',
+        config: {
+            handler: userController.verifyOTP,
+            // auth: "jwt",
+            tags: ['api', 'users'],
+            description: 'Verify SMS OTP',
+            validate: {
+                payload: UserValidator.verifyOTPModel,
+                headers: Joi.object({
+                    authorization: Joi.string().required(),
+                    clientid: Joi.string().required()
+                }).unknown(),
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        error: {
+                            code: 'ex_payload',
+                            msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    LogUser.create({
+                        type: 'updateprofile',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    // deprecated: true,
                     responses: {
                         200: {
                             description: '',
@@ -344,18 +407,14 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
      * change password
      */
     server.route({
-        method: 'POST',
-        path: '/users/changepassword/{username}',
+        method: 'PUT',
+        path: '/users/changepassword',
         config: {
             handler: userController.changePassword,
             tags: ['api', 'users'],
-            auth: "jwt",
+            // auth: "jwt",
             description: 'Change password',
             validate: {
-                params: {
-                    username: Joi.string().required()
-                        .description('username')
-                },
                 payload: UserValidator.changePassModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
@@ -380,7 +439,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             },
             plugins: {
                 'hapi-swagger': {
-                    deprecated: true,
+                    // deprecated: true,
                     responses: {
                         200: {
                             description: '',
@@ -411,8 +470,10 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             handler: userController.loginUser,
             tags: ['users', 'api'],
             description: '#mockapi Login a user.',
+
             validate: {
-                payload: UserValidator.loginUserModel
+                payload: UserValidator.loginUserModel,
+                headers: Joi.object({ clientid: Joi.string().required() }).unknown()
             },
             plugins: {
                 'hapi-swagger': {

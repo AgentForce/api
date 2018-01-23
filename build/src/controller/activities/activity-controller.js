@@ -8,11 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const activity_service_1 = require("../../services/activity.service");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
 const code_errors_1 = require("../../common/code-errors");
 const index_2 = require("../../common/index");
+const Faker = require("faker");
 class ActivitiesController {
     constructor(configs, database) {
         this.configs = configs;
@@ -24,12 +24,25 @@ class ActivitiesController {
     findById(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let id = parseInt(request.params.id, 10);
-                let activities = yield activity_service_1.ActivityService.findById(id);
-                reply({
-                    status: HTTP_STATUS.OK,
-                    data: activities
-                }).code(HTTP_STATUS.OK);
+                let res = {
+                    statusCode: 200,
+                    data: {
+                        Id: 1,
+                        ProcessStep: 2,
+                        Type: 2,
+                        Phone: '01694248887',
+                        Name: 'Gặp khách hàng',
+                        StartDate: '2018-01-26',
+                        EndDate: '2018-01-26',
+                        FullDate: true,
+                        Repeat: 1,
+                        Notification: 3600,
+                        Status: true,
+                        Location: Faker.lorem.sentence(),
+                        Description: Faker.lorem.lines()
+                    }
+                };
+                reply(res);
             }
             catch (ex) {
                 let res = {};
@@ -68,19 +81,160 @@ class ActivitiesController {
         });
     }
     /**
-     * get list activities by campaignid, filter by processstep
-     */
-    historyOfLead(request, reply) {
+        * get activity by perild
+        */
+    calendar(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let leadId = parseInt(request.params.leadid, 10);
-                let limit = parseInt(request.query.limit, 10);
-                let page = parseInt(request.query.page, 10);
-                let activities = yield activity_service_1.ActivityService.listByCampaignId(leadId, limit, page);
-                reply({
-                    status: HTTP_STATUS.OK,
-                    data: activities
-                }).code(HTTP_STATUS.OK);
+                let res = {
+                    statusCode: 200,
+                    data: [{
+                            StartDate: '2018-01-18',
+                            Type: 1,
+                            count: 1
+                        }, {
+                            StartDate: '2018-01-18',
+                            Type: 2,
+                            count: 2
+                        }, {
+                            StartDate: '2018-01-18',
+                            Type: 3,
+                            count: 2
+                        }, {
+                            StartDate: '2018-01-18',
+                            Type: 4,
+                            count: 2
+                        }]
+                };
+                reply(res);
+            }
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        url: request.url.path,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        url: request.url.path,
+                        error: {
+                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
+                            msg: 'activity findById have errors'
+                        }
+                    };
+                }
+                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                index_1.LogActivity.create({
+                    type: 'activity findById have errors',
+                    dataInput: {
+                        payload: request.payload,
+                        params: request.params
+                    },
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            }
+        });
+    }
+    /**
+      * get activitis in a day
+      */
+    activitiesDay(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let res = {
+                    statusCode: 200,
+                    data: [{
+                            Id: 1,
+                            ProcessStep: 1,
+                            Type: 1,
+                            Phone: '01694248887',
+                            Name: 'TuNguyen',
+                            StartDate: '2018-01-26',
+                            FullDate: true,
+                        }, {
+                            Id: 1,
+                            ProcessStep: 1,
+                            Type: 1,
+                            Phone: '01694248888',
+                            Name: 'John',
+                            StartDate: '2018-01-26',
+                            FullDate: true,
+                        }]
+                };
+                reply(res);
+            }
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        url: request.url.path,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        url: request.url.path,
+                        error: {
+                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
+                            msg: 'activity findById have errors'
+                        }
+                    };
+                }
+                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                index_1.LogActivity.create({
+                    type: 'activity findById have errors',
+                    dataInput: {
+                        payload: request.payload,
+                        params: request.params
+                    },
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            }
+        });
+    }
+    /**
+     * get list activities by leadid
+     */
+    activitiesLead(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let res = {
+                    statusCode: 200,
+                    data: [{
+                            Id: 1,
+                            ProcessStep: 1,
+                            Type: 1,
+                            Phone: '01694248887',
+                            Name: 'Tu Nguyen',
+                            StartDate: '2018-01-26',
+                            FullDate: true,
+                        }, {
+                            Id: 2,
+                            ProcessStep: 1,
+                            Type: 1,
+                            Phone: '01694248888',
+                            Name: 'John',
+                            StartDate: '2018-01-26',
+                            FullDate: true,
+                        }]
+                };
+                reply(res);
             }
             catch (ex) {
                 let res = {};
@@ -124,26 +278,45 @@ class ActivitiesController {
     update(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let iAc = request.payload;
-                let id = parseInt(request.params.id, 10);
-                let lead = yield activity_service_1.ActivityService.update(id, iAc);
-                // log mongo create success
-                index_1.LogActivity.create({
-                    type: 'update activity',
-                    dataInput: {
-                        payload: request.payload,
-                        params: request.params
-                    },
-                    msg: 'success',
-                    meta: {
-                        exception: '',
-                        response: JSON.parse(JSON.stringify(lead))
-                    },
-                });
-                reply({
-                    status: HTTP_STATUS.OK,
-                    data: lead
-                }).code(HTTP_STATUS.OK);
+                let res = {
+                    statusCode: 200,
+                    data: {
+                        Id: 1,
+                        ProcessStep: 2,
+                        Type: 2,
+                        Phone: '01694248887',
+                        Name: 'Gặp khách hàng',
+                        StartDate: '2018-01-26',
+                        EndDate: '2018-01-26',
+                        FullDate: true,
+                        Repeat: 1,
+                        Notification: 3600,
+                        Status: true,
+                        Location: Faker.lorem.sentence(),
+                        Description: Faker.lorem.lines()
+                    }
+                };
+                reply(res);
+                // let iAc = request.payload as IPayloadUpdate;
+                // let id = parseInt(request.params.id, 10);
+                // let lead: any = await ActivityService.update(id, iAc);
+                // // log mongo create success
+                // LogActivity.create({
+                //     type: 'update activity',
+                //     dataInput: {
+                //         payload: request.payload,
+                //         params: request.params
+                //     },
+                //     msg: 'success',
+                //     meta: {
+                //         exception: '',
+                //         response: JSON.parse(JSON.stringify(lead))
+                //     },
+                // });
+                // reply({
+                //     status: HTTP_STATUS.OK,
+                //     data: lead
+                // }).code(HTTP_STATUS.OK);
             }
             catch (ex) {
                 let res = {};
@@ -187,13 +360,32 @@ class ActivitiesController {
     create(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let iAc = request.payload;
-                let lead = yield activity_service_1.ActivityService.create(iAc);
-                // log mongo create success
-                reply({
-                    status: HTTP_STATUS.OK,
-                    data: lead
-                }).code(HTTP_STATUS.OK);
+                let res = {
+                    statusCode: 200,
+                    data: {
+                        Id: 1,
+                        ProcessStep: 2,
+                        Type: 2,
+                        Phone: '01694248887',
+                        Name: 'Gặp khách hàng',
+                        StartDate: '2018-01-26',
+                        EndDate: '2018-01-26',
+                        FullDate: true,
+                        Repeat: 1,
+                        Notification: 3600,
+                        Status: true,
+                        Location: Faker.lorem.sentence(),
+                        Description: Faker.lorem.lines()
+                    }
+                };
+                reply(res);
+                // let iAc = request.payload as IPayloadCreate;
+                // let lead: any = await ActivityService.create(iAc);
+                // // log mongo create success
+                // reply({
+                //     status: HTTP_STATUS.OK,
+                //     data: lead
+                // }).code(HTTP_STATUS.OK);
             }
             catch (ex) {
                 let res = {};

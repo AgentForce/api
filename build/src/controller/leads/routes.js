@@ -15,9 +15,9 @@ function default_1(server, configs, database) {
         path: '/leads/{id}',
         config: {
             handler: leadController.findById,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'Find a lead by leadId',
+            description: '#googledrive #KH-lienhe14 Find a lead by leadId',
             validate: {
                 params: {
                     id: Joi.number()
@@ -28,7 +28,7 @@ function default_1(server, configs, database) {
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
                             code: code_errors_1.ManulifeErrors.EX_PAYLOAD, msg: 'payload dont valid',
                             details: error
                         }
@@ -51,7 +51,7 @@ function default_1(server, configs, database) {
                         200: {
                             description: '',
                             schema: Joi.object({
-                                status: Joi
+                                statusCode: Joi
                                     .number()
                                     .example(200),
                                 data: Joi
@@ -61,7 +61,73 @@ function default_1(server, configs, database) {
                         404: {
                             description: 'not found',
                             schema: Joi.object({
-                                status: Joi
+                                statusCode: Joi
+                                    .number()
+                                    .example(HTTP_STATUS.NOT_FOUND),
+                                code: Joi.string().example(index_2.ManulifeErrors.EX_LEADID_NOT_FOUND),
+                                msg: Joi.string()
+                            })
+                        },
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
+                }
+            }
+        }
+    });
+    server.route({
+        method: 'GET',
+        path: '/leads/history/{leadid}',
+        config: {
+            handler: leadController.histories,
+            // auth: "jwt",
+            tags: ['api', 'leads'],
+            description: '#screenv3/KH-tuvan:16, #screenv3/KH-lienhe:16 get histories of leadId',
+            validate: {
+                params: {
+                    id: Joi.number()
+                        .required()
+                        .example(38)
+                        .description('leadid')
+                },
+                // headers: jwtValidator,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD, msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    index_1.LogLead.create({
+                        type: 'detaillead',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object(),
+                            })
+                        },
+                        404: {
+                            description: 'not found',
+                            schema: Joi.object({
+                                statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.NOT_FOUND),
                                 code: Joi.string().example(index_2.ManulifeErrors.EX_LEADID_NOT_FOUND),
@@ -77,19 +143,19 @@ function default_1(server, configs, database) {
         }
     });
     /**
-   * lấy 1 campaign theo campaignid
+   * lấy 1 campaign theo period
    */
     server.route({
         method: 'GET',
-        path: '/leads/camp/{campid}/{processstep}',
+        path: '/leads/{period}/{processstep}',
         config: {
             handler: leadController.list,
             // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'Get leads and activities of lead by campaignid',
+            description: '#driveKH-lienhe, #screen 12,13 Get leads and activities of lead by period',
             validate: {
                 params: {
-                    campid: Joi
+                    period: Joi
                         .number()
                         .integer()
                         .default(1)
@@ -120,7 +186,7 @@ function default_1(server, configs, database) {
                         200: {
                             description: '',
                             schema: Joi.object({
-                                status: Joi
+                                statusCode: Joi
                                     .number()
                                     .example(200),
                                 data: Joi
@@ -134,7 +200,7 @@ function default_1(server, configs, database) {
                         400: {
                             description: '',
                             schema: Joi.object({
-                                status: Joi
+                                statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.BAD_REQUEST),
                                 error: Joi.string(),
@@ -201,25 +267,44 @@ function default_1(server, configs, database) {
         }
     });
     /**
-    * group count leads in a campaign
-    */
+     * Update a lead
+     */
     server.route({
-        method: 'GET',
-        path: '/leads/group/processstep/{campid}',
+        method: 'PUT',
+        path: '/leads/{id}',
         config: {
-            handler: leadController.groupProcessStepInCamp,
-            // auth: "jwt",
+            handler: leadController.update,
+            auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'group count leads in a campaign',
+            description: 'update  info a leads',
             validate: {
+                payload: LeadValidator.updateModel,
                 params: {
-                    campid: Joi
-                        .number()
-                        .integer()
-                        .default(1)
-                        .required(),
+                    id: Joi
+                        .number().
+                        required()
+                        .example(38)
+                        .description('leadid')
+                },
+                // headers: jwtValidator,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD, msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    index_1.LogLead.create({
+                        type: 'updatelead',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
                 }
-                // headers: jwtValidator
             },
             plugins: {
                 'hapi-swagger': {
@@ -231,9 +316,7 @@ function default_1(server, configs, database) {
                                     .number()
                                     .example(200),
                                 data: Joi
-                                    .object({
-                                    data: Joi.array().example([]),
-                                })
+                                    .object()
                             })
                         },
                         400: {
@@ -245,7 +328,10 @@ function default_1(server, configs, database) {
                                 error: Joi.string(),
                             })
                         }
-                    }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
                 }
             }
         }
@@ -255,14 +341,14 @@ function default_1(server, configs, database) {
      */
     server.route({
         method: 'PUT',
-        path: '/leads/{id}',
+        path: '/leads/status/{id}',
         config: {
-            handler: leadController.update,
-            auth: "jwt",
+            handler: leadController.updateStatus,
+            // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'update a leads',
+            description: 'update status of leads',
             validate: {
-                payload: LeadValidator.updateModel,
+                payload: LeadValidator.updateStatusModel,
                 params: {
                     id: Joi
                         .number().
@@ -330,7 +416,7 @@ function default_1(server, configs, database) {
             handler: leadController.create,
             // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'Create new lead',
+            description: '#driveKH-lienhe #screen 11Create list lead ',
             validate: {
                 payload: LeadValidator.createLeadModel,
                 // headers: jwtValidator,
