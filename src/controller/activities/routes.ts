@@ -21,17 +21,21 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
      */
     server.route({
         method: 'GET',
-        path: '/activities/calendar/{period}',
+        path: '/activities/rangedate/{from}/{to}',
         config: {
-            handler: activitiesController.historyPeriod,
+            handler: activitiesController.calendar,
             // auth: "jwt",
             tags: ['api', 'activities'],
-            description: 'Get activities in a period group by day',
+            description: '#v3/dangnhap:13 Get activities in rangeDate group by day',
             validate: {
                 params: {
-                    period: Joi
-                        .number()
-                        .integer()
+                    from: Joi
+                        .date()
+                        .default('2018-01-01')
+                        .required(),
+                    to: Joi
+                        .date()
+                        .default('2018-01-31')
                         .required(),
                 },
                 // headers: jwtValidator
@@ -72,6 +76,62 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         }
     });
 
+
+    /**
+    * history activity in  a period
+    */
+    server.route({
+        method: 'GET',
+        path: '/activities/day/{date}',
+        config: {
+            handler: activitiesController.activitiesDay,
+            // auth: "jwt",
+            tags: ['api', 'activities'],
+            description: '#v3/dangnhap:13 Get activities in Day',
+            validate: {
+                params: {
+                    date: Joi
+                        .date()
+                        .default('2018-01-01')
+                        .required()
+                },
+                // headers: jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object({
+                                            data: Joi.array().example([]),
+                                            limit: Joi.number(),
+                                            page: Joi.number()
+                                        })
+                                }
+                            )
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    });
 
     // /**
     //  * history activity of a lead
@@ -147,7 +207,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     // });
 
     /**
-    * history activity of a lead
+    * history activity by id
     */
     server.route({
         method: 'GET',
@@ -156,10 +216,66 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             handler: activitiesController.findById,
             // auth: "jwt",
             tags: ['api', 'activities'],
-            description: 'Get a activity by id',
+            description: '#screenv3/KH-lienhe:20 Get a activity by id',
             validate: {
                 params: {
                     id: Joi
+                        .number()
+                        .integer()
+                        .required(),
+                }
+                // headers: jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object({
+                                            data: Joi.object(),
+                                        })
+                                }
+                            )
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                    error: Joi.string(),
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+
+
+      /**
+    * history activities of leads
+    */
+    server.route({
+        method: 'GET',
+        path: '/activities/leadid/{leadid}',
+        config: {
+            handler: activitiesController.activitiesLead,
+            // auth: "jwt",
+            tags: ['api', 'activities'],
+            description: '#screenv3/KH-hengap:19 Get list activities by leadid',
+            validate: {
+                params: {
+                    leadid: Joi
                         .number()
                         .integer()
                         .required(),
@@ -211,7 +327,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             handler: activitiesController.create,
             auth: "jwt",
             tags: ['api', 'activities'],
-            description: 'Create a activity.',
+            description: '#screenv3/KH-hengap:18 Create a activity.',
             validate: {
                 payload: ActivitiesValidator.createModel,
                 // headers: jwtValidator,

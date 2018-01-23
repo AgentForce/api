@@ -23,22 +23,23 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
 
 
 
- 
+
     /**
      * get a campaign by campaignid
      */
     server.route({
         method: 'GET',
-        path: '/campaigns/current',
+        path: '/campaigns/period/{period}',
         config: {
             handler: campaignController.getByCampaignId,
             // auth: "jwt",
             tags: ['api', 'campaigns'],
-            description: '#googledrivev3/dangnhap #screen11,12,12copy2,12copy3. Trả về danh sách plan 4 tuần của một tháng',
+            description: '#drivev3/dangnhap,KH-lienhe:1 #screen11,12,12copy2,12copy3. Trả về danh sách plan 4 tuần của một tháng',
             validate: {
                 // headers: jwtValidator,
                 params: {
-
+                    period: Joi.number()
+                        .required()
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {

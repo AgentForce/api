@@ -28,77 +28,121 @@ export default class DashboardController {
      */
     public async dashboard(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let res = {
-                typeTarget: 'month',
-                target: {
-                    TargetCallSale: 100,
-                    TargetContractSale: 50,
-                    TargetMetting: 30,
-                    TargetPresentation: 10,
-                    CurrentCallSale: 10,
-                    CurrentMetting: 45,
-                    CurrentPresentation: 8,
-                    CurrentContract: 1
-                },
-                campaign: [{
-                    Period: 1,
-                    Week: 1,
-                    TargetCallSale: 25,
-                    TargetContractSale: 10,
-                    TargetMetting: 5,
-                    TargetPresentation: 2,
-                    CurrentCallSale: 1,
-                    CurrentMetting: 1,
-                    CurrentPresentation: 8,
-                    CurrentContract: 0
-                }, {
-                    Period: 1,
-                    Week: 2,
-                    TargetCallSale: 25,
-                    TargetContractSale: 10,
-                    TargetMetting: 5,
-                    TargetPresentation: 2,
-                    CurrentCallSale: 1,
-                    CurrentMetting: 1,
-                    CurrentPresentation: 8,
-                    CurrentContract: 0
-                }, {
-                    Period: 1,
-                    Week: 3,
-                    TargetCallSale: 25,
-                    TargetContractSale: 10,
-                    TargetMetting: 5,
-                    TargetPresentation: 2,
-                    CurrentCallSale: 1,
-                    CurrentMetting: 1,
-                    CurrentPresentation: 8,
-                    CurrentContract: 0
-                }, {
-                    Period: 1,
-                    Week: 4,
-                    TargetCallSale: 25,
-                    TargetContractSale: 10,
-                    TargetMetting: 5,
-                    TargetPresentation: 2,
-                    CurrentCallSale: 1,
-                    CurrentMetting: 1,
-                    CurrentPresentation: 8,
-                    CurrentContract: 0
-                }],
-                activities: [{
-                    Id: 1,
-                    ProcessStep: 1,
-                    Type: 1,
-                    Repeat: 1,
-                    Notifictation: 1
-                }, {
-                    Id: 2,
-                    ProcessStep: 1,
-                    Type: 1,
-                    Repeat: 1000,
-                    Notifictation: 1
-                }]
-            };
+            let res = {};
+            if (request.params.type === 'weekmonth') {
+                res = {
+                    typeTarget: request.params.type,
+                    currentweek: 2,
+                    campaign: [{
+                        Period: 1,
+                        Week: 1,
+                        TargetCallSale: 25,
+                        TargetContractSale: 10,
+                        TargetMetting: 5,
+                        TargetPresentation: 2,
+                        CurrentCallSale: 1,
+                        CurrentMetting: 1,
+                        CurrentPresentation: 8,
+                        CurrentContract: 0
+                    }, {
+                        Period: 1,
+                        Week: 2,
+                        TargetCallSale: 25,
+                        TargetContractSale: 10,
+                        TargetMetting: 5,
+                        TargetPresentation: 2,
+                        CurrentCallSale: 1,
+                        CurrentMetting: 1,
+                        CurrentPresentation: 8,
+                        CurrentContract: 0
+                    }, {
+                        Period: 1,
+                        Week: 3,
+                        TargetCallSale: 25,
+                        TargetContractSale: 10,
+                        TargetMetting: 5,
+                        TargetPresentation: 2,
+                        CurrentCallSale: 1,
+                        CurrentMetting: 1,
+                        CurrentPresentation: 8,
+                        CurrentContract: 0
+                    }, {
+                        Period: 1,
+                        Week: 4,
+                        TargetCallSale: 25,
+                        TargetContractSale: 10,
+                        TargetMetting: 5,
+                        TargetPresentation: 2,
+                        CurrentCallSale: 1,
+                        CurrentMetting: 1,
+                        CurrentPresentation: 8,
+                        CurrentContract: 0
+                    }],
+                    activities: [{
+                        Id: 1,
+                        ProcessStep: 1,
+                        Type: 1,
+                        Repeat: 1,
+                        Notification: 1,
+                        FullDate: false,
+                        StartDate: moment().add(1, 'd'),
+                        EndDate: moment().add(1, 'd').endOf('day')
+                    }, {
+                        Id: 2,
+                        ProcessStep: 1,
+                        Type: 1,
+                        Repeat: 1000,
+                        Notification: 1,
+                        FullDate: false,
+                        StartDate: moment().add(1, 'd'),
+                        EndDate: moment().add(1, 'd').endOf('day')
+                    }]
+                };
+            } else {
+                res = {
+                    typeTarget: request.params.type,
+                    target: {
+                        TargetCallSale: 100,
+                        TargetContractSale: 50,
+                        TargetMetting: 30,
+                        TargetPresentation: 10,
+                        CurrentCallSale: 10,
+                        CurrentMetting: 45,
+                        CurrentPresentation: 8,
+                        CurrentContract: 1
+                    },
+                    campaign: [{
+                        TargetCallSale: 25,
+                        TargetContractSale: 10,
+                        TargetMetting: 5,
+                        TargetPresentation: 2,
+                        CurrentCallSale: 1,
+                        CurrentMetting: 1,
+                        CurrentPresentation: 8,
+                        CurrentContract: 0
+                    }],
+                    activities: [{
+                        Id: 1,
+                        ProcessStep: 1,
+                        Type: 1,
+                        Repeat: 1,
+                        Notification: 1,
+                        FullDate: false,
+                        StartDate: moment().add(1, 'd'),
+                        EndDate: moment().add(1, 'd').endOf('day')
+                    }, {
+                        Id: 2,
+                        ProcessStep: 1,
+                        Type: 1,
+                        Repeat: 1000,
+                        Notification: 1,
+                        FullDate: false,
+                        StartDate: moment().add(1, 'd'),
+                        EndDate: moment().add(1, 'd').endOf('day')
+                    }]
+                };
+            }
+
             reply({
                 statusCode: 200,
                 data: res,

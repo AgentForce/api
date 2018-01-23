@@ -27,7 +27,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             validate: {
                 params: {
                     type: Joi.string()
-                        .valid(['week', 'month', 'year'])
+                        .valid(['weekmonth', 'year'])
                         .required()
                         .description('userid')
                 },
