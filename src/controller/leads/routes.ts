@@ -165,7 +165,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
    */
     server.route({
         method: 'GET',
-        path: '/leads/{period}/{processstep}',
+        path: '/leads/{period}/{processstep}/{status}',
         config: {
             handler: leadController.list,
             // auth: "jwt",
@@ -177,11 +177,19 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         .number()
                         .integer()
                         .default(1)
+                        .description('12 month')
                         .required(),
                     processstep: Joi
                         .number()
                         .integer()
                         .default(1)
+                        .valid([1, 2, 3, 4])
+                        .required(),
+                    status: Joi
+                        .number()
+                        .integer()
+                        .description('status of process step')
+                        .valid([1, 2, 3, 4])
                         .required()
                 },
                 query: Joi.object({
@@ -234,65 +242,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         }
     });
 
-    /**
-     * lấy 1 campaign theo campaignid
-     */
-    server.route({
-        method: 'GET',
-        path: '/leads/reject/{campid}/{processstep}',
-        config: {
-            handler: leadController.getLeadsReject,
-            // auth: "jwt",
-            tags: ['api', 'leads'],
-            description: 'Get leads reject by campaignId and process step of lead',
-            validate: {
-                params: {
-                    campid: Joi
-                        .number()
-                        .integer()
-                        .default(1)
-                        .required(),
-                    processstep: Joi
-                        .number()
-                        .integer()
-                        .default(1)
-                        .required()
-                }
-                // headers: jwtValidator
-            },
-            plugins: {
-                'hapi-swagger': {
-                    responses: {
-                        200: {
-                            description: '',
-                            schema: Joi.object(
-                                {
-                                    status: Joi
-                                        .number()
-                                        .example(200),
-                                    data: Joi
-                                        .object({
-                                            data: Joi.array().example([]),
-                                        })
-                                }
-                            )
-                        },
-                        400: {
-                            description: '',
-                            schema: Joi.object(
-                                {
-                                    status: Joi
-                                        .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    });
+
 
 
     /**
