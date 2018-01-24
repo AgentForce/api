@@ -11,7 +11,7 @@ const Dashboard = require("./controller/dashboard");
 const Actvities = require("./controller/activities");
 function init(configs, database) {
     return new Promise(resolve => {
-        const port = process.env.PORT || 3200;
+        const port = process.env.PORT || 3000;
         const server = new Hapi.Server();
         server.connection({
             port: port,
