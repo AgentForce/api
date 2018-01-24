@@ -100,25 +100,28 @@ export default class LeadController {
         try {
             let res = {
                 statusCode: 200,
-                data: [{
-                    CampId: 1,
-                    Phone: '+841603248887',
-                    Name: Faker.name.firstName(),
-                    Age: _.sample([1, 2, 3, 4]),
-                    Gender: 1,
-                    IncomMontly: _.sample([1, 2, 3, 4]),
-                    MaritalStatus: 1,
-                    Address: 'Quận 8',
-                    City: 1,
-                    District: 1,
-                    Relationship: _.sample([1, 2, 3, 4]),
-                    source: 1,
-                    LeadType: 1,
-                    ProcessStep: 1,
-                    Description: 'lorem...',
-                    StatusProcessStep: 1,
-                    Status: false
-                }]
+                data: {
+                    total: 2,
+                    items: [{
+                        CampId: 1,
+                        Phone: '+841603248887',
+                        Name: Faker.name.firstName(),
+                        Age: _.sample([1, 2, 3, 4]),
+                        Gender: 1,
+                        IncomMontly: _.sample([1, 2, 3, 4]),
+                        MaritalStatus: 1,
+                        Address: 'Quận 8',
+                        City: 1,
+                        District: 1,
+                        Relationship: _.sample([1, 2, 3, 4]),
+                        source: 1,
+                        LeadType: 1,
+                        ProcessStep: 1,
+                        Description: 'lorem...',
+                        StatusProcessStep: 1,
+                        Status: false
+                    }]
+                }
             };
             reply(res);
             // let idEvent = parseInt(request.params.id, 10);
@@ -176,35 +179,38 @@ export default class LeadController {
         try {
             let res = {
                 statusCode: 200,
-                data: [{
-                    Id: 1,
-                    Phone: '+841603248887',
-                    ProcessStep: 1,
-                    StatusProcessStep: 1,
-                    Name: Faker.name.firstName(),
-                    activities: [{
+                data: {
+                    total: 2,
+                    items: [{
                         Id: 1,
+                        Phone: '+841603248887',
                         ProcessStep: 1,
-                        Type: 1,
-                        StartDate: '2018-01-26',
-                        EndDate: '2018-01-26',
-                        FullDate: true,
-                    }]
-                }, {
-                    Id: 2,
-                    Phone: '+841603248888',
-                    ProcessStep: 1,
-                    StatusProcessStep: 2,
-                    Name: Faker.name.firstName(),
-                    activities: [{
-                        Id: 1,
+                        StatusProcessStep: 1,
+                        Name: Faker.name.firstName(),
+                        activities: [{
+                            Id: 1,
+                            ProcessStep: 1,
+                            Type: 1,
+                            StartDate: '2018-01-26',
+                            EndDate: '2018-01-26',
+                            FullDate: true,
+                        }]
+                    }, {
+                        Id: 2,
+                        Phone: '+841603248888',
                         ProcessStep: 1,
-                        Type: 1,
-                        StartDate: '2018-01-26',
-                        EndDate: '2018-01-26',
-                        FullDate: true,
+                        StatusProcessStep: 2,
+                        Name: Faker.name.firstName(),
+                        activities: [{
+                            Id: 1,
+                            ProcessStep: 1,
+                            Type: 1,
+                            StartDate: '2018-01-26',
+                            EndDate: '2018-01-26',
+                            FullDate: true,
+                        }]
                     }]
-                }]
+                }
             };
             reply(res);
         } catch (ex) {
