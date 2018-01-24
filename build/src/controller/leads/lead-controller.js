@@ -184,6 +184,7 @@ class LeadController {
                             Id: 1,
                             Phone: '+841603248887',
                             ProcessStep: 1,
+                            StatusProcessStep: 1,
                             Name: Faker.name.firstName(),
                             activities: [{
                                     Id: 1,
@@ -197,6 +198,7 @@ class LeadController {
                             Id: 2,
                             Phone: '+841603248888',
                             ProcessStep: 1,
+                            StatusProcessStep: 2,
                             Name: Faker.name.firstName(),
                             activities: [{
                                     Id: 1,
