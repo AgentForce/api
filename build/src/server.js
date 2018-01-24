@@ -15,7 +15,7 @@ function init(configs, database) {
         const server = new Hapi.Server();
         server.connection({
             port: port,
-            host: '127.0.0.1',
+            host: '0.0.0.0',
             routes: {
                 cors: true,
             },

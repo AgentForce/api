@@ -23,7 +23,7 @@ export function init(configs: IServerConfigurations, database: IDatabase): Promi
 
         server.connection({
             port: port,
-            host: '127.0.0.1',
+            host: '0.0.0.0',
             routes: {
                 cors: true,
             },
