@@ -475,7 +475,7 @@ function default_1(server, serverConfigs, database) {
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
+                        statusCode: HTTP_STATUS.BAD_REQUEST,
                         error: {
                             code: 'ex_payload',
                             msg: 'payload dont valid',
@@ -537,7 +537,7 @@ function default_1(server, serverConfigs, database) {
                         200: {
                             description: '',
                             schema: Joi.object({
-                                status: Joi
+                                statusCode: Joi
                                     .number()
                                     .example(200),
                                 token: Joi

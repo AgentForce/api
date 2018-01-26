@@ -268,7 +268,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
                             code: Ex.EX_PAYLOAD, msg: 'payload dont valid',
                             details: error
                         }
@@ -292,7 +292,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
                                         .example(200),
                                     data: Joi
@@ -304,7 +304,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
                                     error: Joi.string(),
@@ -345,7 +345,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
                             code: Ex.EX_PAYLOAD, msg: 'payload dont valid',
                             details: error
                         }
@@ -369,7 +369,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
                                         .example(200),
                                     data: Joi
@@ -381,7 +381,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
                                     error: Joi.string(),
@@ -414,7 +414,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
+                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
                             code: Ex.EX_PAYLOAD, msg: 'payload dont valid',
                             details: error
                         }
@@ -438,7 +438,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
                                         .example(200),
                                     data: Joi
@@ -450,7 +450,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
                                     error: Joi.string(),

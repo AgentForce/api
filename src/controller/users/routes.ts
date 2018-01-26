@@ -529,7 +529,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
+                        statusCode: HTTP_STATUS.BAD_REQUEST,
                         error: {
                             code: 'ex_payload',
                             msg: 'payload dont valid',
@@ -597,7 +597,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
                                         .example(200),
                                     token: Joi
