@@ -101,7 +101,9 @@ export default class LeadController {
             let res = {
                 statusCode: 200,
                 data: {
-                    total: 2,
+                    totalCount: 2,
+                    page: 1,
+                    limit: 10,
                     items: [{
                         CampId: 1,
                         Phone: '+841603248887',
@@ -180,7 +182,9 @@ export default class LeadController {
             let res = {
                 statusCode: 200,
                 data: {
-                    total: 2,
+                    totalCount: 2,
+                    page: 1,
+                    limit: 10,
                     items: [{
                         Id: 1,
                         Phone: '+841603248887',
@@ -306,8 +310,8 @@ export default class LeadController {
         try {
             let res = {
                 statusCode: 200,
-                data: [{
-                    CampId: 1,
+                data: {
+                    Id: 1,
                     Phone: '+841603248887',
                     Name: Faker.name.firstName(),
                     Age: _.sample([1, 2, 3, 4]),
@@ -324,7 +328,7 @@ export default class LeadController {
                     Description: 'lorem...',
                     StatusProcessStep: 1,
                     Status: false
-                }]
+                }
             };
             reply(res);
         } catch (ex) {
@@ -368,7 +372,7 @@ export default class LeadController {
         try {
             let res = {
                 statusCode: 200,
-                data: [{
+                data: {
                     CampId: 1,
                     Phone: '+841603248887',
                     Name: Faker.name.firstName(),
@@ -386,7 +390,7 @@ export default class LeadController {
                     Description: 'lorem...',
                     StatusProcessStep: 1,
                     Status: false
-                }]
+                }
             };
             reply(res);
         } catch (ex) {
@@ -431,9 +435,23 @@ export default class LeadController {
             let res = {
                 statusCode: 200,
                 data: {
-                    success: 5,
-                    fail: 0,
-                    total: 5
+                    CampId: 1,
+                    Phone: '+841603248887',
+                    Name: Faker.name.firstName(),
+                    Age: _.sample([1, 2, 3, 4]),
+                    Gender: 1,
+                    IncomMontly: _.sample([1, 2, 3, 4]),
+                    MaritalStatus: 1,
+                    Address: 'Quận 8',
+                    City: 1,
+                    District: 1,
+                    Relationship: _.sample([1, 2, 3, 4]),
+                    source: 1,
+                    LeadType: 1,
+                    ProcessStep: 1,
+                    Description: 'lorem...',
+                    StatusProcessStep: 1,
+                    Status: false
                 }
             };
             reply(res);

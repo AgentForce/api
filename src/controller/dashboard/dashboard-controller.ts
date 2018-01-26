@@ -115,10 +115,10 @@ export default class DashboardController {
                         TargetCallSale: 25,
                         TargetContractSale: 10,
                         TargetMetting: 5,
-                        TargetPresentation: 2,
+                        TargetPresentation: 8,
                         CurrentCallSale: 1,
                         CurrentMetting: 1,
-                        CurrentPresentation: 8,
+                        CurrentPresentation: 2,
                         CurrentContract: 0
                     }],
                     activities: [{
