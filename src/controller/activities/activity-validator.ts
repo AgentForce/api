@@ -68,7 +68,7 @@ const updateModel = Joi.object().keys({
     // Name: string; khong can thiet, ten se gan them processttep?
     // CampId: Joi.number().required(),
     Name: Joi.string()
-    .required(), // Title of actiivty
+        .required(), // Title of actiivty
     Location: Joi.string()
         .description('lorem location')
         .allow(null),

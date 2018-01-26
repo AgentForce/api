@@ -265,6 +265,86 @@ export default class UserController {
         }
     }
 
+    public async setPassword(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let res = {
+                statusCode: 200,
+                data: {
+                    status: true
+                }
+            };
+            reply(res);
+            // const dataInput = request.payload as IPayloadChangePass;
+            // const username = request.params.username;
+            // const user = <any>await UserService.findByCode(username);
+            // if (user !== null) {
+            //     if (Bcrypt.compareSync(dataInput.OldPassword, user.Password)) {
+            //         let passwordHash = Bcrypt.hashSync(dataInput.NewPassword, Bcrypt.genSaltSync(8));
+            //         let userPg: any = await UserService
+            //             .changePassword(user.Id, dataInput, passwordHash);
+            //         let userMongo: any = await this.database.userModel
+            //             .update({
+            //                 userId: user.Id,
+            //             }, {
+            //                 password: passwordHash
+            //             });
+            //         let res = {
+            //             status: HTTP_STATUS.OK,
+            //             url: request.url.path,
+            //         };
+            //         LogUser.create({
+            //             type: 'changepassword',
+            //             dataInput: {
+            //                 params: request.params,
+            //                 payload: request.payload
+            //             },
+            //             msg: 'change password success',
+            //             meta: {
+            //                 response: res
+            //             }
+            //         });
+            //         reply(res).code(HTTP_STATUS.OK);
+            //     } else {
+            //         throw {
+            //             code: Ex.EX_OLDPASSWORD_DONT_CORRECT,
+            //             msg: 'oldpass dont correct'
+            //         };
+            //     }
+
+            // } else {
+            //     throw { code: Ex.EX_USERID_NOT_FOUND, msg: 'userid not found' };
+            // }
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: {
+                        code: 'ex', msg:
+                            'Exception occurred change password'
+                    }
+                };
+            }
+            LogUser.create({
+                type: 'changepassword',
+                dataInput: request.payload,
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
+
     /**
      * User login
      */
@@ -272,6 +352,39 @@ export default class UserController {
         return reply({
             status: HTTP_STATUS.OK,
             token: '#manulife$123$123'
+        });
+        // const username = request.payload.Username;
+        // const password = request.payload.Password;
+        // let user: IUser = await this.database
+        //     .userModel
+        //     .findOne({ username: username });
+        // if (!user) {
+        //     return reply({
+        //         status: HTTP_STATUS.OK,
+        //         token: Faker.random.alphaNumeric(250)
+        //     });
+        // }
+
+        // if (!user.validatePassword(password)) {
+        //     return reply(Boom.unauthorized("Password is invalid."));
+        // }
+        // let userPg = await UserService.findByCode(username);
+
+        // reply({
+        //     token: this.generateToken(user),
+        //     info: userPg
+        // });
+    }
+
+    /**
+   * User login
+   */
+    public async requestOTP(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        return reply({
+            status: HTTP_STATUS.OK,
+            data: {
+                Code: '123456'
+            }
         });
         // const username = request.payload.Username;
         // const password = request.payload.Password;
@@ -599,14 +712,74 @@ export default class UserController {
     *  Check SMS OTP
     */
     public async verifyOTP(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        let res = {};
         try {
-            let res = {
+            if (request.payload.Code === '123456') {
+                res = {
+                    statusCode: 200,
+                    data: {
+                        status: true
+                    }
+                };
+                reply(res);
+
+            } else {
+                res = {
+                    statusCode: HTTP_STATUS.BAD_REQUEST,
+                    data: {
+                        status: false
+                    }
+                };
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+
+            }
+
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: {
+                        code: Ex.EX_GENERAL,
+                        msg: 'Exception occurred create authorize'
+                    }
+                };
+            }
+            LogUser.create({
+                type: 'createauthorize',
+                dataInput: request.payload,
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+        }
+    }
+
+
+    /**
+   *  Check SMS OTP
+   */
+    public async check(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        let res = {};
+        try {
+            res = {
                 statusCode: 200,
                 data: {
                     status: true
                 }
             };
             reply(res);
+
         } catch (ex) {
             let res = {};
             if (ex.code) {
