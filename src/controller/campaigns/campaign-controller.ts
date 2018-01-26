@@ -154,6 +154,7 @@ export default class CampaignController {
         try {
             let res = {
                 statusCode: 200,
+                message: 'campaign active',
                 data: {
                     status: true
                 }
