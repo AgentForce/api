@@ -84,6 +84,8 @@ const verifyOTPModel = Joi.object().keys({
     Code: Joi.string()
         .trim()
         .required(),
+    UserName: Joi.string()
+        .required(),
     Phone: Joi
         .string()
         .required()

@@ -25,52 +25,6 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
     });
 
 
-    // server.route({
-    //     method: 'GET',
-    //     path: '/users/testdb',
-    //     config: {
-    //         handler: userController.testUser,
-    //         auth: "jwt",
-    //         description: 'Get user by username',
-    //         tags: ['api', 'users'],
-    //         validate: {
-    //             // headers: UserValidator.jwtValidator,
-    //             params: {
-    //                 userid: Joi.string().required(),
-    //                 query: Joi.string().required()
-    //             }
-    //         },
-    //         plugins: {
-    //             'hapi-swagger': {
-    //                 responses: {
-    //                     200: {
-    //                         description: '',
-    //                         schema: Joi.object(
-    //                             {
-    //                                 status: Joi
-    //                                     .number()
-    //                                     .example(200),
-    //                                 data: Joi
-    //                                     .object(),
-    //                             }
-    //                         )
-    //                     },
-    //                     401: {
-    //                         'description': 'Please login.',
-    //                         schema: Joi.object({
-    //                             "statusCode": 401,
-    //                             "error": "Unauthorized",
-    //                             "message": "Missing authentication"
-    //                         })
-    //                     }
-    //                 },
-    //                 security: [{
-    //                     'jwt': []
-    //                 }]
-    //             }
-    //         }
-    //     }
-    // });
 
     server.route({
         method: 'GET',
@@ -116,51 +70,6 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         }
     });
 
-
-    /**
-     * demo sendmail
-     */
-    // server.route({
-    //     method: 'POST',
-    //     path: '/users/resetpassword',
-    //     config: {
-    //         handler: userController.sendMail,
-    //         // auth: "jwt",
-    //         tags: ['api', 'users'],
-    //         description: 'send email(Just test, please dont try)',
-    //         validate: {
-    //             // headers: UserValidator.jwtValidator,
-    //             payload: {
-    //                 Email: Joi.string()
-    //                     .email()
-    //                     .required()
-    //                     .example('tunguyenq@gmail.com')
-    //             }
-    //         },
-    //         plugins: {
-    //             'hapi-swagger': {
-    //                 deprecated: true,
-    //                 responses: {
-    //                     200: {
-    //                         description: '',
-    //                         schema: Joi.object(
-    //                             {
-    //                                 status: Joi
-    //                                     .number()
-    //                                     .example(200),
-    //                                 data: Joi
-    //                                     .object(),
-    //                             }
-    //                         )
-    //                     },
-    //                     '401': {
-    //                         'description': 'Please login.'
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // });
 
 
 
@@ -227,7 +136,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
 
     server.route({
         method: 'POST',
-        path: '/users/verify',
+        path: '/users/otp/verify',
         config: {
             handler: userController.verifyOTP,
             // auth: "jwt",
@@ -236,8 +145,8 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             validate: {
                 payload: UserValidator.verifyOTPModel,
                 headers: Joi.object({
-                    authorization: Joi.string().required(),
-                    clientid: Joi.string().required()
+                    // authorization: Joi.string().required(),
+                    // clientid: Joi.string().required()
                 }).unknown(),
                 failAction: (request, reply, source, error) => {
                     let res = {
@@ -288,6 +197,93 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         }
     });
 
+
+
+
+
+    server.route({
+        method: 'POST',
+        path: '/users/check',
+        config: {
+            handler: userController.check,
+            // auth: "jwt",
+            tags: ['api', 'users'],
+            description: 'check user',
+            validate: {
+                payload: {
+                    Phone: Joi.string().required(),
+                    UserName: Joi.string().required()
+                },
+                headers: Joi.object({
+                    // authorization: Joi.string().required(),
+                    // clientid: Joi.string().required()
+                }).unknown(),
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        status: HTTP_STATUS.BAD_REQUEST,
+                        error: {
+                            code: 'ex_payload',
+                            msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    LogUser.create({
+                        type: 'updateprofile',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    // deprecated: true,
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object({
+                                            status: Joi
+                                                .boolean()
+                                                .example(true)
+                                        }),
+                                }
+                            )
+                        },
+                        404: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(404),
+                                    data: Joi
+                                        .object({
+                                            status: Joi
+                                                .boolean()
+                                                .example(false)
+                                        }),
+                                }
+                            )
+                        },
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
     /**
      * creat account manulife
      */
@@ -329,7 +325,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
                                         .example(200),
                                     data: Joi
@@ -345,63 +341,6 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             }
         }
     });
-    /**
-     * create account for resource
-     */
-    // server.route({
-    //     method: 'POST',
-    //     path: '/authen',
-    //     config: {
-    //         handler: userController.authorize,
-    //         tags: ['api', 'users'],
-    //         description: 'Create account for access resource',
-    //         validate: {
-    //             payload: UserValidator.ResourceModel,
-    //             failAction: (request, reply, source, error) => {
-    //                 let res = {
-    //                     status: HTTP_STATUS.BAD_REQUEST,
-    //                     error: {
-    //                         code: 'ex_payload',
-    //                         msg: 'payload dont valid',
-    //                         details: error
-    //                     }
-    //                 };
-    //                 LogUser.create({
-    //                     type: 'updateprofile',
-    //                     dataInput: request.payload,
-    //                     msg: 'payload do not valid',
-    //                     meta: {
-    //                         exception: error,
-    //                         response: res
-    //                     },
-    //                 });
-    //                 return reply(res);
-    //             }
-    //         },
-    //         plugins: {
-    //             'hapi-swagger': {
-    //                 deprecated: true,
-    //                 responses: {
-    //                     200: {
-    //                         description: '',
-    //                         schema: Joi.object(
-    //                             {
-    //                                 status: Joi
-    //                                     .number()
-    //                                     .example(200),
-    //                                 data: Joi
-    //                                     .object(),
-    //                             }
-    //                         )
-    //                     },
-    //                 },
-    //                 security: [{
-    //                     'jwt': []
-    //                 }]
-    //             }
-    //         }
-    //     }
-    // });
 
     /**
      * change password
@@ -416,6 +355,178 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             description: 'Change password',
             validate: {
                 payload: UserValidator.changePassModel,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: HTTP_STATUS.BAD_REQUEST,
+                        error: {
+                            code: 'ex_payload',
+                            msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    LogUser.create({
+                        type: 'changepassword',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    // deprecated: true,
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object({
+                                            status: Joi
+                                                .boolean()
+                                                .example(true)
+                                        }),
+                                }
+                            )
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(400),
+                                    err: Joi
+                                        .object({
+                                            msg: Joi
+                                                .string()
+                                                .example('Password dont valid')
+                                        }),
+                                }
+                            )
+                        },
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
+
+    /**
+    * change password
+    */
+    server.route({
+        method: 'PUT',
+        path: '/users/setpassword',
+        config: {
+            handler: userController.setPassword,
+            tags: ['api', 'users'],
+            // auth: "jwt",
+            description: 'Set password',
+            validate: {
+                payload: {
+                    Password: Joi.string()
+                        .regex(/^[0-9]*$/)
+                        .length(6).required()
+                },
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: HTTP_STATUS.BAD_REQUEST,
+                        error: {
+                            code: 'ex_payload',
+                            msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    LogUser.create({
+                        type: 'changepassword',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    // deprecated: true,
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object({
+                                            status: Joi
+                                                .boolean()
+                                                .example(true)
+                                        }),
+                                }
+                            )
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(400),
+                                    err: Joi
+                                        .object({
+                                            msg: Joi
+                                                .string()
+                                                .example('Password dont valid')
+                                        }),
+                                }
+                            )
+                        },
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
+
+    /**
+    * request otp
+    */
+    server.route({
+        method: 'POST',
+        path: '/users/opt/request',
+        config: {
+            handler: userController.requestOTP,
+            tags: ['api', 'users'],
+            // auth: "jwt",
+            description: 'Request to get OTP code',
+            validate: {
+                payload: {
+                    Phone: Joi
+                        .string()
+                        .example('+841693248887')
+                        .required(),
+                    UserName: Joi
+                        .string()
+                        .required()
+                },
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST,
@@ -445,11 +556,15 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
                                         .example(200),
                                     data: Joi
-                                        .object(),
+                                        .object({
+                                            status: Joi
+                                                .boolean()
+                                                .example(true)
+                                        }),
                                 }
                             )
                         },
@@ -497,38 +612,5 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         }
     });
 
-    /**
-     * login authorize
-     */
-    // server.route({
-    //     method: 'POST',
-    //     path: '/authen/login',
-    //     config: {
-    //         handler: userController.loginAuthen,
-    //         tags: ['users', 'api'],
-    //         description: 'Authentication.',
-    //         validate: {
-    //             payload: UserValidator.loginResourceModel
-    //         },
-    //         plugins: {
-    //             'hapi-swagger': {
-    //                 responses: {
-    //                     200: {
-    //                         description: '',
-    //                         schema: Joi.object(
-    //                             {
-    //                                 status: Joi
-    //                                     .number()
-    //                                     .example(200),
-    //                                 token: Joi
-    //                                     .string()
-    //                                     .required(),
-    //                             }
-    //                         )
-    //                     },
-    //                 },
-    //             }
-    //         }
-    //     }
-    // });
+
 }
