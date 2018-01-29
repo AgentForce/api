@@ -191,7 +191,9 @@ export default class UserController {
                 statusCode: 200,
                 data: {
                     status: true
-                }
+                },
+                msg: '',
+                msgCode: ''
             };
             reply(res);
             // const dataInput = request.payload as IPayloadChangePass;
@@ -247,7 +249,8 @@ export default class UserController {
                     status: 400,
                     url: request.url.path,
                     error: {
-                        code: 'ex', msg:
+                        code: 'ex',
+                        msg:
                             'Exception occurred change password'
                     }
                 };
@@ -271,7 +274,9 @@ export default class UserController {
                 statusCode: 200,
                 data: {
                     status: true
-                }
+                },
+                msgCode: '',
+                msg: ''
             };
             reply(res);
             // const dataInput = request.payload as IPayloadChangePass;
@@ -384,7 +389,9 @@ export default class UserController {
             status: HTTP_STATUS.OK,
             data: {
                 Code: '123456'
-            }
+            },
+            msg: '',
+            msgCode: ''
         });
         // const username = request.payload.Username;
         // const password = request.payload.Password;
@@ -719,7 +726,9 @@ export default class UserController {
                     statusCode: 200,
                     data: {
                         status: true
-                    }
+                    },
+                    msg: '',
+                    msgCode: ''
                 };
                 reply(res);
 
@@ -775,8 +784,10 @@ export default class UserController {
             res = {
                 statusCode: 200,
                 data: {
-                    status: true
-                }
+                    status: 1
+                },
+                msg: '',
+                msgCode: ''
             };
             reply(res);
 

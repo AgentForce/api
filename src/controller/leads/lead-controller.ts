@@ -42,7 +42,9 @@ export default class LeadController {
                     Description: 'lorem...',
                     StatusProcessStep: 1,
                     Status: false
-                }
+                },
+                msg: '',
+                msgCode: ''
             };
             reply(res);
             // let idEvent = parseInt(request.params.id, 10);
@@ -123,7 +125,9 @@ export default class LeadController {
                         StatusProcessStep: 1,
                         Status: false
                     }]
-                }
+                },
+                msg: '',
+                msgCode: ''
             };
             reply(res);
             // let idEvent = parseInt(request.params.id, 10);
@@ -214,7 +218,9 @@ export default class LeadController {
                             FullDate: true,
                         }]
                     }]
-                }
+                },
+                msg: '',
+                msgCode: ''
             };
             reply(res);
         } catch (ex) {
@@ -328,7 +334,9 @@ export default class LeadController {
                     Description: 'lorem...',
                     StatusProcessStep: 1,
                     Status: false
-                }
+                },
+                msg: '',
+                msgCode: ''
             };
             reply(res);
         } catch (ex) {
@@ -390,7 +398,9 @@ export default class LeadController {
                     Description: 'lorem...',
                     StatusProcessStep: 1,
                     Status: false
-                }
+                },
+                msg: '',
+                msgCode: ''
             };
             reply(res);
         } catch (ex) {
@@ -452,7 +462,9 @@ export default class LeadController {
                     Description: 'lorem...',
                     StatusProcessStep: 1,
                     Status: false
-                }
+                },
+                msg: '',
+                msgCode: ''
             };
             reply(res);
             // let iLead = request.payload as ILead;

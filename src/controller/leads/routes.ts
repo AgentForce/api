@@ -1,7 +1,7 @@
 import * as Hapi from "hapi";
 import * as Joi from "joi";
 import LeadController from "./lead-controller";
-import { jwtValidator } from "../users/user-validator";
+import { jwtValidator, headerModel } from "../users/user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
@@ -28,7 +28,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         .example(38)
                         .description('leadid')
                 },
-                // headers: jwtValidator,
+                headers: headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST, error: {
@@ -61,6 +61,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .example(200),
                                     data: Joi
                                         .object(),
+                                    msg: Joi.string()
                                 }
                             )
                         },
@@ -71,8 +72,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                     statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.NOT_FOUND),
-                                    code: Joi.string().example(ManulifeErrors.EX_LEADID_NOT_FOUND),
-                                    msg: Joi.string()
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -96,6 +98,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             tags: ['api', 'leads'],
             description: '#screenv3/KH-tuvan:16, #screenv3/KH-lienhe:16 get histories of leadId',
             validate: {
+                headers: headerModel,
                 params: {
                     id: Joi.number()
                         .required()
@@ -135,6 +138,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .example(200),
                                     data: Joi
                                         .object(),
+                                    msg: Joi.string()
                                 }
                             )
                         },
@@ -145,8 +149,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                     statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.NOT_FOUND),
-                                    code: Joi.string().example(ManulifeErrors.EX_LEADID_NOT_FOUND),
-                                    msg: Joi.string()
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -172,6 +177,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             tags: ['api', 'leads'],
             description: '#driveKH-lienhe, #screen 12,13 Get leads and activities of lead by period',
             validate: {
+                headers: headerModel,
                 params: {
                     period: Joi
                         .number()
@@ -220,8 +226,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .object({
                                             data: Joi.array().example([]),
                                             limit: Joi.number(),
-                                            page: Joi.number()
-                                        })
+                                            page: Joi.number(),
+                                            totalCount: Joi.number().required()
+                                        }),
+                                    msg: Joi.string()
                                 }
                             )
                         },
@@ -232,7 +240,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                     statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         }
@@ -257,6 +267,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             tags: ['api', 'leads'],
             description: 'update  info a leads',
             validate: {
+                headers: headerModel,
                 payload: LeadValidator.updateModel,
                 params: {
                     id: Joi
@@ -296,7 +307,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .number()
                                         .example(200),
                                     data: Joi
-                                        .object()
+                                        .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -307,7 +320,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                     statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         }
@@ -334,6 +349,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             tags: ['api', 'leads'],
             description: 'update status of leads',
             validate: {
+                headers: headerModel,
                 payload: LeadValidator.updateStatusModel,
                 params: {
                     id: Joi
@@ -373,7 +389,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .number()
                                         .example(200),
                                     data: Joi
-                                        .object()
+                                        .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -384,7 +402,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                     statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         }
@@ -411,7 +431,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             description: '#driveKH-lienhe #screen 11Create list lead ',
             validate: {
                 payload: LeadValidator.createLeadModel,
-                // headers: jwtValidator,
+                headers: headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST, error: {
@@ -442,7 +462,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .number()
                                         .example(200),
                                     data: Joi
-                                        .object()
+                                        .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -453,7 +475,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                     statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         }

@@ -1,7 +1,7 @@
 import * as Hapi from "hapi";
 import * as Joi from "joi";
 import DashboardController from "./dashboard-controller";
-import { jwtValidator } from "../users/user-validator";
+import { jwtValidator, headerModel } from "../users/user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
@@ -25,6 +25,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             tags: ['api', 'dashboard'],
             description: '#screenhomepage',
             validate: {
+                headers: headerModel,
                 params: {
                     type: Joi.string()
                         .valid(['weekmonth', 'year'])
@@ -76,6 +77,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                             activities: Joi.array()
                                                 .example([]),
                                         }),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -87,7 +90,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
                                     error: Joi.string(),
-                                    code: Joi.string()
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         }

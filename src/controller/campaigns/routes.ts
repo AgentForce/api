@@ -3,7 +3,7 @@ import * as Joi from "joi";
 import * as Boom from 'boom';
 import CampaignController from "./campaign-controller";
 import * as CampaignValidator from "./campaign-validator";
-import { jwtValidator } from "../users/user-validator";
+import { jwtValidator, headerModel } from "../users/user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
@@ -36,7 +36,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             tags: ['api', 'campaigns'],
             description: '#drivev3/dangnhap,KH-lienhe:1 #screen11,12,12copy2,12copy3. Trả về danh sách plan 4 tuần của một tháng',
             validate: {
-                // headers: jwtValidator,
+                headers: headerModel,
                 params: {
                     period: Joi.number()
                         .required()
@@ -77,6 +77,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .example(200),
                                     data: Joi
                                         .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -89,6 +91,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .example(HTTP_STATUS.NOT_FOUND),
                                     data: Joi
                                         .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -113,7 +117,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             tags: ['api', 'campaigns'],
             description: '#screenv3/dangnhap:3 Check campaign exist in current day ',
             validate: {
-                // headers: jwtValidator,
+                headers: headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST, error: {
@@ -150,6 +154,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .example(200),
                                     data: Joi
                                         .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -162,6 +168,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .example(HTTP_STATUS.NOT_FOUND),
                                     data: Joi
                                         .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -188,7 +196,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             description: '#googledrive/dangky #screen10. Create a campaign',
             validate: {
                 payload: CampaignValidator.createCampaignFAModel,
-                // headers: jwtValidator,
+                headers: headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST, error: {
@@ -222,6 +230,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .example(200),
                                     data: Joi
                                         .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -232,7 +242,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                     statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         }
