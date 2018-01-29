@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 const dashboard_controller_1 = require("./dashboard-controller");
+const user_validator_1 = require("../users/user-validator");
 const HTTP_STATUS = require("http-status");
 const code_errors_1 = require("../../common/code-errors");
 const index_1 = require("../../mongo/index");
@@ -20,6 +21,7 @@ function default_1(server, configs, database) {
             tags: ['api', 'dashboard'],
             description: '#screenhomepage',
             validate: {
+                headers: user_validator_1.headerModel,
                 params: {
                     type: Joi.string()
                         .valid(['weekmonth', 'year'])
@@ -70,6 +72,8 @@ function default_1(server, configs, database) {
                                     activities: Joi.array()
                                         .example([]),
                                 }),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         },
                         400: {
@@ -79,7 +83,8 @@ function default_1(server, configs, database) {
                                     .number()
                                     .example(HTTP_STATUS.BAD_REQUEST),
                                 error: Joi.string(),
-                                code: Joi.string()
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         }
                     },

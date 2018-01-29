@@ -133,42 +133,37 @@ const loginUserModel = Joi.object().keys({
         .string()
         .trim()
         .required(),
-    // ClientId: Joi.string()
-    //     .required(),
-    VersionOs: Joi
-        .string()
-        .required(),
-    VersionApp: Joi
-        .string()
-        .required(),
-    GrantType: Joi
-        .string()
-        .required(),
-    Scope: Joi
-        .array(),
-    Emei: Joi
-        .string()
-        .required()
 });
 exports.loginUserModel = loginUserModel;
+const headerModel = Joi.object().keys({
+    clientid: Joi
+        .string()
+        .required(),
+    versionos: Joi
+        .number()
+        .default(8.0)
+        .required(),
+    versionapp: Joi.number().default(1.2).required(),
+    devicename: Joi.string().default('samsung').required(),
+    imei: Joi.string().required()
+}).unknown();
+exports.headerModel = headerModel;
+const headersChecksumModel = Joi.object().keys({
+    clientid: Joi
+        .string()
+        .required(),
+    versionos: Joi
+        .number()
+        .default(8.0)
+        .required(),
+    versionapp: Joi.number().default(1.2).required(),
+    devicename: Joi.string().default('samsung').required(),
+    imei: Joi.string().required(),
+    checksum: Joi.string().required()
+}).unknown();
+exports.headersChecksumModel = headersChecksumModel;
 const loginResourceModel = Joi.object().keys({
     UserName: Joi.string().required(),
-    ClientId: Joi.string()
-        .required(),
-    VersionOs: Joi
-        .string()
-        .required(),
-    VersionApp: Joi
-        .string()
-        .required(),
-    GrantType: Joi
-        .string()
-        .required(),
-    Scope: Joi
-        .array(),
-    Emei: Joi
-        .string()
-        .required(),
     Password: Joi
         .string()
         .trim()

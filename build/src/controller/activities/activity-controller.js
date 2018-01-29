@@ -232,7 +232,9 @@ class ActivitiesController {
                             Name: 'John',
                             StartDate: '2018-01-26',
                             FullDate: true,
-                        }]
+                        }],
+                    msg: '',
+                    msgCode: ''
                 };
                 reply(res);
             }
@@ -294,7 +296,9 @@ class ActivitiesController {
                         Status: true,
                         Location: Faker.lorem.sentence(),
                         Description: Faker.lorem.lines()
-                    }
+                    },
+                    msg: '',
+                    msgCode: ''
                 };
                 reply(res);
                 // let iAc = request.payload as IPayloadUpdate;
@@ -376,7 +380,9 @@ class ActivitiesController {
                         Status: true,
                         Location: Faker.lorem.sentence(),
                         Description: Faker.lorem.lines()
-                    }
+                    },
+                    msg: '',
+                    msgCode: ''
                 };
                 reply(res);
                 // let iAc = request.payload as IPayloadCreate;

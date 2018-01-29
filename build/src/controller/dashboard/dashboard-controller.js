@@ -141,6 +141,8 @@ class DashboardController {
                 reply({
                     statusCode: 200,
                     data: res,
+                    msg: '',
+                    msgCode: ''
                 });
                 // let type = request.params.type as typeTarget;
                 // let UserId = 5;
