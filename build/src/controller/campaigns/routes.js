@@ -4,6 +4,7 @@ const Joi = require("joi");
 const Boom = require("boom");
 const campaign_controller_1 = require("./campaign-controller");
 const CampaignValidator = require("./campaign-validator");
+const user_validator_1 = require("../users/user-validator");
 const HTTP_STATUS = require("http-status");
 /**
  * constant error
@@ -29,7 +30,7 @@ function default_1(server, configs, database) {
             tags: ['api', 'campaigns'],
             description: '#drivev3/dangnhap,KH-lienhe:1 #screen11,12,12copy2,12copy3. Trả về danh sách plan 4 tuần của một tháng',
             validate: {
-                // headers: jwtValidator,
+                headers: user_validator_1.headerModel,
                 params: {
                     period: Joi.number()
                         .required()
@@ -68,6 +69,8 @@ function default_1(server, configs, database) {
                                     .example(200),
                                 data: Joi
                                     .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         },
                         404: {
@@ -78,6 +81,8 @@ function default_1(server, configs, database) {
                                     .example(HTTP_STATUS.NOT_FOUND),
                                 data: Joi
                                     .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         },
                     },
@@ -100,7 +105,7 @@ function default_1(server, configs, database) {
             tags: ['api', 'campaigns'],
             description: '#screenv3/dangnhap:3 Check campaign exist in current day ',
             validate: {
-                // headers: jwtValidator,
+                headers: user_validator_1.headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST, error: {
@@ -135,6 +140,8 @@ function default_1(server, configs, database) {
                                     .example(200),
                                 data: Joi
                                     .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         },
                         404: {
@@ -145,6 +152,8 @@ function default_1(server, configs, database) {
                                     .example(HTTP_STATUS.NOT_FOUND),
                                 data: Joi
                                     .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         },
                     },
@@ -168,7 +177,7 @@ function default_1(server, configs, database) {
             description: '#googledrive/dangky #screen10. Create a campaign',
             validate: {
                 payload: CampaignValidator.createCampaignFAModel,
-                // headers: jwtValidator,
+                headers: user_validator_1.headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST, error: {
@@ -201,6 +210,8 @@ function default_1(server, configs, database) {
                                     .example(200),
                                 data: Joi
                                     .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         },
                         400: {
@@ -209,7 +220,9 @@ function default_1(server, configs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.BAD_REQUEST),
-                                error: Joi.string(),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         }
                     },

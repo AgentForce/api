@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 const activity_controller_1 = require("./activity-controller");
 const ActivitiesValidator = require("./activity-validator");
+const user_validator_1 = require("../users/user-validator");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
 const code_errors_1 = require("../../common/code-errors");
@@ -32,6 +33,7 @@ function default_1(server, configs, database) {
                         .default('2018-01-31')
                         .required(),
                 },
+                headers: user_validator_1.headerModel
             },
             plugins: {
                 'hapi-swagger': {
@@ -43,11 +45,9 @@ function default_1(server, configs, database) {
                                     .number()
                                     .example(200),
                                 data: Joi
-                                    .object({
-                                    data: Joi.array().example([]),
-                                    limit: Joi.number(),
-                                    page: Joi.number()
-                                })
+                                    .array().items({}),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         },
                         400: {
@@ -56,7 +56,9 @@ function default_1(server, configs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.BAD_REQUEST),
-                                error: Joi.string(),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         }
                     }
@@ -82,6 +84,7 @@ function default_1(server, configs, database) {
                         .default('2018-01-01')
                         .required()
                 },
+                headers: user_validator_1.headerModel
             },
             plugins: {
                 'hapi-swagger': {
@@ -97,7 +100,9 @@ function default_1(server, configs, database) {
                                     data: Joi.array().example([]),
                                     limit: Joi.number(),
                                     page: Joi.number()
-                                })
+                                }),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         },
                         400: {
@@ -106,7 +111,9 @@ function default_1(server, configs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.BAD_REQUEST),
-                                error: Joi.string(),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         }
                     }
@@ -203,8 +210,8 @@ function default_1(server, configs, database) {
                         .number()
                         .integer()
                         .required(),
-                }
-                // headers: jwtValidator
+                },
+                headers: user_validator_1.headerModel
             },
             plugins: {
                 'hapi-swagger': {
@@ -216,9 +223,9 @@ function default_1(server, configs, database) {
                                     .number()
                                     .example(200),
                                 data: Joi
-                                    .object({
-                                    data: Joi.object(),
-                                })
+                                    .object({}),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         },
                         400: {
@@ -227,7 +234,9 @@ function default_1(server, configs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.BAD_REQUEST),
-                                error: Joi.string(),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         }
                     }
@@ -252,8 +261,8 @@ function default_1(server, configs, database) {
                         .number()
                         .integer()
                         .required(),
-                }
-                // headers: jwtValidator
+                },
+                headers: user_validator_1.headerModel
             },
             plugins: {
                 'hapi-swagger': {
@@ -266,8 +275,11 @@ function default_1(server, configs, database) {
                                     .example(200),
                                 data: Joi
                                     .object({
-                                    data: Joi.object(),
-                                })
+                                    data: Joi.array(),
+                                    totalCount: 20,
+                                    page: 1,
+                                    limit: 10
+                                }),
                             })
                         },
                         400: {
@@ -276,7 +288,9 @@ function default_1(server, configs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.BAD_REQUEST),
-                                error: Joi.string(),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         }
                     }
@@ -297,7 +311,7 @@ function default_1(server, configs, database) {
             description: '#screenv3/KH-hengap:18 Create a activity.',
             validate: {
                 payload: ActivitiesValidator.createModel,
-                // headers: jwtValidator,
+                headers: user_validator_1.headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST, error: {
@@ -329,6 +343,8 @@ function default_1(server, configs, database) {
                                     .number()
                                     .example(HTTP_STATUS.OK),
                                 data: Joi.object(),
+                                msg: Joi.string(),
+                                msgCode: Joi.string()
                             })
                         },
                         400: {
@@ -337,7 +353,9 @@ function default_1(server, configs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.BAD_REQUEST),
-                                error: Joi.string(),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgCode: Joi.string()
                             })
                         }
                     },
@@ -361,6 +379,7 @@ function default_1(server, configs, database) {
             description: 'Update a activity',
             validate: {
                 payload: ActivitiesValidator.updateModel,
+                headers: user_validator_1.headerModel,
                 params: {
                     id: Joi.number().required()
                         .description('acitivityId')
@@ -397,6 +416,8 @@ function default_1(server, configs, database) {
                                     .number()
                                     .example(HTTP_STATUS.OK),
                                 data: Joi.object(),
+                                msg: Joi.string(),
+                                msgCode: Joi.string()
                             })
                         },
                         400: {
@@ -405,7 +426,9 @@ function default_1(server, configs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.BAD_REQUEST),
-                                error: Joi.string(),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgCode: Joi.string()
                             })
                         }
                     },

@@ -27,7 +27,8 @@ class CampaignController {
                 let res = {
                     statusCode: HTTP_STATUS.OK,
                     data: {},
-                    msg: 'Create success'
+                    msg: 'Create success',
+                    msgCode: ''
                 };
                 reply(res);
                 // let iCamp: ICampaign = request.payload;
@@ -256,6 +257,8 @@ class CampaignController {
                 reply({
                     statusCode: 200,
                     data: res,
+                    msg: '',
+                    msgCode: ''
                 });
             }
             catch (ex) {

@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 const lead_controller_1 = require("./lead-controller");
+const user_validator_1 = require("../users/user-validator");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
 const code_errors_1 = require("../../common/code-errors");
 const LeadValidator = require("./lead-validator");
-const index_2 = require("../../common/index");
 function default_1(server, configs, database) {
     const leadController = new lead_controller_1.default(configs, database);
     server.bind(leadController);
@@ -25,7 +25,7 @@ function default_1(server, configs, database) {
                         .example(38)
                         .description('leadid')
                 },
-                // headers: jwtValidator,
+                headers: user_validator_1.headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST, error: {
@@ -56,6 +56,7 @@ function default_1(server, configs, database) {
                                     .example(200),
                                 data: Joi
                                     .object(),
+                                msg: Joi.string()
                             })
                         },
                         404: {
@@ -64,8 +65,9 @@ function default_1(server, configs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.NOT_FOUND),
-                                code: Joi.string().example(index_2.ManulifeErrors.EX_LEADID_NOT_FOUND),
-                                msg: Joi.string()
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         },
                     },
@@ -85,6 +87,7 @@ function default_1(server, configs, database) {
             tags: ['api', 'leads'],
             description: '#screenv3/KH-tuvan:16, #screenv3/KH-lienhe:16 get histories of leadId',
             validate: {
+                headers: user_validator_1.headerModel,
                 params: {
                     id: Joi.number()
                         .required()
@@ -122,6 +125,7 @@ function default_1(server, configs, database) {
                                     .example(200),
                                 data: Joi
                                     .object(),
+                                msg: Joi.string()
                             })
                         },
                         404: {
@@ -130,8 +134,9 @@ function default_1(server, configs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.NOT_FOUND),
-                                code: Joi.string().example(index_2.ManulifeErrors.EX_LEADID_NOT_FOUND),
-                                msg: Joi.string()
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         },
                     },
@@ -154,6 +159,7 @@ function default_1(server, configs, database) {
             tags: ['api', 'leads'],
             description: '#driveKH-lienhe, #screen 12,13 Get leads and activities of lead by period',
             validate: {
+                headers: user_validator_1.headerModel,
                 params: {
                     period: Joi
                         .number()
@@ -201,8 +207,10 @@ function default_1(server, configs, database) {
                                     .object({
                                     data: Joi.array().example([]),
                                     limit: Joi.number(),
-                                    page: Joi.number()
-                                })
+                                    page: Joi.number(),
+                                    totalCount: Joi.number().required()
+                                }),
+                                msg: Joi.string()
                             })
                         },
                         400: {
@@ -211,7 +219,9 @@ function default_1(server, configs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.BAD_REQUEST),
-                                error: Joi.string(),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         }
                     }
@@ -231,6 +241,7 @@ function default_1(server, configs, database) {
             tags: ['api', 'leads'],
             description: 'update  info a leads',
             validate: {
+                headers: user_validator_1.headerModel,
                 payload: LeadValidator.updateModel,
                 params: {
                     id: Joi
@@ -269,7 +280,9 @@ function default_1(server, configs, database) {
                                     .number()
                                     .example(200),
                                 data: Joi
-                                    .object()
+                                    .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         },
                         400: {
@@ -278,7 +291,9 @@ function default_1(server, configs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.BAD_REQUEST),
-                                error: Joi.string(),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         }
                     },
@@ -301,6 +316,7 @@ function default_1(server, configs, database) {
             tags: ['api', 'leads'],
             description: 'update status of leads',
             validate: {
+                headers: user_validator_1.headerModel,
                 payload: LeadValidator.updateStatusModel,
                 params: {
                     id: Joi
@@ -339,7 +355,9 @@ function default_1(server, configs, database) {
                                     .number()
                                     .example(200),
                                 data: Joi
-                                    .object()
+                                    .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         },
                         400: {
@@ -348,7 +366,9 @@ function default_1(server, configs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.BAD_REQUEST),
-                                error: Joi.string(),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         }
                     },
@@ -372,7 +392,7 @@ function default_1(server, configs, database) {
             description: '#driveKH-lienhe #screen 11Create list lead ',
             validate: {
                 payload: LeadValidator.createLeadModel,
-                // headers: jwtValidator,
+                headers: user_validator_1.headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST, error: {
@@ -402,7 +422,9 @@ function default_1(server, configs, database) {
                                     .number()
                                     .example(200),
                                 data: Joi
-                                    .object()
+                                    .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         },
                         400: {
@@ -411,7 +433,9 @@ function default_1(server, configs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(HTTP_STATUS.BAD_REQUEST),
-                                error: Joi.string(),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
                             })
                         }
                     },

@@ -5,6 +5,7 @@ const user_controller_1 = require("./user-controller");
 const UserValidator = require("./user-validator");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
+const user_validator_1 = require("./user-validator");
 function default_1(server, serverConfigs, database) {
     const userController = new user_controller_1.default(serverConfigs, database);
     server.bind(userController);
@@ -20,13 +21,18 @@ function default_1(server, serverConfigs, database) {
     });
     server.route({
         method: 'GET',
-        path: '/users/profile',
+        path: '/users/profile/{username}',
         config: {
             handler: userController.profile,
             // auth: "jwt",
             description: '#mockapi return info profile of a user',
             tags: ['api', 'users'],
-            validate: {},
+            validate: {
+                headers: UserValidator.headerModel,
+                params: {
+                    username: Joi.string().required()
+                }
+            },
             plugins: {
                 'hapi-swagger': {
                     responses: {
@@ -38,14 +44,20 @@ function default_1(server, serverConfigs, database) {
                                     .example(200),
                                 data: Joi
                                     .object(),
+                                msgcode: Joi.string(),
+                                msg: Joi.string()
                             })
                         },
                         401: {
                             'description': 'Please login.',
                             schema: Joi.object({
-                                "statusCode": 401,
-                                "error": "Unauthorized",
-                                "message": "Missing authentication"
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object(),
+                                msgcode: Joi.string(),
+                                msg: Joi.string()
                             })
                         }
                     },
@@ -58,7 +70,7 @@ function default_1(server, serverConfigs, database) {
     });
     server.route({
         method: 'PUT',
-        path: '/users/profile',
+        path: '/users/profile/',
         config: {
             handler: userController.updateProfile,
             // auth: "jwt",
@@ -66,7 +78,7 @@ function default_1(server, serverConfigs, database) {
             description: 'Update user profile.',
             validate: {
                 payload: UserValidator.updateProfileModel,
-                // headers: UserValidator.jwtValidator,
+                headers: user_validator_1.headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST,
@@ -100,6 +112,8 @@ function default_1(server, serverConfigs, database) {
                                     .example(200),
                                 data: Joi
                                     .object(),
+                                msgcode: Joi.string(),
+                                msg: Joi.string()
                             })
                         },
                         '401': {
@@ -123,7 +137,7 @@ function default_1(server, serverConfigs, database) {
             description: 'Verify SMS OTP',
             validate: {
                 payload: UserValidator.verifyOTPModel,
-                headers: Joi.object({}).unknown(),
+                headers: user_validator_1.headersChecksumModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST,
@@ -157,11 +171,10 @@ function default_1(server, serverConfigs, database) {
                                     .example(200),
                                 data: Joi
                                     .object(),
+                                msgcode: Joi.string(),
+                                msg: Joi.string()
                             })
                         },
-                        '401': {
-                            'description': 'User does not have authorization.'
-                        }
                     },
                     security: [{
                             'jwt': []
@@ -172,18 +185,18 @@ function default_1(server, serverConfigs, database) {
     });
     server.route({
         method: 'POST',
-        path: '/users/check',
+        path: '/users/check/{phone}/{username}',
         config: {
             handler: userController.check,
             // auth: "jwt",
             tags: ['api', 'users'],
             description: 'check user',
             validate: {
-                payload: {
-                    Phone: Joi.string().required(),
-                    UserName: Joi.string().required()
+                headers: user_validator_1.headersChecksumModel,
+                params: {
+                    phone: Joi.string().required(),
+                    username: Joi.string().required()
                 },
-                headers: Joi.object({}).unknown(),
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST,
@@ -221,6 +234,8 @@ function default_1(server, serverConfigs, database) {
                                         .boolean()
                                         .example(true)
                                 }),
+                                msgcode: Joi.string(),
+                                msg: Joi.string()
                             })
                         },
                         404: {
@@ -235,6 +250,8 @@ function default_1(server, serverConfigs, database) {
                                         .boolean()
                                         .example(false)
                                 }),
+                                msgcode: Joi.string(),
+                                msg: Joi.string()
                             })
                         },
                     },
@@ -312,6 +329,7 @@ function default_1(server, serverConfigs, database) {
             // auth: "jwt",
             description: 'Change password',
             validate: {
+                headers: user_validator_1.headerModel,
                 payload: UserValidator.changePassModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
@@ -350,6 +368,8 @@ function default_1(server, serverConfigs, database) {
                                         .boolean()
                                         .example(true)
                                 }),
+                                msgcode: Joi.string(),
+                                msg: Joi.string()
                             })
                         },
                         400: {
@@ -358,12 +378,10 @@ function default_1(server, serverConfigs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(400),
-                                err: Joi
-                                    .object({
-                                    msg: Joi
-                                        .string()
-                                        .example('Password dont valid')
-                                }),
+                                data: Joi
+                                    .object(),
+                                msgcode: Joi.string(),
+                                msg: Joi.string()
                             })
                         },
                     },
@@ -386,6 +404,7 @@ function default_1(server, serverConfigs, database) {
             // auth: "jwt",
             description: 'Set password',
             validate: {
+                headers: user_validator_1.headersChecksumModel,
                 payload: {
                     Password: Joi.string()
                         .regex(/^[0-9]*$/)
@@ -428,6 +447,8 @@ function default_1(server, serverConfigs, database) {
                                         .boolean()
                                         .example(true)
                                 }),
+                                msgcode: Joi.string(),
+                                msg: Joi.string()
                             })
                         },
                         400: {
@@ -436,12 +457,10 @@ function default_1(server, serverConfigs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(400),
-                                err: Joi
-                                    .object({
-                                    msg: Joi
-                                        .string()
-                                        .example('Password dont valid')
-                                }),
+                                data: Joi
+                                    .object({}),
+                                msgcode: Joi.string(),
+                                msg: Joi.string()
                             })
                         },
                     },
@@ -464,6 +483,7 @@ function default_1(server, serverConfigs, database) {
             // auth: "jwt",
             description: 'Request to get OTP code',
             validate: {
+                headers: user_validator_1.headersChecksumModel,
                 payload: {
                     Phone: Joi
                         .string()
@@ -507,9 +527,11 @@ function default_1(server, serverConfigs, database) {
                                 data: Joi
                                     .object({
                                     status: Joi
-                                        .boolean()
-                                        .example(true)
+                                        .number()
+                                        .valid(1, 2, 3, 4, 5)
                                 }),
+                                msg: Joi.string().required(),
+                                msgcode: Joi.string()
                             })
                         },
                     },
@@ -529,7 +551,7 @@ function default_1(server, serverConfigs, database) {
             description: '#mockapi Login a user.',
             validate: {
                 payload: UserValidator.loginUserModel,
-                headers: Joi.object({ clientid: Joi.string().required() }).unknown()
+                headers: user_validator_1.headersChecksumModel
             },
             plugins: {
                 'hapi-swagger': {
@@ -543,6 +565,8 @@ function default_1(server, serverConfigs, database) {
                                 token: Joi
                                     .string()
                                     .required(),
+                                msg: Joi.string().required(),
+                                msgcode: Joi.string()
                             })
                         },
                     },

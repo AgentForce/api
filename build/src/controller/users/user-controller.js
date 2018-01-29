@@ -174,7 +174,9 @@ class UserController {
                     statusCode: 200,
                     data: {
                         status: true
-                    }
+                    },
+                    msg: '',
+                    msgCode: ''
                 };
                 reply(res);
                 // const dataInput = request.payload as IPayloadChangePass;
@@ -231,7 +233,8 @@ class UserController {
                         status: 400,
                         url: request.url.path,
                         error: {
-                            code: 'ex', msg: 'Exception occurred change password'
+                            code: 'ex',
+                            msg: 'Exception occurred change password'
                         }
                     };
                 }
@@ -255,7 +258,9 @@ class UserController {
                     statusCode: 200,
                     data: {
                         status: true
-                    }
+                    },
+                    msgCode: '',
+                    msg: ''
                 };
                 reply(res);
                 // const dataInput = request.payload as IPayloadChangePass;
@@ -368,7 +373,9 @@ class UserController {
                 status: HTTP_STATUS.OK,
                 data: {
                     Code: '123456'
-                }
+                },
+                msg: '',
+                msgCode: ''
             });
             // const username = request.payload.Username;
             // const password = request.payload.Password;
@@ -708,7 +715,9 @@ class UserController {
                         statusCode: 200,
                         data: {
                             status: true
-                        }
+                        },
+                        msg: '',
+                        msgCode: ''
                     };
                     reply(res);
                 }
@@ -764,8 +773,10 @@ class UserController {
                 res = {
                     statusCode: 200,
                     data: {
-                        status: true
-                    }
+                        status: 1
+                    },
+                    msg: '',
+                    msgCode: ''
                 };
                 reply(res);
             }
