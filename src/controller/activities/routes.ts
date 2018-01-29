@@ -2,7 +2,7 @@ import * as Hapi from "hapi";
 import * as Joi from "joi";
 import ActivityController from "./activity-controller";
 import * as ActivitiesValidator from "./activity-validator";
-import { jwtValidator } from "../users/user-validator";
+import { jwtValidator, headerModel } from "../users/user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
@@ -38,7 +38,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         .default('2018-01-31')
                         .required(),
                 },
-                // headers: jwtValidator
+                headers: headerModel
             },
             plugins: {
                 'hapi-swagger': {
@@ -51,11 +51,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .number()
                                         .example(200),
                                     data: Joi
-                                        .object({
-                                            data: Joi.array().example([]),
-                                            limit: Joi.number(),
-                                            page: Joi.number()
-                                        })
+                                        .array().items({
+                                        }),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -66,7 +65,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                     statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         }
@@ -95,7 +96,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         .default('2018-01-01')
                         .required()
                 },
-                // headers: jwtValidator
+                headers: headerModel
             },
             plugins: {
                 'hapi-swagger': {
@@ -112,7 +113,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                             data: Joi.array().example([]),
                                             limit: Joi.number(),
                                             page: Joi.number()
-                                        })
+                                        }),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -123,7 +126,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                     statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         }
@@ -223,8 +228,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         .number()
                         .integer()
                         .required(),
-                }
-                // headers: jwtValidator
+                },
+                headers: headerModel
             },
             plugins: {
                 'hapi-swagger': {
@@ -237,9 +242,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .number()
                                         .example(200),
                                     data: Joi
-                                        .object({
-                                            data: Joi.object(),
-                                        })
+                                        .object({}),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -250,7 +255,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                     statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         }
@@ -262,9 +269,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
 
 
 
-      /**
-    * history activities of leads
-    */
+    /**
+  * history activities of leads
+  */
     server.route({
         method: 'GET',
         path: '/activities/leadid/{leadid}',
@@ -279,8 +286,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         .number()
                         .integer()
                         .required(),
-                }
-                // headers: jwtValidator
+                },
+                headers: headerModel
             },
             plugins: {
                 'hapi-swagger': {
@@ -294,8 +301,11 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .example(200),
                                     data: Joi
                                         .object({
-                                            data: Joi.object(),
-                                        })
+                                            data: Joi.array(),
+                                            totalCount: 20,
+                                            page: 1,
+                                            limit: 10
+                                        }),
                                 }
                             )
                         },
@@ -306,7 +316,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                     statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         }
@@ -330,7 +342,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             description: '#screenv3/KH-hengap:18 Create a activity.',
             validate: {
                 payload: ActivitiesValidator.createModel,
-                // headers: jwtValidator,
+                headers: headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST, error: {
@@ -363,6 +375,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .number()
                                         .example(HTTP_STATUS.OK),
                                     data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgCode: Joi.string()
                                 }
                             )
                         },
@@ -373,7 +387,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                     statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgCode: Joi.string()
                                 }
                             )
                         }
@@ -400,6 +416,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             description: 'Update a activity',
             validate: {
                 payload: ActivitiesValidator.updateModel,
+                headers: headerModel,
                 params: {
                     id: Joi.number().required()
                         .description('acitivityId')
@@ -437,6 +454,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .number()
                                         .example(HTTP_STATUS.OK),
                                     data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgCode: Joi.string()
                                 }
                             )
                         },
@@ -447,7 +466,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                     statusCode: Joi
                                         .number()
                                         .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgCode: Joi.string()
                                 }
                             )
                         }

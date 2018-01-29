@@ -32,7 +32,8 @@ export default class CampaignController {
                 data: {
 
                 },
-                msg: 'Create success'
+                msg: 'Create success',
+                msgCode: ''
             };
             reply(res);
             // let iCamp: ICampaign = request.payload;
@@ -254,6 +255,8 @@ export default class CampaignController {
             reply({
                 statusCode: 200,
                 data: res,
+                msg: '',
+                msgCode: ''
             });
         } catch (ex) {
             // log mongo create fail

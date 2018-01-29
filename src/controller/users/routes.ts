@@ -7,7 +7,7 @@ import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
 import { LogUser } from "../../mongo/index";
-import { jwtValidator } from "./user-validator";
+import { jwtValidator, headerModel, headersChecksumModel } from "./user-validator";
 import { checkToken } from "../../common/authentication";
 export default function (server: Hapi.Server, serverConfigs: IServerConfigurations, database: IDatabase) {
 
@@ -28,15 +28,17 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
 
     server.route({
         method: 'GET',
-        path: '/users/profile',
+        path: '/users/profile/{username}',
         config: {
             handler: userController.profile,
             // auth: "jwt",
             description: '#mockapi return info profile of a user',
             tags: ['api', 'users'],
             validate: {
-                // headers: UserValidator.jwtValidator,
-
+                headers: UserValidator.headerModel,
+                params: {
+                    username: Joi.string().required()
+                }
             },
             plugins: {
                 'hapi-swagger': {
@@ -50,15 +52,21 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                         .example(200),
                                     data: Joi
                                         .object(),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
                                 }
                             )
                         },
                         401: {
                             'description': 'Please login.',
                             schema: Joi.object({
-                                "statusCode": 401,
-                                "error": "Unauthorized",
-                                "message": "Missing authentication"
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object(),
+                                msgcode: Joi.string(),
+                                msg: Joi.string()
                             })
                         }
                     },
@@ -76,15 +84,16 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
 
     server.route({
         method: 'PUT',
-        path: '/users/profile',
+        path: '/users/profile/',
         config: {
             handler: userController.updateProfile,
             // auth: "jwt",
             tags: ['api', 'users'],
             description: 'Update user profile.',
             validate: {
+
                 payload: UserValidator.updateProfileModel,
-                // headers: UserValidator.jwtValidator,
+                headers: headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST,
@@ -119,6 +128,8 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                         .example(200),
                                     data: Joi
                                         .object(),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
                                 }
                             )
                         },
@@ -144,10 +155,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             description: 'Verify SMS OTP',
             validate: {
                 payload: UserValidator.verifyOTPModel,
-                headers: Joi.object({
-                    // authorization: Joi.string().required(),
-                    // clientid: Joi.string().required()
-                }).unknown(),
+                headers: headersChecksumModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST,
@@ -182,12 +190,12 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                         .example(200),
                                     data: Joi
                                         .object(),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
                                 }
                             )
                         },
-                        '401': {
-                            'description': 'User does not have authorization.'
-                        }
+
                     },
                     security: [{
                         'jwt': []
@@ -203,21 +211,18 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
 
     server.route({
         method: 'POST',
-        path: '/users/check',
+        path: '/users/check/{phone}/{username}',
         config: {
             handler: userController.check,
             // auth: "jwt",
             tags: ['api', 'users'],
             description: 'check user',
             validate: {
-                payload: {
-                    Phone: Joi.string().required(),
-                    UserName: Joi.string().required()
+                headers: headersChecksumModel,
+                params: {
+                    phone: Joi.string().required(),
+                    username: Joi.string().required()
                 },
-                headers: Joi.object({
-                    // authorization: Joi.string().required(),
-                    // clientid: Joi.string().required()
-                }).unknown(),
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST,
@@ -256,6 +261,8 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                                 .boolean()
                                                 .example(true)
                                         }),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
                                 }
                             )
                         },
@@ -272,6 +279,8 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                                 .boolean()
                                                 .example(false)
                                         }),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
                                 }
                             )
                         },
@@ -354,6 +363,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             // auth: "jwt",
             description: 'Change password',
             validate: {
+                headers: headerModel,
                 payload: UserValidator.changePassModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
@@ -393,6 +403,8 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                                 .boolean()
                                                 .example(true)
                                         }),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
                                 }
                             )
                         },
@@ -403,12 +415,10 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                     statusCode: Joi
                                         .number()
                                         .example(400),
-                                    err: Joi
-                                        .object({
-                                            msg: Joi
-                                                .string()
-                                                .example('Password dont valid')
-                                        }),
+                                    data: Joi
+                                        .object(),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
                                 }
                             )
                         },
@@ -434,6 +444,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             // auth: "jwt",
             description: 'Set password',
             validate: {
+                headers: headersChecksumModel,
                 payload: {
                     Password: Joi.string()
                         .regex(/^[0-9]*$/)
@@ -477,6 +488,8 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                                 .boolean()
                                                 .example(true)
                                         }),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
                                 }
                             )
                         },
@@ -487,12 +500,12 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                     statusCode: Joi
                                         .number()
                                         .example(400),
-                                    err: Joi
+                                    data: Joi
                                         .object({
-                                            msg: Joi
-                                                .string()
-                                                .example('Password dont valid')
+
                                         }),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
                                 }
                             )
                         },
@@ -518,6 +531,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             // auth: "jwt",
             description: 'Request to get OTP code',
             validate: {
+                headers: headersChecksumModel,
                 payload: {
                     Phone: Joi
                         .string()
@@ -562,9 +576,11 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                     data: Joi
                                         .object({
                                             status: Joi
-                                                .boolean()
-                                                .example(true)
+                                                .number()
+                                                .valid(1, 2, 3, 4, 5)
                                         }),
+                                    msg: Joi.string().required(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -588,7 +604,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
 
             validate: {
                 payload: UserValidator.loginUserModel,
-                headers: Joi.object({ clientid: Joi.string().required() }).unknown()
+                headers: headersChecksumModel
             },
             plugins: {
                 'hapi-swagger': {
@@ -603,6 +619,8 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                     token: Joi
                                         .string()
                                         .required(),
+                                    msg: Joi.string().required(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },

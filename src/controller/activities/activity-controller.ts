@@ -225,7 +225,9 @@ export default class ActivitiesController {
                     Name: 'John',
                     StartDate: '2018-01-26',
                     FullDate: true,
-                }]
+                }],
+                msg: '',
+                msgCode: ''
             };
             reply(res);
         } catch (ex) {
@@ -284,7 +286,9 @@ export default class ActivitiesController {
                     Status: true,
                     Location: Faker.lorem.sentence(),
                     Description: Faker.lorem.lines()
-                }
+                },
+                msg: '',
+                msgCode: ''
             };
             reply(res);
             // let iAc = request.payload as IPayloadUpdate;
@@ -364,7 +368,9 @@ export default class ActivitiesController {
                     Status: true,
                     Location: Faker.lorem.sentence(),
                     Description: Faker.lorem.lines()
-                }
+                },
+                msg: '',
+                msgCode: ''
             };
             reply(res);
             // let iAc = request.payload as IPayloadCreate;
