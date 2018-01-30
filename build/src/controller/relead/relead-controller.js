@@ -40,7 +40,21 @@ class CampaignController {
             try {
                 let res = {
                     statusCode: HTTP_STATUS.OK,
-                    data: {},
+                    data: {
+                        items: [{
+                                Phone: '841693258887',
+                                FullName: 'Tu Nguyen'
+                            }, {
+                                Phone: '841693258888',
+                                FullName: 'Hong Dao'
+                            }, {
+                                Phone: '841693258889',
+                                FullName: 'Alex'
+                            }],
+                        totalItem: 20,
+                        page: 1,
+                        limit: 10
+                    },
                     msg: '',
                     msgCode: 'get_success'
                 };
