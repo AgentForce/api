@@ -209,46 +209,46 @@ export default class CampaignController {
                 data: [{
                     Period: 1,
                     Week: 1,
-                    TargetCallSale: 25,
-                    TargetContractSale: 10,
+                    TargetCallSale: 20,
                     TargetMetting: 5,
-                    TargetPresentation: 2,
+                    TargetPresentation: 3,
+                    TargetContractSale: 2,
                     CurrentCallSale: 1,
                     CurrentMetting: 1,
-                    CurrentPresentation: 8,
-                    CurrentContract: 0
+                    CurrentPresentation: 1,
+                    CurrentContract: 1
                 }, {
                     Period: 1,
                     Week: 2,
-                    TargetCallSale: 25,
-                    TargetContractSale: 10,
+                    TargetCallSale: 20,
                     TargetMetting: 5,
-                    TargetPresentation: 2,
+                    TargetPresentation: 3,
+                    TargetContractSale: 1,
                     CurrentCallSale: 1,
                     CurrentMetting: 1,
-                    CurrentPresentation: 8,
+                    CurrentPresentation: 1,
                     CurrentContract: 0
                 }, {
                     Period: 1,
                     Week: 3,
-                    TargetCallSale: 25,
-                    TargetContractSale: 10,
-                    TargetMetting: 5,
+                    TargetCallSale: 20,
+                    TargetMetting: 4,
                     TargetPresentation: 2,
+                    TargetContractSale: 1,
                     CurrentCallSale: 1,
                     CurrentMetting: 1,
-                    CurrentPresentation: 8,
+                    CurrentPresentation: 1,
                     CurrentContract: 0
                 }, {
                     Period: 1,
                     Week: 4,
-                    TargetCallSale: 25,
-                    TargetContractSale: 10,
-                    TargetMetting: 5,
+                    TargetCallSale: 20,
+                    TargetMetting: 4,
                     TargetPresentation: 2,
+                    TargetContractSale: 1,
                     CurrentCallSale: 1,
                     CurrentMetting: 1,
-                    CurrentPresentation: 8,
+                    CurrentPresentation: 1,
                     CurrentContract: 0
                 }]
             };

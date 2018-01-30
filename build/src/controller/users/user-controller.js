@@ -341,7 +341,12 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             return reply({
                 status: HTTP_STATUS.OK,
-                token: '#manulife$123$123'
+                data: {
+                    token: '#manulife$123$123',
+                    refreshToken: '3453p04tertvnw34[5'
+                },
+                msgCode: '',
+                msg: ''
             });
             // const username = request.payload.Username;
             // const password = request.payload.Password;
@@ -429,22 +434,66 @@ class UserController {
     /**
     * Authentication
     */
-    loginAuthen(request, reply) {
+    refreshToken(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
-            const email = request.payload.Email;
-            const password = request.payload.Password;
-            let user = yield this.database
-                .userModel
-                .findOne({ email: email });
-            if (!user) {
-                return reply(Boom.unauthorized("User does not exists."));
+            try {
+                let res = {
+                    status: HTTP_STATUS.OK,
+                    data: {
+                        token: '#manulife$123$123',
+                        refreshToken: '3453p04tertvnw34[5'
+                    },
+                    msgCode: '',
+                    msg: ''
+                };
+                reply({
+                    status: HTTP_STATUS.OK,
+                    data: res
+                }).code(HTTP_STATUS.OK);
+                // if (user !== null) {
+                //     reply({
+                //         status: HTTP_STATUS.OK,
+                //         data: user
+                //     }).code(HTTP_STATUS.OK);
+                // } else {
+                //     throw {
+                //         code: Ex.EX_USERNAME_NOT_FOUND,
+                //         msg: 'UserName not found'
+                //     };
+                // }
             }
-            if (!user.validatePassword(password)) {
-                return reply(Boom.unauthorized("Password is invalid."));
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 400,
+                        url: request.url.path,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 400,
+                        url: request.url.path,
+                        error: {
+                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
+                            msg: 'Exception occurred find username'
+                        }
+                    };
+                }
+                index_1.LogUser.create({
+                    type: 'findusername',
+                    dataInput: {
+                        params: request.params
+                    },
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
-            reply({
-                token: this.generateToken(user),
-            });
         });
     }
     profile(request, reply) {

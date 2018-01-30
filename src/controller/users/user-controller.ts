@@ -356,7 +356,12 @@ export default class UserController {
     public async loginUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         return reply({
             status: HTTP_STATUS.OK,
-            token: '#manulife$123$123'
+            data: {
+                token: '#manulife$123$123',
+                refreshToken: '3453p04tertvnw34[5'
+            },
+            msgCode: '',
+            msg: ''
         });
         // const username = request.payload.Username;
         // const password = request.payload.Password;
@@ -450,23 +455,63 @@ export default class UserController {
     /**
     * Authentication
     */
-    public async loginAuthen(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        const email = request.payload.Email;
-        const password = request.payload.Password;
-        let user: IUser = await this.database
-            .userModel
-            .findOne({ email: email });
-        if (!user) {
-            return reply(Boom.unauthorized("User does not exists."));
+    public async refreshToken(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let res = {
+                status: HTTP_STATUS.OK,
+                data: {
+                    token: '#manulife$123$123',
+                    refreshToken: '3453p04tertvnw34[5'
+                },
+                msgCode: '',
+                msg: ''
+            };
+            reply({
+                status: HTTP_STATUS.OK,
+                data: res
+            }).code(HTTP_STATUS.OK);
+            // if (user !== null) {
+            //     reply({
+            //         status: HTTP_STATUS.OK,
+            //         data: user
+            //     }).code(HTTP_STATUS.OK);
+            // } else {
+            //     throw {
+            //         code: Ex.EX_USERNAME_NOT_FOUND,
+            //         msg: 'UserName not found'
+            //     };
+            // }
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 400,
+                    url: request.url.path,
+                    error: {
+                        code: Ex.EX_GENERAL,
+                        msg: 'Exception occurred find username'
+                    }
+                };
+            }
+            LogUser.create({
+                type: 'findusername',
+                dataInput: {
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
-
-        if (!user.validatePassword(password)) {
-            return reply(Boom.unauthorized("Password is invalid."));
-        }
-
-        reply({
-            token: this.generateToken(user),
-        });
     }
 
 
