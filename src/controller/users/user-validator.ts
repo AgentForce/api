@@ -144,10 +144,12 @@ const headerModel = Joi.object().keys({
         .string()
         .required(),
     versionos: Joi
-        .number()
-        .default(8.0)
+        .string()
+        .default('1.3 fix')
         .required(),
-    versionapp: Joi.number().default(1.2).required(),
+    versionapp: Joi.string()
+        .default('2.0')
+        .required(),
     devicename: Joi.string().default('samsung').required(),
     imei: Joi.string().required()
 
@@ -158,10 +160,12 @@ const headersChecksumModel = Joi.object().keys({
         .string()
         .required(),
     versionos: Joi
-        .number()
-        .default(8.0)
+        .string()
+        .default('1.3 fix')
         .required(),
-    versionapp: Joi.number().default(1.2).required(),
+    versionapp: Joi.string()
+        .default('2.0')
+        .required(),
     devicename: Joi.string().default('samsung').required(),
     imei: Joi.string().required(),
     checksum: Joi.string().required()

@@ -89,6 +89,94 @@ class CampaignController {
             }
         });
     }
+    createCampaignSM(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // 1. Router Checking data input : commission > 0, loan > 0, monthly > 0
+            try {
+                let res = {
+                    statusCode: HTTP_STATUS.OK,
+                    data: {},
+                    msg: 'Create success',
+                    msgCode: ''
+                };
+                reply(res);
+                // let iCamp: ICampaign = request.payload;
+                // let userId = 5;
+                // const camps = <any>await CampaignService.createOfFA(iCamp, userId);
+                // let logcamps = _.map(camps, (camp: any) => {
+                //     return {
+                //         type: 'createcampaign',
+                //         dataInput: {
+                //             payload: request.payload
+                //         },
+                //         msg: 'success',
+                //         meta: {
+                //             response: camp.dataValues
+                //         },
+                //     };
+                // });
+                // // save mongo log
+                // LogCamp
+                //     .insertMany(logcamps);
+                // reply({
+                //     status: HTTP_STATUS.OK,
+                //     data: camps
+                // }).code(200);
+            }
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 400,
+                        url: request.url.path,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 400,
+                        url: request.url.path,
+                        error: {
+                            code: index_2.ManulifeErrors.EX_GENERAL,
+                            msg: 'Create campaign have errors'
+                        }
+                    };
+                }
+                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                index_1.LogCamp.create({
+                    type: 'createcampaign',
+                    dataInput: {
+                        payload: request.payload
+                    },
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            }
+        });
+    }
+    /**
+     * forcast
+     */
+    forcast(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let res = {
+                    statusCode: HTTP_STATUS.OK,
+                    data: {},
+                    msg: '',
+                    msgCode: ''
+                };
+                reply(res);
+            }
+            catch (ex) {
+                reply(ex);
+            }
+        });
+    }
     /**
      * get total campaign info from cache
      * parameter:
