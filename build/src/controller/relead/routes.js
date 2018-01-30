@@ -87,6 +87,10 @@ function default_1(server, configs, database) {
             description: 'get list in a period, if get all: period=0',
             validate: {
                 headers: user_validator_1.headerModel,
+                query: {
+                    limit: Joi.number().required(),
+                    page: Joi.number().required()
+                },
                 params: {
                     period: Joi.number()
                         .required()

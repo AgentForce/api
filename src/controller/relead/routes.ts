@@ -108,6 +108,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             description: 'get list in a period, if get all: period=0',
             validate: {
                 headers: headerModel,
+                query: {
+                    limit: Joi.number().required(),
+                    page: Joi.number().required()
+                },
                 params: {
                     period: Joi.number()
                         .required()
@@ -128,17 +132,15 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                     responses: {
                         200: {
                             description: '',
-                            schema: Joi.object(
-                                {
-                                    statusCode: Joi
-                                        .number()
-                                        .example(200),
-                                    data: Joi
-                                        .object(),
-                                    msg: Joi.string(),
-                                    msgcode: Joi.string()
-                                }
-                            )
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
                         },
                         404: {
                             description: '',
