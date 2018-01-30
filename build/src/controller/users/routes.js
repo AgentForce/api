@@ -184,7 +184,7 @@ function default_1(server, serverConfigs, database) {
         }
     });
     server.route({
-        method: 'POST',
+        method: 'GET',
         path: '/users/check/{phone}/{username}',
         config: {
             handler: userController.check,
@@ -551,6 +551,40 @@ function default_1(server, serverConfigs, database) {
             description: '#mockapi Login a user.',
             validate: {
                 payload: UserValidator.loginUserModel,
+                headers: user_validator_1.headersChecksumModel
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(200),
+                                token: Joi
+                                    .string()
+                                    .required(),
+                                msg: Joi.string().required(),
+                                msgcode: Joi.string()
+                            })
+                        },
+                    },
+                }
+            }
+        }
+    });
+    server.route({
+        method: 'POST',
+        path: '/users/refreshtoken',
+        config: {
+            handler: userController.refreshToken,
+            tags: ['users', 'api'],
+            description: 'refresh token, will return new token and new refresh token.',
+            validate: {
+                payload: {
+                    refreshToken: Joi.string()
+                },
                 headers: user_validator_1.headersChecksumModel
             },
             plugins: {
