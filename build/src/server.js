@@ -9,6 +9,7 @@ const Metatypes = require("./controller/metatype");
 // import * as Invites from './controller/invites';
 const Dashboard = require("./controller/dashboard");
 const Actvities = require("./controller/activities");
+const Relead = require("./controller/relead");
 function init(configs, database) {
     return new Promise(resolve => {
         const port = process.env.PORT || 3000;
@@ -42,6 +43,7 @@ function init(configs, database) {
             Campaigns.init(server, configs, database);
             Leads.init(server, configs, database);
             Actvities.init(server, configs, database);
+            Relead.init(server, configs, database);
             // Events.init(server, configs, database);
             Metatypes.init(server, configs, database);
             Dashboard.init(server, configs, database);

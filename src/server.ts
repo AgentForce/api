@@ -11,6 +11,7 @@ import * as Metatypes from './controller/metatype';
 import * as Dashboard from './controller/dashboard';
 import { IDatabase } from "./database";
 import * as Actvities from './controller/activities';
+import * as Relead from './controller/relead';
 import { Invite } from "./postgres/invite";
 import * as Path from 'path';
 
@@ -54,6 +55,7 @@ export function init(configs: IServerConfigurations, database: IDatabase): Promi
             Campaigns.init(server, configs, database);
             Leads.init(server, configs, database);
             Actvities.init(server, configs, database);
+            Relead.init(server, configs, database);
             // Events.init(server, configs, database);
             Metatypes.init(server, configs, database);
             Dashboard.init(server, configs, database);

@@ -1,8 +1,8 @@
 import * as Hapi from "hapi";
 import * as Joi from "joi";
 import * as Boom from 'boom';
-import CampaignController from "./campaign-controller";
-import * as CampaignValidator from "./campaign-validator";
+import CampaignController from "./relead-controller";
+import * as CampaignValidator from "./relead-validator";
 import { jwtValidator, headerModel } from "../users/user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
@@ -16,6 +16,7 @@ import { ManulifeErrors as Ex } from '../../common/code-errors';
  */
 import { LogCamp } from "../../mongo/index";
 import { SlackAlert } from "../../common/index";
+import { request } from "https";
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
 
     const campaignController = new CampaignController(configs, database);
@@ -25,16 +26,86 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
 
 
     /**
-     * get a campaign by period
+     * get
      */
     server.route({
         method: 'GET',
-        path: '/campaigns/period/{period}',
+        path: '/releads/{id}',
         config: {
-            handler: campaignController.getByCampaignId,
+            handler: campaignController.get,
             // auth: "jwt",
-            tags: ['api', 'campaigns'],
-            description: '#drivev3/dangnhap,KH-lienhe:1 #screen11,12,12copy2,12copy3. Trả về danh sách plan 4 tuần của một tháng',
+            tags: ['api', 'releads'],
+            description: 'get relead',
+            validate: {
+                headers: headerModel,
+                params: {
+                    id: Joi.number()
+                        .required()
+                },
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: Ex.EX_PAYLOAD,
+                            msg: 'params dont valid',
+                            details: error
+                        }
+                    };
+                }
+                // headers: jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
+                                }
+                            )
+                        },
+                        404: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.NOT_FOUND),
+                                    data: Joi
+                                        .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
+                                }
+                            )
+                        },
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
+
+
+    /**
+         * get list relead
+         */
+    server.route({
+        method: 'GET',
+        path: '/releads/period/{period}',
+        config: {
+            handler: campaignController.list,
+            // auth: "jwt",
+            tags: ['api', 'releads'],
+            description: 'get list in a period, if get all: period=0',
             validate: {
                 headers: headerModel,
                 params: {
@@ -49,21 +120,8 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             details: error
                         }
                     };
-                    LogCamp.create({
-                        type: '/campaigns/current',
-                        dataInput: {
-                            params: request.params,
-                        },
-                        msg: 'params do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        }
-                    });
-                    reply(Boom);
                 }
                 // headers: jwtValidator
-
             },
             plugins: {
                 'hapi-swagger': {
@@ -104,20 +162,30 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             }
         }
     });
-
     /**
-     * get a campaign by period
-     */
+            * create relead
+            */
     server.route({
-        method: 'GET',
-        path: '/campaigns/check',
+        method: 'POST',
+        path: '/releads',
         config: {
-            handler: campaignController.checkCampaign,
+            handler: campaignController.create,
             // auth: "jwt",
-            tags: ['api', 'campaigns'],
-            description: '#screenv3/dangnhap:3 Check campaign exist in current day ',
+            tags: ['api', 'releads'],
+            description: 'create a relead',
             validate: {
                 headers: headerModel,
+                payload: {
+                    Phone: Joi
+                        .string()
+                        .required(),
+                    FullName: Joi
+                        .string()
+                        .required(),
+                    CampId: Joi
+                        .number()
+                        .required()
+                },
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST, error: {
@@ -126,21 +194,81 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             details: error
                         }
                     };
-                    LogCamp.create({
-                        type: '/campaigns/current',
-                        dataInput: {
-                            params: request.params,
-                        },
-                        msg: 'params do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        }
-                    });
-                    reply(Boom);
                 }
                 // headers: jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
+                                }
+                            )
+                        },
+                        404: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.NOT_FOUND),
+                                    data: Joi
+                                        .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
+                                }
+                            )
+                        },
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
 
+
+    /**
+            * create relead
+            */
+    server.route({
+        method: 'PUT',
+        path: '/releads/{id}',
+        config: {
+            handler: campaignController.get,
+            // auth: "jwt",
+            tags: ['api', 'releads'],
+            description: 'update a relead',
+            validate: {
+                headers: headerModel,
+                payload: {
+                    Phone: Joi
+                        .string()
+                        .required(),
+                    FullName: Joi
+                        .string()
+                        .required()
+                },
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: Ex.EX_PAYLOAD,
+                            msg: 'params dont valid',
+                            details: error
+                        }
+                    };
+                }
+                // headers: jwtValidator
             },
             plugins: {
                 'hapi-swagger': {
@@ -183,118 +311,38 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     });
 
     /**
-        * forcast
+        * get list relead
         */
     server.route({
-        method: 'GET',
-        path: '/campaigns/forcast',
+        method: 'DELETE',
+        path: '/releads/{id}',
         config: {
-            handler: campaignController.forcast,
+            handler: campaignController.get,
             // auth: "jwt",
-            tags: ['api', 'campaigns'],
-            description: 'API for SM. forcast target',
+            tags: ['api', 'releads'],
+            description: 'delete a relead',
             validate: {
                 headers: headerModel,
-                failAction: (request, reply, source, error) => {
-                    let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST,
-                        error: {
-                            code: Ex.EX_PAYLOAD,
-                            msg: 'payload dont valid',
-                            details: error
-                        }
-                    };
-                    SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                    LogCamp.create({
-                        type: 'createcamp',
-                        dataInput: request.payload,
-                        msg: 'payload do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        },
-                    });
-                    return reply(res);
-                }
-            },
-            plugins: {
-                'hapi-swagger': {
-                    responses: {
-                        200: {
-                            description: 'success',
-                            schema: Joi.object(
-                                {
-                                    statusCode: Joi
-                                        .number()
-                                        .example(200),
-                                    data: Joi
-                                        .object(),
-                                    msg: Joi.string(),
-                                    msgcode: Joi.string()
-                                }
-                            )
-                        },
-                        400: {
-                            description: 'Error something',
-                            schema: Joi.object(
-                                {
-                                    statusCode: Joi
-                                        .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
-                                    data: Joi.object(),
-                                    msg: Joi.string(),
-                                    msgcode: Joi.string()
-                                }
-                            )
-                        }
-                    },
-                    security: [{
-                        'jwt': []
-                    }]
-                }
-            }
-        }
-    });
-    /**
-     * creat new campaign fa
-     */
-    server.route({
-        method: 'POST',
-        path: '/campaigns/fa',
-        config: {
-            handler: campaignController.createCampaign,
-            // auth: "jwt",
-            tags: ['api', 'campaigns'],
-            description: '#googledrive/dangky #screen10. Create a campaign FA',
-            validate: {
-                payload: CampaignValidator.createCampaignFAModel,
-                headers: headerModel,
+                params: {
+                    id: Joi.number()
+                        .required()
+                },
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST, error: {
                             code: Ex.EX_PAYLOAD,
-                            msg: 'payload dont valid',
+                            msg: 'params dont valid',
                             details: error
                         }
                     };
-                    SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                    LogCamp.create({
-                        type: 'createcamp',
-                        dataInput: request.payload,
-                        msg: 'payload do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        },
-                    });
-                    return reply(res);
                 }
+                // headers: jwtValidator
             },
             plugins: {
                 'hapi-swagger': {
                     responses: {
                         200: {
-                            description: 'success',
+                            description: '',
                             schema: Joi.object(
                                 {
                                     statusCode: Joi
@@ -307,72 +355,13 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 }
                             )
                         },
-                        400: {
-                            description: 'Error something',
+                        404: {
+                            description: '',
                             schema: Joi.object(
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
-                                    data: Joi.object(),
-                                    msg: Joi.string(),
-                                    msgcode: Joi.string()
-                                }
-                            )
-                        }
-                    },
-                    security: [{
-                        'jwt': []
-                    }]
-                }
-            }
-        }
-    });
-    /**
-   * creat new campaign fa
-   */
-    server.route({
-        method: 'POST',
-        path: '/campaigns/sm',
-        config: {
-            handler: campaignController.createCampaignSM,
-            // auth: "jwt",
-            tags: ['api', 'campaigns'],
-            description: '#googledrive/dangky #screen10. Create a campaign SM',
-            validate: {
-                payload: CampaignValidator.createCampaignFAModel,
-                headers: headerModel,
-                failAction: (request, reply, source, error) => {
-                    let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: Ex.EX_PAYLOAD,
-                            msg: 'payload dont valid',
-                            details: error
-                        }
-                    };
-                    SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                    LogCamp.create({
-                        type: 'createcamp',
-                        dataInput: request.payload,
-                        msg: 'payload do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        },
-                    });
-                    return reply(res);
-                }
-            },
-            plugins: {
-                'hapi-swagger': {
-                    responses: {
-                        200: {
-                            description: 'success',
-                            schema: Joi.object(
-                                {
-                                    statusCode: Joi
-                                        .number()
-                                        .example(200),
+                                        .example(HTTP_STATUS.NOT_FOUND),
                                     data: Joi
                                         .object(),
                                     msg: Joi.string(),
@@ -380,19 +369,6 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 }
                             )
                         },
-                        400: {
-                            description: 'Error something',
-                            schema: Joi.object(
-                                {
-                                    statusCode: Joi
-                                        .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
-                                    data: Joi.object(),
-                                    msg: Joi.string(),
-                                    msgcode: Joi.string()
-                                }
-                            )
-                        }
                     },
                     security: [{
                         'jwt': []
@@ -401,4 +377,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             }
         }
     });
+
+
+
 }
