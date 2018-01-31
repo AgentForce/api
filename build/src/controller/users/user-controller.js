@@ -768,7 +768,7 @@ class UserController {
                     active: 0,
                     description: "",
                     link: "",
-                    mobile_type: "android",
+                    mobile_type: request.params.type,
                     version: "3.0",
                 },
                 msgCode: '',

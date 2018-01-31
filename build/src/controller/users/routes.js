@@ -600,12 +600,15 @@ function default_1(server, serverConfigs, database) {
     });
     server.route({
         method: 'GET',
-        path: '/app/check',
+        path: '/app/check/{type}',
         config: {
             handler: userController.checkApp,
             tags: ['app', 'api'],
             description: 'check update app',
             validate: {
+                params: {
+                    type: Joi.string().valid('ios', 'android').required()
+                },
                 headers: user_validator_1.headersChecksumModel
             },
             plugins: {

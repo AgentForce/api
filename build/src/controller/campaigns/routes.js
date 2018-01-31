@@ -371,6 +371,75 @@ function default_1(server, configs, database) {
             }
         }
     });
+    /**
+    * creat new campaign fa
+    */
+    server.route({
+        method: 'POST',
+        path: '/campaigns/um',
+        config: {
+            handler: campaignController.createCampaign,
+            // auth: "jwt",
+            tags: ['api', 'campaigns'],
+            description: '#googledrive/dangky #screen10. Create a campaign UM',
+            validate: {
+                payload: CampaignValidator.createCampaignFAModel,
+                headers: user_validator_1.headerModel,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
+                            msg: 'payload dont valid',
+                            details: error
+                        }
+                    };
+                    index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                    index_1.LogCamp.create({
+                        type: 'createcamp',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: 'success',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
+                        },
+                        400: {
+                            description: 'Error something',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(HTTP_STATUS.BAD_REQUEST),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
+                        }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
+                }
+            }
+        }
+    });
 }
 exports.default = default_1;
 //# sourceMappingURL=routes.js.map

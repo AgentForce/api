@@ -138,7 +138,7 @@ exports.loginUserModel = loginUserModel;
 const headerModel = Joi.object().keys({
     clientid: Joi
         .string()
-        .example('123456')
+        .default('123456')
         .required(),
     versionos: Joi
         .string()
