@@ -145,11 +145,9 @@ function default_1(server, serverConfigs, database) {
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST,
-                        error: {
-                            code: 'ex_payload',
-                            msg: 'payload dont valid',
-                            details: error
-                        }
+                        data: error,
+                        msgCode: '',
+                        msg: ''
                     };
                     index_1.LogUser.create({
                         type: 'updateprofile',
@@ -174,7 +172,9 @@ function default_1(server, serverConfigs, database) {
                                     .number()
                                     .example(200),
                                 data: Joi
-                                    .object(),
+                                    .object({
+                                    Status: Joi.boolean()
+                                }),
                                 msgcode: Joi.string(),
                                 msg: Joi.string()
                             })
@@ -506,11 +506,11 @@ function default_1(server, serverConfigs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(200),
-                                data: Joi
-                                    .object({
-                                    status: Joi
-                                        .number()
-                                        .valid(1, 2, 3, 4, 5)
+                                data: Joi.object({
+                                    Status: Joi
+                                        .object({
+                                        status: Joi.boolean()
+                                    })
                                 }),
                                 msg: Joi.string().required(),
                                 msgcode: Joi.string()
@@ -544,9 +544,13 @@ function default_1(server, serverConfigs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(200),
-                                token: Joi
-                                    .string()
-                                    .required(),
+                                data: {
+                                    access_token: Joi.string(),
+                                    token_type: Joi.string(),
+                                    expires_in: Joi.number(),
+                                    refresh_token: Joi.string(),
+                                    scope: Joi.string()
+                                },
                                 msg: Joi.string().required(),
                                 msgcode: Joi.string()
                             })
@@ -579,12 +583,11 @@ function default_1(server, serverConfigs, database) {
                                     .number()
                                     .example(200),
                                 data: {
-                                    token: Joi
-                                        .string()
-                                        .required(),
-                                    refreshToken: Joi
-                                        .string()
-                                        .required()
+                                    access_token: Joi.string(),
+                                    token_type: Joi.string(),
+                                    expires_in: Joi.number(),
+                                    refresh_token: Joi.string(),
+                                    scope: Joi.string()
                                 },
                                 msg: Joi.string().required(),
                                 msgcode: Joi.string()
@@ -599,8 +602,8 @@ function default_1(server, serverConfigs, database) {
         method: 'GET',
         path: '/app/check',
         config: {
-            handler: userController.refreshToken,
-            tags: ['users', 'api'],
+            handler: userController.checkApp,
+            tags: ['app', 'api'],
             description: 'check update app',
             validate: {
                 headers: user_validator_1.headersChecksumModel
@@ -614,14 +617,7 @@ function default_1(server, serverConfigs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(200),
-                                data: {
-                                    token: Joi
-                                        .string()
-                                        .required(),
-                                    refreshToken: Joi
-                                        .string()
-                                        .required()
-                                },
+                                data: {},
                                 msg: Joi.string().required(),
                                 msgcode: Joi.string()
                             })

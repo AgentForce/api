@@ -163,11 +163,9 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 failAction: (request, reply, source, error) => {
                     let res = {
                         status: HTTP_STATUS.BAD_REQUEST,
-                        error: {
-                            code: 'ex_payload',
-                            msg: 'payload dont valid',
-                            details: error
-                        }
+                        data: error,
+                        msgCode: '',
+                        msg: ''
                     };
                     LogUser.create({
                         type: 'updateprofile',
@@ -193,7 +191,9 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                         .number()
                                         .example(200),
                                     data: Joi
-                                        .object(),
+                                        .object({
+                                            Status: Joi.boolean()
+                                        }),
                                     msgcode: Joi.string(),
                                     msg: Joi.string()
                                 }
@@ -554,12 +554,12 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                     statusCode: Joi
                                         .number()
                                         .example(200),
-                                    data: Joi
-                                        .object({
-                                            status: Joi
-                                                .number()
-                                                .valid(1, 2, 3, 4, 5)
-                                        }),
+                                    data: Joi.object({
+                                        Status: Joi
+                                            .object({
+                                                status: Joi.boolean()
+                                            })
+                                    }),
                                     msg: Joi.string().required(),
                                     msgcode: Joi.string()
                                 }
@@ -597,9 +597,13 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                     statusCode: Joi
                                         .number()
                                         .example(200),
-                                    token: Joi
-                                        .string()
-                                        .required(),
+                                    data: {
+                                        access_token: Joi.string(),
+                                        token_type: Joi.string(),
+                                        expires_in: Joi.number(),
+                                        refresh_token: Joi.string(),
+                                        scope: Joi.string()
+                                    },
                                     msg: Joi.string().required(),
                                     msgcode: Joi.string()
                                 }
@@ -637,12 +641,11 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                         .number()
                                         .example(200),
                                     data: {
-                                        token: Joi
-                                            .string()
-                                            .required(),
-                                        refreshToken: Joi
-                                            .string()
-                                            .required()
+                                        access_token: Joi.string(),
+                                        token_type: Joi.string(),
+                                        expires_in: Joi.number(),
+                                        refresh_token: Joi.string(),
+                                        scope: Joi.string()
                                     },
                                     msg: Joi.string().required(),
                                     msgcode: Joi.string()
@@ -659,8 +662,8 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         method: 'GET',
         path: '/app/check',
         config: {
-            handler: userController.refreshToken,
-            tags: ['users', 'api'],
+            handler: userController.checkApp,
+            tags: ['app', 'api'],
             description: 'check update app',
 
             validate: {
@@ -677,12 +680,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                         .number()
                                         .example(200),
                                     data: {
-                                        token: Joi
-                                            .string()
-                                            .required(),
-                                        refreshToken: Joi
-                                            .string()
-                                            .required()
+
                                     },
                                     msg: Joi.string().required(),
                                     msgcode: Joi.string()
