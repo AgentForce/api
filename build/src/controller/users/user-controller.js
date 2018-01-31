@@ -170,54 +170,28 @@ class UserController {
     changePassword(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let res = {
-                    statusCode: 200,
-                    data: {
-                        status: true
-                    },
-                    msg: '',
-                    msgCode: ''
-                };
+                let res = {};
+                if (request.payload.OldPassword === '123456') {
+                    res = {
+                        statusCode: 200,
+                        data: {
+                            status: true
+                        },
+                        msg: index_2.MsgCodeResponses.USER_CHANGE_PASS_SUCCESS,
+                        msgCode: index_2.MsgCodeResponses.USER_CHANGE_PASS_SUCCESS
+                    };
+                }
+                else {
+                    res = {
+                        statusCode: 200,
+                        data: {
+                            status: false
+                        },
+                        msg: index_2.MsgCodeResponses.USER_CHANGE_PASS_DONT_MATCH,
+                        msgCode: index_2.MsgCodeResponses.USER_CHANGE_PASS_DONT_MATCH
+                    };
+                }
                 reply(res);
-                // const dataInput = request.payload as IPayloadChangePass;
-                // const username = request.params.username;
-                // const user = <any>await UserService.findByCode(username);
-                // if (user !== null) {
-                //     if (Bcrypt.compareSync(dataInput.OldPassword, user.Password)) {
-                //         let passwordHash = Bcrypt.hashSync(dataInput.NewPassword, Bcrypt.genSaltSync(8));
-                //         let userPg: any = await UserService
-                //             .changePassword(user.Id, dataInput, passwordHash);
-                //         let userMongo: any = await this.database.userModel
-                //             .update({
-                //                 userId: user.Id,
-                //             }, {
-                //                 password: passwordHash
-                //             });
-                //         let res = {
-                //             status: HTTP_STATUS.OK,
-                //             url: request.url.path,
-                //         };
-                //         LogUser.create({
-                //             type: 'changepassword',
-                //             dataInput: {
-                //                 params: request.params,
-                //                 payload: request.payload
-                //             },
-                //             msg: 'change password success',
-                //             meta: {
-                //                 response: res
-                //             }
-                //         });
-                //         reply(res).code(HTTP_STATUS.OK);
-                //     } else {
-                //         throw {
-                //             code: Ex.EX_OLDPASSWORD_DONT_CORRECT,
-                //             msg: 'oldpass dont correct'
-                //         };
-                //     }
-                // } else {
-                //     throw { code: Ex.EX_USERID_NOT_FOUND, msg: 'userid not found' };
-                // }
             }
             catch (ex) {
                 let res = {};
@@ -259,8 +233,8 @@ class UserController {
                     data: {
                         status: true
                     },
-                    msgCode: '',
-                    msg: ''
+                    msgCode: index_2.MsgCodeResponses.USER_SET_PASSWORD_SUCCESS,
+                    msg: index_2.MsgCodeResponses.USER_SET_PASSWORD_SUCCESS,
                 };
                 reply(res);
                 // const dataInput = request.payload as IPayloadChangePass;
@@ -446,10 +420,7 @@ class UserController {
                     msgCode: '',
                     msg: ''
                 };
-                reply({
-                    status: HTTP_STATUS.OK,
-                    data: res
-                }).code(HTTP_STATUS.OK);
+                reply(res).code(HTTP_STATUS.OK);
                 // if (user !== null) {
                 //     reply({
                 //         status: HTTP_STATUS.OK,
@@ -578,36 +549,12 @@ class UserController {
                 };
                 reply({
                     status: HTTP_STATUS.OK,
-                    data: fakerUser
+                    data: fakerUser,
+                    msg: 'Tìm thấy tài khoảng',
+                    msgcode: 'found'
                 }).code(HTTP_STATUS.OK);
             }
             catch (ex) {
-                console.log(ex);
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: { code: 'ex', msg: 'Exception occurred update profile user' }
-                    };
-                }
-                index_1.LogUser.create({
-                    type: 'updateprofile',
-                    dataInput: request.payload,
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
         });
     }
@@ -653,34 +600,6 @@ class UserController {
                 }
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: {
-                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
-                            msg: 'Exception occurred create user'
-                        }
-                    };
-                }
-                index_1.LogUser.create({
-                    type: 'createuser',
-                    dataInput: request.payload,
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
         });
     }
@@ -730,25 +649,7 @@ class UserController {
                     };
                 }
                 else {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: {
-                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
-                            msg: 'Exception occurred create authorize'
-                        }
-                    };
                 }
-                index_1.LogUser.create({
-                    type: 'createauthorize',
-                    dataInput: request.payload,
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
         });
     }
@@ -781,34 +682,6 @@ class UserController {
                 }
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: {
-                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
-                            msg: 'Exception occurred create authorize'
-                        }
-                    };
-                }
-                index_1.LogUser.create({
-                    type: 'createauthorize',
-                    dataInput: request.payload,
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
         });
     }
@@ -817,48 +690,65 @@ class UserController {
    */
     check(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
-            let res = {};
-            try {
+            let res = {
+                statusCode: 200,
+                data: {
+                    status: 1
+                },
+                msg: '',
+                msgCode: ''
+            };
+            if (request.params.phone === '841693248887' && request.params.username === 'm123456') {
                 res = {
                     statusCode: 200,
                     data: {
                         status: 1
                     },
-                    msg: '',
-                    msgCode: ''
+                    msg: index_2.MsgCodeResponses.USER_INACTIVE,
+                    msgCode: index_2.MsgCodeResponses.USER_INACTIVE
                 };
-                reply(res);
             }
-            catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: {
-                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
-                            msg: 'Exception occurred create authorize'
-                        }
-                    };
-                }
-                index_1.LogUser.create({
-                    type: 'createauthorize',
-                    dataInput: request.payload,
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
+            else if (request.params.phone === '841693248888' && request.params.username === 'm123455') {
+                res = {
+                    statusCode: 200,
+                    data: {
+                        status: 2
                     },
-                });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                    msg: index_2.MsgCodeResponses.USER_DONT_MATCH,
+                    msgCode: index_2.MsgCodeResponses.USER_DONT_MATCH
+                };
             }
+            else if (request.params.phone === '841693248889' && request.params.username === 'd123456') {
+                res = {
+                    statusCode: 200,
+                    data: {
+                        status: 3
+                    },
+                    msg: index_2.MsgCodeResponses.USER_DEACTIVED,
+                    msgCode: index_2.MsgCodeResponses.USER_DEACTIVED
+                };
+            }
+            else if (request.params.phone === '841693248880' && request.params.username === 'a123456') {
+                res = {
+                    statusCode: 200,
+                    data: {
+                        status: 4
+                    },
+                    msg: index_2.MsgCodeResponses.USER_NOT_FOUND,
+                    msgCode: index_2.MsgCodeResponses.USER_NOT_FOUND
+                };
+            }
+            else {
+                res = {
+                    statusCode: 200,
+                    data: {
+                        status: 5
+                    },
+                    msg: index_2.MsgCodeResponses.USER_ACTIVED,
+                    msgCode: index_2.MsgCodeResponses.USER_ACTIVED
+                };
+            }
+            reply(res);
         });
     }
 }

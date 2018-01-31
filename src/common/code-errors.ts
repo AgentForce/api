@@ -22,4 +22,34 @@ const ManulifeErrors = {
     EX_USER_EMAIL_NOT_EXIST: 'EX_USER_EMAIL_NOT_EXIST',
 
 };
-export { ManulifeErrors };
+const MsgResponses = {
+    // user
+    USER_INACTIVE: 'user_inactive',
+    USER_DONT_MATCH: 'user_dont_match',
+    USER_DEACTIVED: 'user_deactived',
+    USER_NOT_FOUND: 'user_not_found',
+    USER_ACTIVED: 'user_actived',
+    USER_OTP_SUCCESS: 'otp_success',
+    USER_OTP_TOO_MUCH: 'otp_request_too_much',
+    USER_OTP_VERIFY_SUCCESS: 'verify_success',
+    USER_OTP_UNVALID: 'otp_unvalid'
+};
+const MsgCodeResponses = {
+    //General
+    INPUT_INVALID: 'input_invalid',
+    // user
+    USER_INACTIVE: 'user_inactive',
+    USER_DONT_MATCH: 'user_dont_match',
+    USER_DEACTIVED: 'user_deactived',
+    USER_NOT_FOUND: 'user_not_found',
+    USER_ACTIVED: 'user_actived',
+    USER_OTP_SUCCESS: 'otp_success',
+    USER_OTP_TOO_MUCH: 'otp_request_too_much',
+    USER_OTP_VERIFY_SUCCESS: 'verify_success',
+    USER_OTP_UNVALID: 'otp_unvalid',
+    USER_SET_PASSWORD_SUCCESS: 'set_password_success',
+    USER_CHANGE_PASS_SUCCESS: 'change_password_success',
+    USER_CHANGE_PASS_DONT_MATCH: 'old_password_dont_match'
+
+};
+export { ManulifeErrors, MsgCodeResponses, MsgResponses };

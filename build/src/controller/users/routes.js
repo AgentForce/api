@@ -6,6 +6,7 @@ const UserValidator = require("./user-validator");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
 const user_validator_1 = require("./user-validator");
+const index_2 = require("../../common/index");
 function default_1(server, serverConfigs, database) {
     const userController = new user_controller_1.default(serverConfigs, database);
     server.bind(userController);
@@ -70,7 +71,7 @@ function default_1(server, serverConfigs, database) {
     });
     server.route({
         method: 'PUT',
-        path: '/users/profile/',
+        path: '/users/profile',
         config: {
             handler: userController.updateProfile,
             // auth: "jwt",
@@ -111,7 +112,10 @@ function default_1(server, serverConfigs, database) {
                                     .number()
                                     .example(200),
                                 data: Joi
-                                    .object(),
+                                    .object({
+                                    token: Joi.string().required(),
+                                    refreshToken: Joi.string().required()
+                                }),
                                 msgcode: Joi.string(),
                                 msg: Joi.string()
                             })
@@ -194,8 +198,12 @@ function default_1(server, serverConfigs, database) {
             validate: {
                 headers: user_validator_1.headersChecksumModel,
                 params: {
-                    phone: Joi.string().required(),
-                    username: Joi.string().required()
+                    phone: Joi.string()
+                        .default('841693248887')
+                        .required(),
+                    username: Joi.string()
+                        .default('m123456')
+                        .required()
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
@@ -227,33 +235,20 @@ function default_1(server, serverConfigs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
+                                    .valid([200, 400])
                                     .example(200),
                                 data: Joi
                                     .object({
                                     status: Joi
-                                        .boolean()
-                                        .example(true)
+                                        .number()
+                                        .valid([1, 2, 3, 4, 5])
+                                        .example(1)
+                                        .description('1: chua active')
                                 }),
                                 msgcode: Joi.string(),
                                 msg: Joi.string()
                             })
-                        },
-                        404: {
-                            description: '',
-                            schema: Joi.object({
-                                statusCode: Joi
-                                    .number()
-                                    .example(404),
-                                data: Joi
-                                    .object({
-                                    status: Joi
-                                        .boolean()
-                                        .example(false)
-                                }),
-                                msgcode: Joi.string(),
-                                msg: Joi.string()
-                            })
-                        },
+                        }
                     },
                     security: [{
                             'jwt': []
@@ -413,11 +408,9 @@ function default_1(server, serverConfigs, database) {
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST,
-                        error: {
-                            code: 'ex_payload',
-                            msg: 'payload dont valid',
-                            details: error
-                        }
+                        data: error,
+                        msgCode: index_2.MsgCodeResponses.INPUT_INVALID,
+                        msg: index_2.MsgCodeResponses.INPUT_INVALID
                     };
                     index_1.LogUser.create({
                         type: 'changepassword',
@@ -496,21 +489,10 @@ function default_1(server, serverConfigs, database) {
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST,
-                        error: {
-                            code: 'ex_payload',
-                            msg: 'payload dont valid',
-                            details: error
-                        }
+                        data: error,
+                        msgCode: index_2.MsgCodeResponses.INPUT_INVALID,
+                        msg: index_2.MsgCodeResponses.INPUT_INVALID
                     };
-                    index_1.LogUser.create({
-                        type: 'changepassword',
-                        dataInput: request.payload,
-                        msg: 'payload do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        },
-                    });
                     return reply(res);
                 }
             },
@@ -519,7 +501,7 @@ function default_1(server, serverConfigs, database) {
                     // deprecated: true,
                     responses: {
                         200: {
-                            description: '',
+                            description: 'success',
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
@@ -596,9 +578,14 @@ function default_1(server, serverConfigs, database) {
                                 statusCode: Joi
                                     .number()
                                     .example(200),
-                                token: Joi
-                                    .string()
-                                    .required(),
+                                data: {
+                                    token: Joi
+                                        .string()
+                                        .required(),
+                                    refreshToken: Joi
+                                        .string()
+                                        .required()
+                                },
                                 msg: Joi.string().required(),
                                 msgcode: Joi.string()
                             })
