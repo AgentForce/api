@@ -138,6 +138,7 @@ exports.loginUserModel = loginUserModel;
 const headerModel = Joi.object().keys({
     clientid: Joi
         .string()
+        .example('123456')
         .required(),
     versionos: Joi
         .string()
@@ -147,7 +148,7 @@ const headerModel = Joi.object().keys({
         .default('2.0')
         .required(),
     devicename: Joi.string().default('samsung').required(),
-    imei: Joi.string().required()
+    imei: Joi.string().required().default('123456')
 }).unknown();
 exports.headerModel = headerModel;
 const headersChecksumModel = Joi.object().keys({

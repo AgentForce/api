@@ -332,8 +332,11 @@ export default class UserController {
         return reply({
             status: HTTP_STATUS.OK,
             data: {
-                token: '#manulife$123$123',
-                refreshToken: '3453p04tertvnw34[5'
+                access_token: '2f8ac8b7255355afab238b45e9289d9504344ba5',
+                token_type: 'Bearer',
+                expires_in: 599,
+                refresh_token: 'ce4309b70cdc150de0e41295aa28009b65c42d26',
+                scope: 'user_info:read'
             },
             msgCode: '',
             msg: ''
@@ -368,10 +371,10 @@ export default class UserController {
         return reply({
             status: HTTP_STATUS.OK,
             data: {
-                Code: '123456'
+                Status: true
             },
-            msg: '',
-            msgCode: ''
+            msg: MsgCodeResponses.USER_OTP_SUCCESS,
+            msgCode: MsgCodeResponses.USER_OTP_SUCCESS
         });
         // const username = request.payload.Username;
         // const password = request.payload.Password;
@@ -435,8 +438,11 @@ export default class UserController {
             let res = {
                 status: HTTP_STATUS.OK,
                 data: {
-                    token: '#manulife$123$123',
-                    refreshToken: '3453p04tertvnw34[5'
+                    access_token: "9d22ef67c5ff1e6d6f7c06ca75267220951970d9",
+                    token_type: "Bearer",
+                    expires_in: 599,
+                    refresh_token: "6e918eee79c9bf0d49e687ca7ff1848bc64d1f4f",
+                    scope: "user_info:read"
                 },
                 msgCode: '',
                 msg: ''
@@ -763,4 +769,23 @@ export default class UserController {
         reply(res);
     }
 
+    /**
+ *  Check SMS OTP
+ */
+    public async checkApp(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        let res = {
+            statusCode: 200,
+            data: {
+                active: 0,
+                description: "",
+                link: "",
+                mobile_type: "android",
+                version: "3.0",
+            },
+            msgCode: '',
+            msg: ''
+        };
+
+        reply(res);
+    }
 }
