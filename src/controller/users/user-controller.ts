@@ -15,7 +15,7 @@ const nodemailer = require('nodemailer');
 import * as EmailTemplate from 'email-templates';
 import { User } from "../../postgres/user";
 import * as faker from 'faker';
-import { SlackAlert } from "../../common/index";
+import { SlackAlert, MsgCodeResponses, MsgResponses } from "../../common/index";
 
 import * as path from 'path';
 import * as fs from 'fs';
@@ -188,54 +188,29 @@ export default class UserController {
     public async changePassword(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: 200,
-                data: {
-                    status: true
-                },
-                msg: '',
-                msgCode: ''
-            };
-            reply(res);
-            // const dataInput = request.payload as IPayloadChangePass;
-            // const username = request.params.username;
-            // const user = <any>await UserService.findByCode(username);
-            // if (user !== null) {
-            //     if (Bcrypt.compareSync(dataInput.OldPassword, user.Password)) {
-            //         let passwordHash = Bcrypt.hashSync(dataInput.NewPassword, Bcrypt.genSaltSync(8));
-            //         let userPg: any = await UserService
-            //             .changePassword(user.Id, dataInput, passwordHash);
-            //         let userMongo: any = await this.database.userModel
-            //             .update({
-            //                 userId: user.Id,
-            //             }, {
-            //                 password: passwordHash
-            //             });
-            //         let res = {
-            //             status: HTTP_STATUS.OK,
-            //             url: request.url.path,
-            //         };
-            //         LogUser.create({
-            //             type: 'changepassword',
-            //             dataInput: {
-            //                 params: request.params,
-            //                 payload: request.payload
-            //             },
-            //             msg: 'change password success',
-            //             meta: {
-            //                 response: res
-            //             }
-            //         });
-            //         reply(res).code(HTTP_STATUS.OK);
-            //     } else {
-            //         throw {
-            //             code: Ex.EX_OLDPASSWORD_DONT_CORRECT,
-            //             msg: 'oldpass dont correct'
-            //         };
-            //     }
 
-            // } else {
-            //     throw { code: Ex.EX_USERID_NOT_FOUND, msg: 'userid not found' };
-            // }
+            };
+            if (request.payload.OldPassword === '123456') {
+                res = {
+                    statusCode: 200,
+                    data: {
+                        status: true
+                    },
+                    msg: MsgCodeResponses.USER_CHANGE_PASS_SUCCESS,
+                    msgCode: MsgCodeResponses.USER_CHANGE_PASS_SUCCESS
+                };
+            } else {
+                res = {
+                    statusCode: 200,
+                    data: {
+                        status: false
+                    },
+                    msg: MsgCodeResponses.USER_CHANGE_PASS_DONT_MATCH,
+                    msgCode: MsgCodeResponses.USER_CHANGE_PASS_DONT_MATCH
+                };
+            }
+            reply(res);
+
         } catch (ex) {
             let res = {};
             if (ex.code) {
@@ -275,8 +250,8 @@ export default class UserController {
                 data: {
                     status: true
                 },
-                msgCode: '',
-                msg: ''
+                msgCode: MsgCodeResponses.USER_SET_PASSWORD_SUCCESS,
+                msg: MsgCodeResponses.USER_SET_PASSWORD_SUCCESS,
             };
             reply(res);
             // const dataInput = request.payload as IPayloadChangePass;
@@ -466,10 +441,7 @@ export default class UserController {
                 msgCode: '',
                 msg: ''
             };
-            reply({
-                status: HTTP_STATUS.OK,
-                data: res
-            }).code(HTTP_STATUS.OK);
+            reply(res).code(HTTP_STATUS.OK);
             // if (user !== null) {
             //     reply({
             //         status: HTTP_STATUS.OK,
@@ -595,35 +567,13 @@ export default class UserController {
             };
             reply({
                 status: HTTP_STATUS.OK,
-                data: fakerUser
+                data: fakerUser,
+                msg: 'Tìm thấy tài khoảng',
+                msgcode: 'found'
             }).code(HTTP_STATUS.OK);
 
         } catch (ex) {
-            console.log(ex);
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: { code: 'ex', msg: 'Exception occurred update profile user' }
-                };
-            }
-            LogUser.create({
-                type: 'updateprofile',
-                dataInput: request.payload,
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+
         }
     }
 
@@ -666,33 +616,7 @@ export default class UserController {
                 throw { code: Ex.EX_USERNAME_EXIST, msg: 'username exist or email exist' };
             }
         } catch (ex) {
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: {
-                        code: Ex.EX_GENERAL,
-                        msg: 'Exception occurred create user'
-                    }
-                };
-            }
-            LogUser.create({
-                type: 'createuser',
-                dataInput: request.payload,
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+
         }
     }
 
@@ -738,25 +662,8 @@ export default class UserController {
                     error: ex
                 };
             } else {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: {
-                        code: Ex.EX_GENERAL,
-                        msg: 'Exception occurred create authorize'
-                    }
-                };
+
             }
-            LogUser.create({
-                type: 'createauthorize',
-                dataInput: request.payload,
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
 
@@ -789,33 +696,7 @@ export default class UserController {
             }
 
         } catch (ex) {
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: {
-                        code: Ex.EX_GENERAL,
-                        msg: 'Exception occurred create authorize'
-                    }
-                };
-            }
-            LogUser.create({
-                type: 'createauthorize',
-                dataInput: request.payload,
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+
         }
     }
 
@@ -824,70 +705,61 @@ export default class UserController {
    *  Check SMS OTP
    */
     public async check(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        let res = {};
-        try {
+        let res = {
+            statusCode: 200,
+            data: {
+                status: 1
+            },
+            msg: '',
+            msgCode: ''
+        };
+        if (request.params.phone === '841693248887' && request.params.username === 'm123456') {
             res = {
                 statusCode: 200,
                 data: {
                     status: 1
                 },
-                msg: '',
-                msgCode: ''
+                msg: MsgCodeResponses.USER_INACTIVE,
+                msgCode: MsgCodeResponses.USER_INACTIVE
             };
-            reply(res);
-
-        } catch (ex) {
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: {
-                        code: Ex.EX_GENERAL,
-                        msg: 'Exception occurred create authorize'
-                    }
-                };
-            }
-            LogUser.create({
-                type: 'createauthorize',
-                dataInput: request.payload,
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
+        } else if (request.params.phone === '841693248888' && request.params.username === 'm123455') {
+            res = {
+                statusCode: 200,
+                data: {
+                    status: 2
                 },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                msg: MsgCodeResponses.USER_DONT_MATCH,
+                msgCode: MsgCodeResponses.USER_DONT_MATCH
+            };
+        } else if (request.params.phone === '841693248889' && request.params.username === 'd123456') {
+            res = {
+                statusCode: 200,
+                data: {
+                    status: 3
+                },
+                msg: MsgCodeResponses.USER_DEACTIVED,
+                msgCode: MsgCodeResponses.USER_DEACTIVED
+            };
+        } else if (request.params.phone === '841693248880' && request.params.username === 'a123456') {
+            res = {
+                statusCode: 200,
+                data: {
+                    status: 4
+                },
+                msg: MsgCodeResponses.USER_NOT_FOUND,
+                msgCode: MsgCodeResponses.USER_NOT_FOUND
+            };
+        } else {
+            res = {
+                statusCode: 200,
+                data: {
+                    status: 5
+                },
+                msg: MsgCodeResponses.USER_ACTIVED,
+                msgCode: MsgCodeResponses.USER_ACTIVED
+            };
         }
-    }
-    /*public async updateUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        const id = request.auth.credentials.id;
-
-        try {
-            let  user: IUser = await this.database.userModel.findByIdAndUpdate(id, { $set: request.payload }, { new: true });
-            return reply(user);
-        } catch (error) {
-            return reply(Boom.badImplementation(error));
-        }
+        reply(res);
     }
 
-    public async deleteUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        const id = request.auth.credentials.id;
-        let user: IUser = await this.database.userModel.findByIdAndRemove(id);
-
-        return reply(user);
-    }
-
-    public async infoUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        const id = request.auth.credentials.id;
-        let user: IUser = await this.database.userModel.findById(id);
-
-        reply(user);
-    }*/
 }

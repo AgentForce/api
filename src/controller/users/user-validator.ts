@@ -158,6 +158,7 @@ const headerModel = Joi.object().keys({
 const headersChecksumModel = Joi.object().keys({
     clientid: Joi
         .string()
+        .default('123456')
         .required(),
     versionos: Joi
         .string()
@@ -167,8 +168,11 @@ const headersChecksumModel = Joi.object().keys({
         .default('2.0')
         .required(),
     devicename: Joi.string().default('samsung').required(),
-    imei: Joi.string().required(),
-    checksum: Joi.string().required()
+    imei: Joi.string().required()
+        .default('123456'),
+    checksum: Joi.string()
+        .default('22342345')
+        .required()
 
 }).unknown();
 

@@ -9,6 +9,7 @@ import * as HTTP_STATUS from 'http-status';
 import { LogUser } from "../../mongo/index";
 import { jwtValidator, headerModel, headersChecksumModel } from "./user-validator";
 import { checkToken } from "../../common/authentication";
+import { MsgCodeResponses } from "../../common/index";
 export default function (server: Hapi.Server, serverConfigs: IServerConfigurations, database: IDatabase) {
 
     const userController = new UserController(serverConfigs, database);
@@ -84,7 +85,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
 
     server.route({
         method: 'PUT',
-        path: '/users/profile/',
+        path: '/users/profile',
         config: {
             handler: userController.updateProfile,
             // auth: "jwt",
@@ -127,7 +128,10 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                         .number()
                                         .example(200),
                                     data: Joi
-                                        .object(),
+                                        .object({
+                                            token: Joi.string().required(),
+                                            refreshToken: Joi.string().required()
+                                        }),
                                     msgcode: Joi.string(),
                                     msg: Joi.string()
                                 }
@@ -220,8 +224,12 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             validate: {
                 headers: headersChecksumModel,
                 params: {
-                    phone: Joi.string().required(),
-                    username: Joi.string().required()
+                    phone: Joi.string()
+                        .default('841693248887')
+                        .required(),
+                    username: Joi.string()
+                        .default('m123456')
+                        .required()
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
@@ -254,36 +262,21 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                 {
                                     statusCode: Joi
                                         .number()
+                                        .valid([200, 400])
                                         .example(200),
                                     data: Joi
                                         .object({
                                             status: Joi
-                                                .boolean()
-                                                .example(true)
+                                                .number()
+                                                .valid([1, 2, 3, 4, 5])
+                                                .example(1)
+                                                .description('1: chua active')
                                         }),
                                     msgcode: Joi.string(),
                                     msg: Joi.string()
                                 }
                             )
-                        },
-                        404: {
-                            description: '',
-                            schema: Joi.object(
-                                {
-                                    statusCode: Joi
-                                        .number()
-                                        .example(404),
-                                    data: Joi
-                                        .object({
-                                            status: Joi
-                                                .boolean()
-                                                .example(false)
-                                        }),
-                                    msgcode: Joi.string(),
-                                    msg: Joi.string()
-                                }
-                            )
-                        },
+                        }
                     },
                     security: [{
                         'jwt': []
@@ -453,11 +446,9 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST,
-                        error: {
-                            code: 'ex_payload',
-                            msg: 'payload dont valid',
-                            details: error
-                        }
+                        data: error,
+                        msgCode: MsgCodeResponses.INPUT_INVALID,
+                        msg: MsgCodeResponses.INPUT_INVALID
                     };
                     LogUser.create({
                         type: 'changepassword',
@@ -544,21 +535,11 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 failAction: (request, reply, source, error) => {
                     let res = {
                         statusCode: HTTP_STATUS.BAD_REQUEST,
-                        error: {
-                            code: 'ex_payload',
-                            msg: 'payload dont valid',
-                            details: error
-                        }
+                        data: error,
+                        msgCode: MsgCodeResponses.INPUT_INVALID,
+                        msg: MsgCodeResponses.INPUT_INVALID
                     };
-                    LogUser.create({
-                        type: 'changepassword',
-                        dataInput: request.payload,
-                        msg: 'payload do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        },
-                    });
+
                     return reply(res);
                 }
             },
@@ -567,7 +548,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                     // deprecated: true,
                     responses: {
                         200: {
-                            description: '',
+                            description: 'success',
                             schema: Joi.object(
                                 {
                                     statusCode: Joi
@@ -655,9 +636,14 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                     statusCode: Joi
                                         .number()
                                         .example(200),
-                                    token: Joi
-                                        .string()
-                                        .required(),
+                                    data: {
+                                        token: Joi
+                                            .string()
+                                            .required(),
+                                        refreshToken: Joi
+                                            .string()
+                                            .required()
+                                    },
                                     msg: Joi.string().required(),
                                     msgcode: Joi.string()
                                 }
