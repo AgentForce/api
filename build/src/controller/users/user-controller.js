@@ -732,20 +732,20 @@ class UserController {
                 res = {
                     statusCode: 200,
                     data: {
-                        status: 4
+                        status: 5
                     },
-                    msg: index_2.MsgCodeResponses.USER_NOT_FOUND,
-                    msgCode: index_2.MsgCodeResponses.USER_NOT_FOUND
+                    msg: index_2.MsgCodeResponses.USER_ACTIVED,
+                    msgCode: index_2.MsgCodeResponses.USER_ACTIVED
                 };
             }
             else {
                 res = {
                     statusCode: 200,
                     data: {
-                        status: 5
+                        status: 4
                     },
-                    msg: index_2.MsgCodeResponses.USER_ACTIVED,
-                    msgCode: index_2.MsgCodeResponses.USER_ACTIVED
+                    msg: index_2.MsgCodeResponses.USER_NOT_FOUND,
+                    msgCode: index_2.MsgCodeResponses.USER_NOT_FOUND
                 };
             }
             reply(res);
