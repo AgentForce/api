@@ -744,20 +744,21 @@ export default class UserController {
             res = {
                 statusCode: 200,
                 data: {
-                    status: 4
-                },
-                msg: MsgCodeResponses.USER_NOT_FOUND,
-                msgCode: MsgCodeResponses.USER_NOT_FOUND
-            };
-        } else {
-            res = {
-                statusCode: 200,
-                data: {
                     status: 5
                 },
                 msg: MsgCodeResponses.USER_ACTIVED,
                 msgCode: MsgCodeResponses.USER_ACTIVED
             };
+        } else {
+            res = {
+                statusCode: 200,
+                data: {
+                    status: 4
+                },
+                msg: MsgCodeResponses.USER_NOT_FOUND,
+                msgCode: MsgCodeResponses.USER_NOT_FOUND
+            };
+
         }
         reply(res);
     }

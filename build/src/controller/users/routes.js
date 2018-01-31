@@ -595,6 +595,42 @@ function default_1(server, serverConfigs, database) {
             }
         }
     });
+    server.route({
+        method: 'GET',
+        path: '/app/check',
+        config: {
+            handler: userController.refreshToken,
+            tags: ['users', 'api'],
+            description: 'check update app',
+            validate: {
+                headers: user_validator_1.headersChecksumModel
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(200),
+                                data: {
+                                    token: Joi
+                                        .string()
+                                        .required(),
+                                    refreshToken: Joi
+                                        .string()
+                                        .required()
+                                },
+                                msg: Joi.string().required(),
+                                msgcode: Joi.string()
+                            })
+                        },
+                    },
+                }
+            }
+        }
+    });
 }
 exports.default = default_1;
 //# sourceMappingURL=routes.js.map
