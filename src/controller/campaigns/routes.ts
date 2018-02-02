@@ -78,7 +78,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                     data: Joi
                                         .object(),
                                     msg: Joi.string(),
-                                    msgcode: Joi.string()
+                                    msgCode: Joi.string()
                                 }
                             )
                         },
@@ -92,7 +92,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                     data: Joi
                                         .object(),
                                     msg: Joi.string(),
-                                    msgcode: Joi.string()
+                                    msgCode: Joi.string()
                                 }
                             )
                         },
@@ -153,7 +153,77 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                         .number()
                                         .example(200),
                                     data: Joi
+                                        .object({
+                                            status: Joi.boolean().example(true)
+                                        }),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
+                                }
+                            )
+                        },
+                        404: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(HTTP_STATUS.NOT_FOUND),
+                                    data: Joi
                                         .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
+                                }
+                            )
+                        },
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
+    /**
+     * get a campaign by period
+     */
+    server.route({
+        method: 'GET',
+        path: '/campaigns/forwardtarget',
+        config: {
+            handler: campaignController.checkCampaign,
+            // auth: "jwt",
+            tags: ['api', 'campaigns'],
+            description: 'for screen dashboard: ',
+            validate: {
+                headers: headerModel,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: Ex.EX_PAYLOAD,
+                            msg: 'params dont valid',
+                            details: error
+                        }
+                    };
+                    reply(Boom);
+                }
+                // headers: jwtValidator
+
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object({
+                                            status: Joi.boolean().example(true)
+                                        }),
                                     msg: Joi.string(),
                                     msgcode: Joi.string()
                                 }

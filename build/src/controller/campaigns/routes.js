@@ -70,7 +70,7 @@ function default_1(server, configs, database) {
                                 data: Joi
                                     .object(),
                                 msg: Joi.string(),
-                                msgcode: Joi.string()
+                                msgCode: Joi.string()
                             })
                         },
                         404: {
@@ -82,7 +82,7 @@ function default_1(server, configs, database) {
                                 data: Joi
                                     .object(),
                                 msg: Joi.string(),
-                                msgcode: Joi.string()
+                                msgCode: Joi.string()
                             })
                         },
                     },
@@ -139,7 +139,71 @@ function default_1(server, configs, database) {
                                     .number()
                                     .example(200),
                                 data: Joi
+                                    .object({
+                                    status: Joi.boolean().example(true)
+                                }),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
+                        },
+                        404: {
+                            description: '',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(HTTP_STATUS.NOT_FOUND),
+                                data: Joi
                                     .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
+                        },
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
+                }
+            }
+        }
+    });
+    /**
+     * get a campaign by period
+     */
+    server.route({
+        method: 'GET',
+        path: '/campaigns/forwardtarget',
+        config: {
+            handler: campaignController.checkCampaign,
+            // auth: "jwt",
+            tags: ['api', 'campaigns'],
+            description: 'for screen dashboard: ',
+            validate: {
+                headers: user_validator_1.headerModel,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
+                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
+                            msg: 'params dont valid',
+                            details: error
+                        }
+                    };
+                    reply(Boom);
+                }
+                // headers: jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object({
+                                    status: Joi.boolean().example(true)
+                                }),
                                 msg: Joi.string(),
                                 msgcode: Joi.string()
                             })

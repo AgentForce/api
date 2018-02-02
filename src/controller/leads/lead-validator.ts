@@ -32,12 +32,6 @@ const createLeadModel = Joi.array().items({
         .required()
         .example(1)
         .description('Get info from api /types, key=MaritalStatus'),
-    Address: Joi.string().max(500),
-    City: Joi.number()
-        .required()
-        .description('Get info from api /types, key=city'),
-    District: Joi.number().required()
-        .description('Get info from api /types, key=district'),
     Relationship: Joi.number()
         .required()
         .description('Get info from api /types, key=Relationship'),
@@ -72,16 +66,10 @@ const updateModel = Joi.object().keys({
         .valid([1, 2, 3, 4])
         .required()
         .description('Get info from api /types, key=MaritalStatus'),
-    Address: Joi.string().max(500),
-    City: Joi.number()
-        .required()
-        .description('Get info from api /types, key=city'),
     Type: Joi.number()
         .required()
         .valid([1, 2, 3, 4])
         .description('4 type of activity'),
-    District: Joi.number().required()
-        .description('Get info from api /types, key=district'),
     Relationship: Joi.number()
         .required()
         .description('Get info from api /types, key=Relationship'),
