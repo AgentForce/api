@@ -100,7 +100,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             validate: {
                 headers: headerModel,
                 params: {
-                    id: Joi.number()
+                    leadid: Joi.number()
                         .required()
                         .example(38)
                         .description('leadid')
