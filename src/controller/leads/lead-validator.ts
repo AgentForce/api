@@ -38,7 +38,7 @@ const createLeadModel = Joi.array().items({
     Source: Joi.number()
         .required()
         .description('Get info from api /types, key=Source'),
-    Job: Joi.string(),
+    // Job: Joi.string(),
     LeadType: Joi.number()
         .required()
         .description('Get info from api /types, key=LeadType'),
@@ -76,7 +76,7 @@ const updateModel = Joi.object().keys({
     Source: Joi.number()
         .required()
         .description('Get info from api /types, key=Source'),
-    Job: Joi.string(),
+    // Job: Joi.string(),
     LeadType: Joi.number()
         .required()
         .description('Get info from api /types, key=LeadType'),
