@@ -1,5 +1,5 @@
 import * as Joi from "joi";
-const createLeadModel = Joi.array().items({
+const createLeadModel = Joi.object({
     CampId: Joi.number()
         .required()
         .description('Campaign id'),
