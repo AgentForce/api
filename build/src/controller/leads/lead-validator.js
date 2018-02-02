@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
-const createLeadModel = Joi.array().items({
+const createLeadModel = Joi.object({
     CampId: Joi.number()
         .required()
         .description('Campaign id'),
