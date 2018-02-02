@@ -89,7 +89,7 @@ function default_1(server, configs, database) {
             validate: {
                 headers: user_validator_1.headerModel,
                 params: {
-                    id: Joi.number()
+                    leadid: Joi.number()
                         .required()
                         .example(38)
                         .description('leadid')
