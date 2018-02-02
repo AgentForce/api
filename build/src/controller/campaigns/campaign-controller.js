@@ -245,10 +245,11 @@ class CampaignController {
             try {
                 let res = {
                     statusCode: 200,
-                    message: 'campaign active',
                     data: {
                         status: true
-                    }
+                    },
+                    msg: index_2.MsgCodeResponses.CAMP_EXIST,
+                    msgCode: index_2.MsgCodeResponses.CAMP_EXIST
                 };
                 reply(res);
             }
@@ -294,60 +295,71 @@ class CampaignController {
     getByCampaignId(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let res = {
-                    statusCode: HTTP_STATUS.OK,
-                    data: [{
-                            Period: 1,
-                            Week: 1,
-                            TargetCallSale: 20,
-                            TargetMetting: 5,
-                            TargetPresentation: 3,
-                            TargetContractSale: 2,
-                            CurrentCallSale: 1,
-                            CurrentMetting: 1,
-                            CurrentPresentation: 1,
-                            CurrentContract: 1
-                        }, {
-                            Period: 1,
-                            Week: 2,
-                            TargetCallSale: 20,
-                            TargetMetting: 5,
-                            TargetPresentation: 3,
-                            TargetContractSale: 1,
-                            CurrentCallSale: 1,
-                            CurrentMetting: 1,
-                            CurrentPresentation: 1,
-                            CurrentContract: 0
-                        }, {
-                            Period: 1,
-                            Week: 3,
-                            TargetCallSale: 20,
-                            TargetMetting: 4,
-                            TargetPresentation: 2,
-                            TargetContractSale: 1,
-                            CurrentCallSale: 1,
-                            CurrentMetting: 1,
-                            CurrentPresentation: 1,
-                            CurrentContract: 0
-                        }, {
-                            Period: 1,
-                            Week: 4,
-                            TargetCallSale: 20,
-                            TargetMetting: 4,
-                            TargetPresentation: 2,
-                            TargetContractSale: 1,
-                            CurrentCallSale: 1,
-                            CurrentMetting: 1,
-                            CurrentPresentation: 1,
-                            CurrentContract: 0
-                        }]
-                };
-                reply({
-                    statusCode: 200,
-                    data: res,
-                    msg: '',
-                    msgCode: ''
-                });
+                let data = {};
+                if (parseInt(request.params.period, 10) > 0) {
+                    data = {
+                        statusCode: HTTP_STATUS.OK,
+                        data: [{
+                                Period: 1,
+                                Week: 1,
+                                TargetCallSale: 20,
+                                TargetMetting: 5,
+                                TargetPresentation: 3,
+                                TargetContractSale: 2,
+                                CurrentCallSale: 1,
+                                CurrentMetting: 1,
+                                CurrentPresentation: 1,
+                                CurrentContract: 1
+                            }, {
+                                Period: 1,
+                                Week: 2,
+                                TargetCallSale: 20,
+                                TargetMetting: 5,
+                                TargetPresentation: 3,
+                                TargetContractSale: 1,
+                                CurrentCallSale: 1,
+                                CurrentMetting: 1,
+                                CurrentPresentation: 1,
+                                CurrentContract: 0
+                            }, {
+                                Period: 1,
+                                Week: 3,
+                                TargetCallSale: 20,
+                                TargetMetting: 4,
+                                TargetPresentation: 2,
+                                TargetContractSale: 1,
+                                CurrentCallSale: 1,
+                                CurrentMetting: 1,
+                                CurrentPresentation: 1,
+                                CurrentContract: 0
+                            }, {
+                                Period: 1,
+                                Week: 4,
+                                TargetCallSale: 20,
+                                TargetMetting: 4,
+                                TargetPresentation: 2,
+                                TargetContractSale: 1,
+                                CurrentCallSale: 1,
+                                CurrentMetting: 1,
+                                CurrentPresentation: 1,
+                                CurrentContract: 0
+                            }]
+                    };
+                    reply({
+                        statusCode: 200,
+                        data: data,
+                        msg: index_2.MsgCodeResponses.CAMP_EXIST,
+                        msgCode: index_2.MsgCodeResponses.CAMP_EXIST
+                    });
+                }
+                else {
+                    reply({
+                        statusCode: 404,
+                        data: {},
+                        msg: index_2.MsgCodeResponses.CAMP_NOT_EXIST,
+                        msgCode: index_2.MsgCodeResponses.CAMP_NOT_EXIST
+                    });
+                }
             }
             catch (ex) {
                 // log mongo create fail

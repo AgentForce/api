@@ -49,7 +49,10 @@ const MsgCodeResponses = {
     USER_OTP_UNVALID: 'otp_unvalid',
     USER_SET_PASSWORD_SUCCESS: 'set_password_success',
     USER_CHANGE_PASS_SUCCESS: 'change_password_success',
-    USER_CHANGE_PASS_DONT_MATCH: 'old_password_dont_match'
+    USER_CHANGE_PASS_DONT_MATCH: 'old_password_dont_match',
+    // campaign
+    CAMP_EXIST: 'campaign_exist',
+    CAMP_NOT_EXIST: 'campaign_not_exist',
 
 };
 export { ManulifeErrors, MsgCodeResponses, MsgResponses };

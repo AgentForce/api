@@ -10,7 +10,7 @@ import { Campaign } from "../../postgres/campaign";
 import { LogCamp } from "../../mongo/index";
 import { IPayloadUpdate } from "./campaign";
 import * as _ from 'lodash';
-import { SlackAlert, ManulifeErrors as Ex } from "../../common/index";
+import { SlackAlert, ManulifeErrors as Ex, MsgCodeResponses } from "../../common/index";
 export default class CampaignController {
 
     private database: IDatabase;
@@ -245,10 +245,11 @@ export default class CampaignController {
         try {
             let res = {
                 statusCode: 200,
-                message: 'campaign active',
                 data: {
                     status: true
-                }
+                },
+                msg: MsgCodeResponses.CAMP_EXIST,
+                msgCode: MsgCodeResponses.CAMP_EXIST
             };
             reply(res);
         } catch (ex) {
@@ -294,60 +295,71 @@ export default class CampaignController {
      */
     public async getByCampaignId(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let res = {
-                statusCode: HTTP_STATUS.OK,
-                data: [{
-                    Period: 1,
-                    Week: 1,
-                    TargetCallSale: 20,
-                    TargetMetting: 5,
-                    TargetPresentation: 3,
-                    TargetContractSale: 2,
-                    CurrentCallSale: 1,
-                    CurrentMetting: 1,
-                    CurrentPresentation: 1,
-                    CurrentContract: 1
-                }, {
-                    Period: 1,
-                    Week: 2,
-                    TargetCallSale: 20,
-                    TargetMetting: 5,
-                    TargetPresentation: 3,
-                    TargetContractSale: 1,
-                    CurrentCallSale: 1,
-                    CurrentMetting: 1,
-                    CurrentPresentation: 1,
-                    CurrentContract: 0
-                }, {
-                    Period: 1,
-                    Week: 3,
-                    TargetCallSale: 20,
-                    TargetMetting: 4,
-                    TargetPresentation: 2,
-                    TargetContractSale: 1,
-                    CurrentCallSale: 1,
-                    CurrentMetting: 1,
-                    CurrentPresentation: 1,
-                    CurrentContract: 0
-                }, {
-                    Period: 1,
-                    Week: 4,
-                    TargetCallSale: 20,
-                    TargetMetting: 4,
-                    TargetPresentation: 2,
-                    TargetContractSale: 1,
-                    CurrentCallSale: 1,
-                    CurrentMetting: 1,
-                    CurrentPresentation: 1,
-                    CurrentContract: 0
-                }]
-            };
-            reply({
-                statusCode: 200,
-                data: res,
-                msg: '',
-                msgCode: ''
-            });
+            let data = {};
+            if (parseInt(request.params.period, 10) > 0) {
+                data = {
+                    statusCode: HTTP_STATUS.OK,
+                    data: [{
+                        Period: 1,
+                        Week: 1,
+                        TargetCallSale: 20,
+                        TargetMetting: 5,
+                        TargetPresentation: 3,
+                        TargetContractSale: 2,
+                        CurrentCallSale: 1,
+                        CurrentMetting: 1,
+                        CurrentPresentation: 1,
+                        CurrentContract: 1
+                    }, {
+                        Period: 1,
+                        Week: 2,
+                        TargetCallSale: 20,
+                        TargetMetting: 5,
+                        TargetPresentation: 3,
+                        TargetContractSale: 1,
+                        CurrentCallSale: 1,
+                        CurrentMetting: 1,
+                        CurrentPresentation: 1,
+                        CurrentContract: 0
+                    }, {
+                        Period: 1,
+                        Week: 3,
+                        TargetCallSale: 20,
+                        TargetMetting: 4,
+                        TargetPresentation: 2,
+                        TargetContractSale: 1,
+                        CurrentCallSale: 1,
+                        CurrentMetting: 1,
+                        CurrentPresentation: 1,
+                        CurrentContract: 0
+                    }, {
+                        Period: 1,
+                        Week: 4,
+                        TargetCallSale: 20,
+                        TargetMetting: 4,
+                        TargetPresentation: 2,
+                        TargetContractSale: 1,
+                        CurrentCallSale: 1,
+                        CurrentMetting: 1,
+                        CurrentPresentation: 1,
+                        CurrentContract: 0
+                    }]
+                };
+                reply({
+                    statusCode: 200,
+                    data: data,
+                    msg: MsgCodeResponses.CAMP_EXIST,
+                    msgCode: MsgCodeResponses.CAMP_EXIST
+                });
+            } else {
+                reply({
+                    statusCode: 404,
+                    data: {},
+                    msg: MsgCodeResponses.CAMP_NOT_EXIST,
+                    msgCode: MsgCodeResponses.CAMP_NOT_EXIST
+                });
+            }
+
         } catch (ex) {
             // log mongo create fail
             let res = {};
