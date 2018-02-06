@@ -68,10 +68,10 @@ const updateModel = Joi.object().keys({
         .valid([1, 2, 3, 4])
         .required()
         .description('Get info from api /types, key=MaritalStatus'),
-    Type: Joi.number()
-        .required()
-        .valid([1, 2, 3, 4])
-        .description('4 type of activity'),
+    // Type: Joi.number()
+    //     .required()
+    //     .valid([1, 2, 3, 4])
+    //     .description('4 type of activity'),
     Relationship: Joi.number()
         .required()
         .description('Get info from api /types, key=Relationship'),
@@ -79,9 +79,9 @@ const updateModel = Joi.object().keys({
         .required()
         .description('Get info from api /types, key=Source'),
     // Job: Joi.string(),
-    LeadType: Joi.number()
-        .required()
-        .description('Get info from api /types, key=LeadType'),
+    // LeadType: Joi.number()
+    //     .required()
+    //     .description('Get info from api /types, key=LeadType'),
     Description: Joi.string().max(500)
 });
 exports.updateModel = updateModel;

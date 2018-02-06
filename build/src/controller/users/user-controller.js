@@ -221,7 +221,7 @@ class UserController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }
@@ -304,7 +304,7 @@ class UserController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }
@@ -469,7 +469,7 @@ class UserController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }
@@ -534,7 +534,7 @@ class UserController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }
@@ -684,7 +684,7 @@ class UserController {
                             status: false
                         }
                     };
-                    reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                    reply(res);
                 }
             }
             catch (ex) {
