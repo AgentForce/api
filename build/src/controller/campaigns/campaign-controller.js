@@ -85,7 +85,7 @@ class CampaignController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res).code(HTTP_STATUS.OK);
             }
         });
     }
@@ -154,7 +154,7 @@ class CampaignController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }
@@ -198,7 +198,7 @@ class CampaignController {
                     reply({
                         status: HTTP_STATUS.NOT_FOUND,
                         msg: 'not found anything'
-                    }).code(HTTP_STATUS.NOT_FOUND);
+                    });
                 }
             }
             catch (ex) {
@@ -285,7 +285,7 @@ class CampaignController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }
@@ -394,7 +394,7 @@ class CampaignController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }
@@ -452,7 +452,7 @@ class CampaignController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }

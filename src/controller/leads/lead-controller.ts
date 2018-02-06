@@ -90,7 +90,7 @@ export default class LeadController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -173,7 +173,7 @@ export default class LeadController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -254,7 +254,7 @@ export default class LeadController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -301,7 +301,7 @@ export default class LeadController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -367,7 +367,7 @@ export default class LeadController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -431,7 +431,7 @@ export default class LeadController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -502,7 +502,7 @@ export default class LeadController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 

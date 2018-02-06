@@ -239,7 +239,7 @@ export default class UserController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -321,7 +321,7 @@ export default class UserController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -488,7 +488,7 @@ export default class UserController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -552,7 +552,7 @@ export default class UserController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -697,7 +697,7 @@ export default class UserController {
                         status: false
                     }
                 };
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
 
             }
 
