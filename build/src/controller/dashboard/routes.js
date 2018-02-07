@@ -14,7 +14,7 @@ function default_1(server, configs, database) {
      */
     server.route({
         method: 'GET',
-        path: '/dashboard/{type}',
+        path: '/campaigns/dashboard/{type}',
         config: {
             handler: dashboardController.dashboard,
             // auth: "jwt",
