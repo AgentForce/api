@@ -26,7 +26,7 @@ class DashboardController {
                 let res = {};
                 if (request.params.type === 'weekmonth') {
                     res = {
-                        typeTarget: request.params.type,
+                        type: request.params.type,
                         currentweek: 2,
                         campaign: [{
                                 Period: 1,

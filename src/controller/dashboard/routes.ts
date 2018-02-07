@@ -18,7 +18,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
      */
     server.route({
         method: 'GET',
-        path: '/dashboard/{type}',
+        path: '/campaigns/dashboard/{type}',
         config: {
             handler: dashboardController.dashboard,
             // auth: "jwt",
