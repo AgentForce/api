@@ -39,7 +39,7 @@ const db = new Loki(`${UPLOAD_PATH}/${DB_NAME}`, { persistenceMethod: 'fs' });
 // optional: clean all data before start
 // cleanFolder(UPLOAD_PATH);
 if (!fs.existsSync(UPLOAD_PATH)) {
-    fs.mkdirSync(UPLOAD_PATH);
+    // fs.mkdirSync(UPLOAD_PATH);
 }
 
 export default class UserController {
