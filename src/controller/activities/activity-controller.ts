@@ -202,6 +202,81 @@ export default class ActivitiesController {
         }
     }
 
+
+    /**
+     * get list activities by leadid
+     */
+    public async list(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let res = {
+                statusCode: 1,
+                data: {
+                    count: request.query.count,
+                    page: request.query.page,
+                    limit: request.query.limit,
+                    rows: [{
+                        Id: 1,
+                        ProcessStep: 1,
+                        Type: 1,
+                        Repeat: 1,
+                        Notification: 1,
+                        FullDate: false,
+                        StartDate: moment().add(1, 'd'),
+                        EndDate: moment().add(1, 'd').endOf('day')
+                    }, {
+                        Id: 2,
+                        ProcessStep: 1,
+                        Type: 1,
+                        Repeat: 1000,
+                        Notification: 1,
+                        FullDate: false,
+                        StartDate: moment().add(1, 'd'),
+                        EndDate: moment().add(1, 'd').endOf('day')
+                    }, {
+                        Id: 2,
+                        ProcessStep: 1,
+                        Type: 1,
+                        Repeat: 1000,
+                        Notification: 1,
+                        FullDate: false,
+                        StartDate: moment().add(1, 'd'),
+                        EndDate: moment().add(1, 'd').endOf('day')
+                    }, {
+                        Id: 3,
+                        ProcessStep: 1,
+                        Type: 1,
+                        Repeat: 1000,
+                        Notification: 1,
+                        FullDate: false,
+                        StartDate: moment().add(1, 'd'),
+                        EndDate: moment().add(1, 'd').endOf('day')
+                    }, {
+                        Id: 4,
+                        ProcessStep: 1,
+                        Type: 1,
+                        Repeat: 1000,
+                        Notification: 1,
+                        FullDate: false,
+                        StartDate: moment().add(1, 'd'),
+                        EndDate: moment().add(1, 'd').endOf('day')
+                    }, {
+                        Id: 5,
+                        ProcessStep: 1,
+                        Type: 1,
+                        Repeat: 1000,
+                        Notification: 1,
+                        FullDate: false,
+                        StartDate: moment().add(1, 'd'),
+                        EndDate: moment().add(1, 'd').endOf('day')
+                    }]
+                },
+                msg: '',
+                msgCode: ''
+            };
+            reply(res);
+        } catch (ex) {
+        }
+    }
     /**
      * get list activities by leadid
      */
@@ -213,18 +288,20 @@ export default class ActivitiesController {
                     Id: 1,
                     ProcessStep: 1,
                     Type: 1,
-                    Phone: '01694248887',
-                    Name: 'Tu Nguyen',
-                    StartDate: '2018-01-26',
-                    FullDate: true,
+                    Repeat: 1,
+                    Notification: 1,
+                    FullDate: false,
+                    StartDate: moment().add(1, 'd'),
+                    EndDate: moment().add(1, 'd').endOf('day')
                 }, {
                     Id: 2,
                     ProcessStep: 1,
                     Type: 1,
-                    Phone: '01694248888',
-                    Name: 'John',
-                    StartDate: '2018-01-26',
-                    FullDate: true,
+                    Repeat: 1000,
+                    Notification: 1,
+                    FullDate: false,
+                    StartDate: moment().add(1, 'd'),
+                    EndDate: moment().add(1, 'd').endOf('day')
                 }],
                 msg: '',
                 msgCode: ''
@@ -248,19 +325,6 @@ export default class ActivitiesController {
                     }
                 };
             }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogActivity.create({
-                type: 'historyOfLead have errors',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
             reply(res);
         }
     }
