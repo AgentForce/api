@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 const user_controller_1 = require("./user-controller");
 const UserValidator = require("./user-validator");
-const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
 const user_validator_1 = require("./user-validator");
 const index_2 = require("../../common/index");
@@ -42,7 +41,7 @@ function default_1(server, serverConfigs, database) {
                             schema: Joi.object({
                                 status: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: Joi
                                     .object(),
                                 msgcode: Joi.string(),
@@ -54,7 +53,7 @@ function default_1(server, serverConfigs, database) {
                             schema: Joi.object({
                                 status: Joi
                                     .number()
-                                    .example(200),
+                                    .example(0),
                                 data: Joi
                                     .object(),
                                 msgcode: Joi.string(),
@@ -82,12 +81,13 @@ function default_1(server, serverConfigs, database) {
                 headers: user_validator_1.headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        error: {
+                        statusCode: 0,
+                        data: {
                             code: 'ex_payload',
                             msg: 'payload dont valid',
-                            details: error
-                        }
+                        },
+                        msgCode: 'ex_payload',
+                        msg: 'payload dont valid',
                     };
                     index_1.LogUser.create({
                         type: 'updateprofile',
@@ -144,10 +144,13 @@ function default_1(server, serverConfigs, database) {
                 headers: user_validator_1.headersChecksumModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        data: error,
-                        msgCode: '',
-                        msg: ''
+                        statusCode: 0,
+                        data: {
+                            code: 'ex_payload',
+                            msg: 'payload dont valid',
+                        },
+                        msgCode: 'ex_payload',
+                        msg: 'payload dont valid',
                     };
                     index_1.LogUser.create({
                         type: 'updateprofile',
@@ -207,12 +210,13 @@ function default_1(server, serverConfigs, database) {
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        error: {
+                        statusCode: 0,
+                        data: {
                             code: 'ex_payload',
                             msg: 'payload dont valid',
-                            details: error
-                        }
+                        },
+                        msgCode: 'ex_payload',
+                        msg: 'payload dont valid',
                     };
                     index_1.LogUser.create({
                         type: 'updateprofile',
@@ -271,12 +275,13 @@ function default_1(server, serverConfigs, database) {
                 payload: UserValidator.createUserModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        error: {
+                        statusCode: 0,
+                        data: {
                             code: 'ex_payload',
                             msg: 'payload dont valid',
-                            details: error
-                        }
+                        },
+                        msgCode: 'ex_payload',
+                        msg: 'payload dont valid',
                     };
                     index_1.LogUser.create({
                         type: 'updateprofile',
@@ -328,12 +333,13 @@ function default_1(server, serverConfigs, database) {
                 payload: UserValidator.changePassModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST,
-                        error: {
+                        statusCode: 0,
+                        data: {
                             code: 'ex_payload',
                             msg: 'payload dont valid',
-                            details: error
-                        }
+                        },
+                        msgCode: 'ex_payload',
+                        msg: 'payload dont valid',
                     };
                     index_1.LogUser.create({
                         type: 'changepassword',
@@ -407,7 +413,7 @@ function default_1(server, serverConfigs, database) {
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST,
+                        statusCode: 0,
                         data: error,
                         msgCode: index_2.MsgCodeResponses.INPUT_INVALID,
                         msg: index_2.MsgCodeResponses.INPUT_INVALID
@@ -488,7 +494,7 @@ function default_1(server, serverConfigs, database) {
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST,
+                        statusCode: 0,
                         data: error,
                         msgCode: index_2.MsgCodeResponses.INPUT_INVALID,
                         msg: index_2.MsgCodeResponses.INPUT_INVALID
@@ -505,7 +511,7 @@ function default_1(server, serverConfigs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: Joi.object({
                                     Status: Joi
                                         .object({
@@ -543,7 +549,7 @@ function default_1(server, serverConfigs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: {
                                     access_token: Joi.string(),
                                     token_type: Joi.string(),
@@ -581,7 +587,7 @@ function default_1(server, serverConfigs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: {
                                     access_token: Joi.string(),
                                     token_type: Joi.string(),
@@ -619,7 +625,7 @@ function default_1(server, serverConfigs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: {},
                                 msg: Joi.string().required(),
                                 msgcode: Joi.string()

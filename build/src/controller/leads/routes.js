@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 const lead_controller_1 = require("./lead-controller");
 const user_validator_1 = require("../users/user-validator");
-const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
 const code_errors_1 = require("../../common/code-errors");
 const LeadValidator = require("./lead-validator");
@@ -28,10 +27,10 @@ function default_1(server, configs, database) {
                 headers: user_validator_1.headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD, msg: 'payload dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
                     };
                     index_1.LogLead.create({
                         type: 'detaillead',
@@ -53,7 +52,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: Joi
                                     .object(),
                                 msg: Joi.string()
@@ -64,7 +63,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(HTTP_STATUS.NOT_FOUND),
+                                    .example(0),
                                 data: Joi.object(),
                                 msg: Joi.string(),
                                 msgcode: Joi.string()
@@ -97,10 +96,10 @@ function default_1(server, configs, database) {
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD, msg: 'payload dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
                     };
                     index_1.LogLead.create({
                         type: 'detaillead',
@@ -122,7 +121,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: Joi
                                     .object(),
                                 msg: Joi.string()
@@ -133,7 +132,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(HTTP_STATUS.NOT_FOUND),
+                                    .example(0),
                                 data: Joi.object(),
                                 msg: Joi.string(),
                                 msgcode: Joi.string()
@@ -202,7 +201,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: Joi
                                     .object({
                                     data: Joi.array().example([]),
@@ -218,7 +217,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(HTTP_STATUS.BAD_REQUEST),
+                                    .example(0),
                                 data: Joi.object(),
                                 msg: Joi.string(),
                                 msgcode: Joi.string()
@@ -253,10 +252,10 @@ function default_1(server, configs, database) {
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD, msg: 'payload dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
                     };
                     index_1.LogLead.create({
                         type: 'updatelead',
@@ -278,7 +277,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: Joi
                                     .object(),
                                 msg: Joi.string(),
@@ -290,7 +289,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(HTTP_STATUS.BAD_REQUEST),
+                                    .example(0),
                                 data: Joi.object(),
                                 msg: Joi.string(),
                                 msgcode: Joi.string()
@@ -328,10 +327,10 @@ function default_1(server, configs, database) {
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD, msg: 'payload dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
                     };
                     index_1.LogLead.create({
                         type: 'updatelead',
@@ -353,7 +352,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: Joi
                                     .object(),
                                 msg: Joi.string(),
@@ -365,7 +364,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(HTTP_STATUS.BAD_REQUEST),
+                                    .example(0),
                                 data: Joi.object(),
                                 msg: Joi.string(),
                                 msgcode: Joi.string()
@@ -395,10 +394,10 @@ function default_1(server, configs, database) {
                 headers: user_validator_1.headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD, msg: 'payload dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
                     };
                     index_1.LogLead.create({
                         type: 'createlead',
@@ -420,7 +419,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: Joi
                                     .object(),
                                 msg: Joi.string(),
@@ -432,7 +431,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(HTTP_STATUS.BAD_REQUEST),
+                                    .example(0),
                                 data: Joi.object(),
                                 msg: Joi.string(),
                                 msgcode: Joi.string()

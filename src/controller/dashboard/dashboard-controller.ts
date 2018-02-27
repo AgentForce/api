@@ -144,7 +144,7 @@ export default class DashboardController {
             }
 
             reply({
-                statusCode: 200,
+                statusCode: 1,
                 data: res,
                 msg: '',
                 msgCode: ''
@@ -170,13 +170,13 @@ export default class DashboardController {
             let res = {};
             if (ex.code) {
                 res = {
-                    statusCode: HTTP_STATUS.BAD_GATEWAY,
+                    statusCode: 0,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    statusCode: HTTP_STATUS.BAD_GATEWAY,
+                    statusCode: 0,
                     url: request.url.path,
                     error: {
                         code: Ex.EX_GENERAL,
@@ -197,8 +197,7 @@ export default class DashboardController {
                     response: res
                 },
             });
-            reply(res)
-                .code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 }

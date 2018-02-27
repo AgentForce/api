@@ -5,7 +5,7 @@ import { jwtValidator, headerModel } from "../users/user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
-import { ManulifeErrors as Ex } from '../../common/code-errors';
+import { ManulifeErrors as Ex, MsgCodeResponses } from '../../common/code-errors';
 import { LogCamp } from "../../mongo/index";
 import { SlackAlert } from "../../common/index";
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
@@ -35,11 +35,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: Ex.EX_PAYLOAD,
-                            msg: 'payload dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: MsgCodeResponses.INPUT_INVALID,
+                        msg: MsgCodeResponses.INPUT_INVALID
                     };
                     LogCamp.create({
                         type: '/dashboard/{type}',
@@ -65,7 +64,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(200),
+                                        .example(1),
                                     data: Joi
                                         .object({
                                             targetType: Joi
@@ -88,7 +87,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                        .example(0),
                                     error: Joi.string(),
                                     msg: Joi.string(),
                                     msgcode: Joi.string()

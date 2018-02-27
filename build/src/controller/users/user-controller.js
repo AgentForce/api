@@ -173,7 +173,7 @@ class UserController {
                 let res = {};
                 if (request.payload.OldPassword === '123456') {
                     res = {
-                        statusCode: 200,
+                        statusCode: 1,
                         data: {
                             status: true
                         },
@@ -183,7 +183,7 @@ class UserController {
                 }
                 else {
                     res = {
-                        statusCode: 200,
+                        statusCode: 1,
                         data: {
                             status: false
                         },
@@ -197,14 +197,14 @@ class UserController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: 'ex',
@@ -229,7 +229,7 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         status: true
                     },
@@ -281,14 +281,14 @@ class UserController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: 'ex', msg: 'Exception occurred change password'
@@ -314,7 +314,7 @@ class UserController {
     loginUser(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             return reply({
-                status: HTTP_STATUS.OK,
+                status: 1,
                 data: {
                     access_token: '2f8ac8b7255355afab238b45e9289d9504344ba5',
                     token_type: 'Bearer',
@@ -352,7 +352,7 @@ class UserController {
     requestOTP(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             return reply({
-                status: HTTP_STATUS.OK,
+                status: 1,
                 data: {
                     Status: true
                 },
@@ -415,7 +415,7 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    status: HTTP_STATUS.OK,
+                    status: 1,
                     data: {
                         access_token: "9d22ef67c5ff1e6d6f7c06ca75267220951970d9",
                         token_type: "Bearer",
@@ -443,14 +443,14 @@ class UserController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 1,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: 400,
+                        status: 1,
                         url: request.url.path,
                         error: {
                             code: code_errors_1.ManulifeErrors.EX_GENERAL,
@@ -489,9 +489,9 @@ class UserController {
                     Code: '234234'
                 };
                 reply({
-                    status: HTTP_STATUS.OK,
+                    status: 1,
                     data: fakerUser
-                }).code(HTTP_STATUS.OK);
+                });
                 // if (user !== null) {
                 //     reply({
                 //         status: HTTP_STATUS.OK,
@@ -508,14 +508,14 @@ class UserController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: code_errors_1.ManulifeErrors.EX_GENERAL,
@@ -554,7 +554,7 @@ class UserController {
                     Code: '234234'
                 };
                 reply({
-                    status: HTTP_STATUS.OK,
+                    status: 1,
                     data: fakerUser,
                     msg: 'Tìm thấy tài khoảng',
                     msgcode: 'found'
@@ -593,7 +593,7 @@ class UserController {
                         console.log(ex);
                     });
                     return reply({
-                        status: HTTP_STATUS.OK,
+                        status: 1,
                         data: {
                             token: this.generateToken(newUser),
                             info: newUserPg
@@ -634,7 +634,7 @@ class UserController {
                         throw ex;
                     });
                     return reply({
-                        status: HTTP_STATUS.OK,
+                        status: 1,
                         data: {
                             token: this.generateToken(newUser)
                         }
@@ -668,7 +668,7 @@ class UserController {
             try {
                 if (request.payload.Code === '123456') {
                     res = {
-                        statusCode: 200,
+                        statusCode: 1,
                         data: {
                             status: true
                         },
@@ -697,7 +697,7 @@ class UserController {
     check(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             let res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     status: 1
                 },
@@ -706,7 +706,7 @@ class UserController {
             };
             if (request.params.phone === '841693248887' && request.params.username === 'm123456') {
                 res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         status: 1
                     },
@@ -716,7 +716,7 @@ class UserController {
             }
             else if (request.params.phone === '841693248888' && request.params.username === 'm123455') {
                 res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         status: 2
                     },
@@ -726,7 +726,7 @@ class UserController {
             }
             else if (request.params.phone === '841693248889' && request.params.username === 'd123456') {
                 res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         status: 3
                     },
@@ -736,7 +736,7 @@ class UserController {
             }
             else if (request.params.phone === '841693248880' && request.params.username === 'a123456') {
                 res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         status: 5
                     },
@@ -746,7 +746,7 @@ class UserController {
             }
             else {
                 res = {
-                    statusCode: 200,
+                    statusCode: 0,
                     data: {
                         status: 4
                     },
@@ -763,7 +763,7 @@ class UserController {
     checkApp(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             let res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     active: 0,
                     description: "",

@@ -27,7 +27,7 @@ export default class ActivitiesController {
     public async findById(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     Id: 1,
                     ProcessStep: 2,
@@ -49,13 +49,13 @@ export default class ActivitiesController {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: HTTP_STATUS.BAD_REQUEST,
+                    status: 0,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: HTTP_STATUS.BAD_REQUEST,
+                    status: 0,
                     url: request.url.path,
                     error: {
                         code: EX.EX_GENERAL,
@@ -76,7 +76,7 @@ export default class ActivitiesController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -86,7 +86,7 @@ export default class ActivitiesController {
     public async calendar(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: [{
                     StartDate: '2018-01-18',
                     Type: 1,
@@ -110,13 +110,13 @@ export default class ActivitiesController {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: HTTP_STATUS.BAD_REQUEST,
+                    status: 0,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: HTTP_STATUS.BAD_REQUEST,
+                    status: 0,
                     url: request.url.path,
                     error: {
                         code: EX.EX_GENERAL,
@@ -137,7 +137,7 @@ export default class ActivitiesController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -147,7 +147,7 @@ export default class ActivitiesController {
     public async activitiesDay(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: [{
                     Id: 1,
                     ProcessStep: 1,
@@ -171,13 +171,13 @@ export default class ActivitiesController {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: HTTP_STATUS.BAD_REQUEST,
+                    status: 0,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: HTTP_STATUS.BAD_REQUEST,
+                    status: 0,
                     url: request.url.path,
                     error: {
                         code: EX.EX_GENERAL,
@@ -198,7 +198,7 @@ export default class ActivitiesController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -208,7 +208,7 @@ export default class ActivitiesController {
     public async activitiesLead(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: [{
                     Id: 1,
                     ProcessStep: 1,
@@ -234,13 +234,13 @@ export default class ActivitiesController {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: HTTP_STATUS.BAD_REQUEST,
+                    status: 0,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: HTTP_STATUS.BAD_REQUEST,
+                    status: 0,
                     url: request.url.path,
                     error: {
                         code: EX.EX_GENERAL,
@@ -261,7 +261,7 @@ export default class ActivitiesController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -271,7 +271,7 @@ export default class ActivitiesController {
     public async update(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     Id: 1,
                     ProcessStep: 2,
@@ -315,13 +315,13 @@ export default class ActivitiesController {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: {
                         code: EX.EX_GENERAL,
@@ -342,7 +342,7 @@ export default class ActivitiesController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -353,7 +353,7 @@ export default class ActivitiesController {
         try {
 
             let res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     Id: 1,
                     ProcessStep: 2,
@@ -384,13 +384,13 @@ export default class ActivitiesController {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: {
                         code: EX.EX_GENERAL,
@@ -408,7 +408,7 @@ export default class ActivitiesController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 

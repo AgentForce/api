@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 const relead_controller_1 = require("./relead-controller");
 const user_validator_1 = require("../users/user-validator");
-const HTTP_STATUS = require("http-status");
 /**
  * constant error
  */
@@ -30,11 +29,10 @@ function default_1(server, configs, database) {
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
-                            msg: 'params dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
                     };
                 }
                 // headers: jwtValidator
@@ -47,7 +45,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: Joi
                                     .object(),
                                 msg: Joi.string(),
@@ -59,7 +57,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(HTTP_STATUS.NOT_FOUND),
+                                    .example(0),
                                 data: Joi
                                     .object(),
                                 msg: Joi.string(),
@@ -97,11 +95,10 @@ function default_1(server, configs, database) {
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
-                            msg: 'params dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
                     };
                 }
                 // headers: jwtValidator
@@ -114,7 +111,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: Joi
                                     .object(),
                                 msg: Joi.string(),
@@ -126,7 +123,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(HTTP_STATUS.NOT_FOUND),
+                                    .example(0),
                                 data: Joi
                                     .object(),
                                 msg: Joi.string(),
@@ -167,11 +164,10 @@ function default_1(server, configs, database) {
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
-                            msg: 'params dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
                     };
                 }
                 // headers: jwtValidator
@@ -184,7 +180,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: Joi
                                     .object(),
                                 msg: Joi.string(),
@@ -196,7 +192,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(HTTP_STATUS.NOT_FOUND),
+                                    .example(0),
                                 data: Joi
                                     .object(),
                                 msg: Joi.string(),
@@ -234,11 +230,10 @@ function default_1(server, configs, database) {
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
-                            msg: 'params dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
                     };
                 }
                 // headers: jwtValidator
@@ -251,7 +246,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: Joi
                                     .object(),
                                 msg: Joi.string(),
@@ -263,7 +258,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(HTTP_STATUS.NOT_FOUND),
+                                    .example(0),
                                 data: Joi
                                     .object(),
                                 msg: Joi.string(),
@@ -297,11 +292,10 @@ function default_1(server, configs, database) {
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
-                            msg: 'params dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
                     };
                 }
                 // headers: jwtValidator
@@ -314,7 +308,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: Joi
                                     .object(),
                                 msg: Joi.string(),
@@ -326,7 +320,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(HTTP_STATUS.NOT_FOUND),
+                                    .example(0),
                                 data: Joi
                                     .object(),
                                 msg: Joi.string(),
