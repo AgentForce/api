@@ -26,7 +26,7 @@ export default class CampaignController {
     public async get(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: 0,
+                statusCode: 1,
                 data: {
                     "Id": 2,
                     "UserId": 5,
