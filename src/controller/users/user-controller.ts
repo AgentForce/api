@@ -39,7 +39,7 @@ const db = new Loki(`${UPLOAD_PATH}/${DB_NAME}`, { persistenceMethod: 'fs' });
 // optional: clean all data before start
 // cleanFolder(UPLOAD_PATH);
 if (!fs.existsSync(UPLOAD_PATH)) {
-    fs.mkdirSync(UPLOAD_PATH);
+    // fs.mkdirSync(UPLOAD_PATH);
 }
 
 export default class UserController {
@@ -100,17 +100,17 @@ export default class UserController {
                 .update({
                     Password: passwordHash,
                 }, {
-                    where: {
-                        Email: request.payload.Email
-                    }
-                });
+                        where: {
+                            Email: request.payload.Email
+                        }
+                    });
 
             let userMongo: any = await this.database.userModel
                 .update({
                     email: request.payload.Email,
                 }, {
-                    password: passwordHash
-                });
+                        password: passwordHash
+                    });
 
 
             nodemailer.createTestAccount((err, account) => {
@@ -192,7 +192,7 @@ export default class UserController {
             };
             if (request.payload.OldPassword === '123456') {
                 res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         status: true
                     },
@@ -201,7 +201,7 @@ export default class UserController {
                 };
             } else {
                 res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         status: false
                     },
@@ -215,13 +215,13 @@ export default class UserController {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: {
                         code: 'ex',
@@ -246,7 +246,7 @@ export default class UserController {
     public async setPassword(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     status: true
                 },
@@ -298,13 +298,13 @@ export default class UserController {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: {
                         code: 'ex', msg:
@@ -330,7 +330,7 @@ export default class UserController {
      */
     public async loginUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         return reply({
-            status: HTTP_STATUS.OK,
+            status: 1,
             data: {
                 access_token: '2f8ac8b7255355afab238b45e9289d9504344ba5',
                 token_type: 'Bearer',
@@ -369,7 +369,7 @@ export default class UserController {
    */
     public async requestOTP(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         return reply({
-            status: HTTP_STATUS.OK,
+            status: 1,
             data: {
                 Status: true
             },
@@ -403,7 +403,7 @@ export default class UserController {
     public async testUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         return dbPostgres
             .query(`select * from reporttolist(${request.params.userid}, lquery_in('${request.params.query}'))`,
-            { replacements: { email: 42 } })
+                { replacements: { email: 42 } })
             .spread((output, records: any) => {
                 return records.rows;
             });
@@ -436,7 +436,7 @@ export default class UserController {
     public async refreshToken(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                status: HTTP_STATUS.OK,
+                status: 1,
                 data: {
                     access_token: "9d22ef67c5ff1e6d6f7c06ca75267220951970d9",
                     token_type: "Bearer",
@@ -463,13 +463,13 @@ export default class UserController {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: 400,
+                    status: 1,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: 400,
+                    status: 1,
                     url: request.url.path,
                     error: {
                         code: Ex.EX_GENERAL,
@@ -509,9 +509,9 @@ export default class UserController {
 
             };
             reply({
-                status: HTTP_STATUS.OK,
+                status: 1,
                 data: fakerUser
-            }).code(HTTP_STATUS.OK);
+            });
             // if (user !== null) {
             //     reply({
             //         status: HTTP_STATUS.OK,
@@ -527,13 +527,13 @@ export default class UserController {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: {
                         code: Ex.EX_GENERAL,
@@ -572,7 +572,7 @@ export default class UserController {
 
             };
             reply({
-                status: HTTP_STATUS.OK,
+                status: 1,
                 data: fakerUser,
                 msg: 'Tìm thấy tài khoảng',
                 msgcode: 'found'
@@ -611,7 +611,7 @@ export default class UserController {
                         console.log(ex);
                     });
                 return reply({
-                    status: HTTP_STATUS.OK,
+                    status: 1,
                     data: {
                         token: this.generateToken(newUser),
                         info: newUserPg
@@ -650,7 +650,7 @@ export default class UserController {
                         throw ex;
                     });
                 return reply({
-                    status: HTTP_STATUS.OK,
+                    status: 1,
                     data: {
                         token: this.generateToken(newUser)
                     }
@@ -681,7 +681,7 @@ export default class UserController {
         try {
             if (request.payload.Code === '123456') {
                 res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         status: true
                     },
@@ -712,7 +712,7 @@ export default class UserController {
    */
     public async check(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         let res = {
-            statusCode: 200,
+            statusCode: 1,
             data: {
                 status: 1
             },
@@ -721,7 +721,7 @@ export default class UserController {
         };
         if (request.params.phone === '841693248887' && request.params.username === 'm123456') {
             res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     status: 1
                 },
@@ -730,7 +730,7 @@ export default class UserController {
             };
         } else if (request.params.phone === '841693248888' && request.params.username === 'm123455') {
             res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     status: 2
                 },
@@ -739,7 +739,7 @@ export default class UserController {
             };
         } else if (request.params.phone === '841693248889' && request.params.username === 'd123456') {
             res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     status: 3
                 },
@@ -748,7 +748,7 @@ export default class UserController {
             };
         } else if (request.params.phone === '841693248880' && request.params.username === 'a123456') {
             res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     status: 5
                 },
@@ -757,7 +757,7 @@ export default class UserController {
             };
         } else {
             res = {
-                statusCode: 200,
+                statusCode: 0,
                 data: {
                     status: 4
                 },
@@ -774,7 +774,7 @@ export default class UserController {
  */
     public async checkApp(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         let res = {
-            statusCode: 200,
+            statusCode: 1,
             data: {
                 active: 0,
                 description: "",

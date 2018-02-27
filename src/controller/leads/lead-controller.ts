@@ -23,7 +23,7 @@ export default class LeadController {
     public async findById(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     CampId: 1,
                     Phone: '+841603248887',
@@ -64,13 +64,13 @@ export default class LeadController {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: {
                         code: Ex.EX_GENERAL,
@@ -101,7 +101,7 @@ export default class LeadController {
     public async histories(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     totalCount: 2,
                     page: 1,
@@ -147,13 +147,13 @@ export default class LeadController {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: {
                         code: Ex.EX_GENERAL,
@@ -184,7 +184,7 @@ export default class LeadController {
     public async list(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     totalCount: 2,
                     page: 1,
@@ -267,7 +267,7 @@ export default class LeadController {
             let campaignId = parseInt(request.params.campid, 10);
             let leads: any = await LeadService.getLeadReject(campaignId, processStep);
             reply({
-                status: HTTP_STATUS.OK,
+                status: 1,
                 data: leads
             }).code(HTTP_STATUS.OK);
         } catch (ex) {
@@ -315,7 +315,7 @@ export default class LeadController {
     public async update(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     Id: 1,
                     Phone: '+841603248887',
@@ -379,7 +379,7 @@ export default class LeadController {
     public async updateStatus(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     CampId: 1,
                     Phone: '+841603248887',
@@ -407,7 +407,7 @@ export default class LeadController {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: ex
                 };
@@ -443,7 +443,7 @@ export default class LeadController {
     public async create(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: 200,
+                statusCode: 1,
                 data: {
                     CampId: 1,
                     Phone: '+841603248887',
@@ -481,13 +481,13 @@ export default class LeadController {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: { code: 'ex', msg: 'Create lead have errors' }
                 };

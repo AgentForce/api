@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const HTTP_STATUS = require("http-status");
 class CampaignController {
     constructor(configs, database) {
         this.configs = configs;
@@ -21,8 +20,15 @@ class CampaignController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: HTTP_STATUS.OK,
-                    data: {},
+                    statusCode: 0,
+                    data: {
+                        "Id": 2,
+                        "UserId": 5,
+                        "CampId": 134,
+                        "Phone": "01693248887",
+                        "Name": "string",
+                        "Period": 2
+                    },
                     msg: '',
                     msgCode: 'get_success'
                 };
@@ -39,7 +45,7 @@ class CampaignController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: HTTP_STATUS.OK,
+                    statusCode: 1,
                     data: {
                         items: [{
                                 Phone: '841693258887',
@@ -71,8 +77,15 @@ class CampaignController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: HTTP_STATUS.OK,
-                    data: {},
+                    statusCode: 1,
+                    data: {
+                        "Id": 2,
+                        "UserId": 5,
+                        "CampId": 134,
+                        "Phone": "01693248887",
+                        "Name": "string",
+                        "Period": 2
+                    },
                     msg: 'Create success',
                     msgCode: ''
                 };

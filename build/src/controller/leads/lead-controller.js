@@ -23,7 +23,7 @@ class LeadController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         CampId: 1,
                         Phone: '+841603248887',
@@ -65,14 +65,14 @@ class LeadController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: index_2.ManulifeErrors.EX_GENERAL,
@@ -103,7 +103,7 @@ class LeadController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         totalCount: 2,
                         page: 1,
@@ -150,14 +150,14 @@ class LeadController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: index_2.ManulifeErrors.EX_GENERAL,
@@ -188,7 +188,7 @@ class LeadController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         totalCount: 2,
                         page: 1,
@@ -274,7 +274,7 @@ class LeadController {
                 let campaignId = parseInt(request.params.campid, 10);
                 let leads = yield lead_service_1.LeadService.getLeadReject(campaignId, processStep);
                 reply({
-                    status: HTTP_STATUS.OK,
+                    status: 1,
                     data: leads
                 }).code(HTTP_STATUS.OK);
             }
@@ -323,7 +323,7 @@ class LeadController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         Id: 1,
                         Phone: '+841603248887',
@@ -388,7 +388,7 @@ class LeadController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         CampId: 1,
                         Phone: '+841603248887',
@@ -417,7 +417,7 @@ class LeadController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
@@ -455,7 +455,7 @@ class LeadController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         CampId: 1,
                         Phone: '+841603248887',
@@ -494,14 +494,14 @@ class LeadController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: { code: 'ex', msg: 'Create lead have errors' }
                     };

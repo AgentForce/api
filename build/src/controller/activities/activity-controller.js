@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
 const code_errors_1 = require("../../common/code-errors");
 const index_2 = require("../../common/index");
@@ -25,7 +24,7 @@ class ActivitiesController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         Id: 1,
                         ProcessStep: 2,
@@ -48,14 +47,14 @@ class ActivitiesController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: code_errors_1.ManulifeErrors.EX_GENERAL,
@@ -76,7 +75,7 @@ class ActivitiesController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }
@@ -87,7 +86,7 @@ class ActivitiesController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: [{
                             StartDate: '2018-01-18',
                             Type: 1,
@@ -112,14 +111,14 @@ class ActivitiesController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: code_errors_1.ManulifeErrors.EX_GENERAL,
@@ -140,7 +139,7 @@ class ActivitiesController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }
@@ -151,7 +150,7 @@ class ActivitiesController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: [{
                             Id: 1,
                             ProcessStep: 1,
@@ -176,14 +175,14 @@ class ActivitiesController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: code_errors_1.ManulifeErrors.EX_GENERAL,
@@ -204,7 +203,7 @@ class ActivitiesController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }
@@ -215,7 +214,7 @@ class ActivitiesController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: [{
                             Id: 1,
                             ProcessStep: 1,
@@ -242,14 +241,14 @@ class ActivitiesController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: code_errors_1.ManulifeErrors.EX_GENERAL,
@@ -270,7 +269,7 @@ class ActivitiesController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }
@@ -281,7 +280,7 @@ class ActivitiesController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         Id: 1,
                         ProcessStep: 2,
@@ -326,14 +325,14 @@ class ActivitiesController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: code_errors_1.ManulifeErrors.EX_GENERAL,
@@ -354,7 +353,7 @@ class ActivitiesController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }
@@ -365,7 +364,7 @@ class ActivitiesController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         Id: 1,
                         ProcessStep: 2,
@@ -397,14 +396,14 @@ class ActivitiesController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: code_errors_1.ManulifeErrors.EX_GENERAL,
@@ -422,7 +421,7 @@ class ActivitiesController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }

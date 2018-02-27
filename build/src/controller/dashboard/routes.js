@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 const dashboard_controller_1 = require("./dashboard-controller");
 const user_validator_1 = require("../users/user-validator");
-const HTTP_STATUS = require("http-status");
 const code_errors_1 = require("../../common/code-errors");
 const index_1 = require("../../mongo/index");
 function default_1(server, configs, database) {
@@ -31,11 +30,10 @@ function default_1(server, configs, database) {
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
-                            msg: 'payload dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
                     };
                     index_1.LogCamp.create({
                         type: '/dashboard/{type}',
@@ -60,7 +58,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(200),
+                                    .example(1),
                                 data: Joi
                                     .object({
                                     targetType: Joi
@@ -81,7 +79,7 @@ function default_1(server, configs, database) {
                             schema: Joi.object({
                                 statusCode: Joi
                                     .number()
-                                    .example(HTTP_STATUS.BAD_REQUEST),
+                                    .example(0),
                                 error: Joi.string(),
                                 msg: Joi.string(),
                                 msgcode: Joi.string()

@@ -26,9 +26,14 @@ export default class CampaignController {
     public async get(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: HTTP_STATUS.OK,
+                statusCode: 0,
                 data: {
-
+                    "Id": 2,
+                    "UserId": 5,
+                    "CampId": 134,
+                    "Phone": "01693248887",
+                    "Name": "string",
+                    "Period": 2
                 },
                 msg: '',
                 msgCode: 'get_success'
@@ -48,7 +53,7 @@ export default class CampaignController {
     public async list(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: HTTP_STATUS.OK,
+                statusCode: 1,
                 data: {
                     items: [{
                         Phone: '841693258887',
@@ -82,9 +87,14 @@ export default class CampaignController {
     public async create(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: HTTP_STATUS.OK,
+                statusCode: 1,
                 data: {
-
+                    "Id": 2,
+                    "UserId": 5,
+                    "CampId": 134,
+                    "Phone": "01693248887",
+                    "Name": "string",
+                    "Period": 2
                 },
                 msg: 'Create success',
                 msgCode: ''

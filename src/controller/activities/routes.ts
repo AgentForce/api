@@ -7,7 +7,7 @@ import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
 import { LogActivity } from "../../mongo/index";
-import { ManulifeErrors as Ex } from '../../common/code-errors';
+import { ManulifeErrors as Ex, MsgCodeResponses } from '../../common/code-errors';
 import { SlackAlert } from "../../common/index";
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
 
@@ -49,7 +49,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(200),
+                                        .example(1),
                                     data: Joi
                                         .array().items({
                                         }),
@@ -64,7 +64,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                        .example(0),
                                     data: Joi.object(),
                                     msg: Joi.string(),
                                     msgcode: Joi.string()
@@ -107,7 +107,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(200),
+                                        .example(1),
                                     data: Joi
                                         .object({
                                             data: Joi.array().example([]),
@@ -125,7 +125,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                        .example(0),
                                     data: Joi.object(),
                                     msg: Joi.string(),
                                     msgcode: Joi.string()
@@ -240,7 +240,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(200),
+                                        .example(1),
                                     data: Joi
                                         .object({}),
                                     msg: Joi.string(),
@@ -254,7 +254,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                        .example(0),
                                     data: Joi.object(),
                                     msg: Joi.string(),
                                     msgcode: Joi.string()
@@ -298,7 +298,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(200),
+                                        .example(1),
                                     data: Joi
                                         .object({
                                             data: Joi.array(),
@@ -315,7 +315,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                        .example(0),
                                     data: Joi.object(),
                                     msg: Joi.string(),
                                     msgcode: Joi.string()
@@ -345,11 +345,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 headers: headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: Ex.EX_PAYLOAD,
-                            msg: 'payload dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: MsgCodeResponses.INPUT_INVALID,
+                        msg: MsgCodeResponses.INPUT_INVALID
                     };
                     SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                     LogActivity.create({
@@ -373,7 +372,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(HTTP_STATUS.OK),
+                                        .example(1),
                                     data: Joi.object(),
                                     msg: Joi.string(),
                                     msgCode: Joi.string()
@@ -386,7 +385,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                        .example(0),
                                     data: Joi.object(),
                                     msg: Joi.string(),
                                     msgCode: Joi.string()
@@ -424,11 +423,10 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: Ex.EX_PAYLOAD,
-                            msg: 'payload dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: MsgCodeResponses.INPUT_INVALID,
+                        msg: MsgCodeResponses.INPUT_INVALID
                     };
                     SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                     LogActivity.create({
@@ -452,7 +450,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(HTTP_STATUS.OK),
+                                        .example(1),
                                     data: Joi.object(),
                                     msg: Joi.string(),
                                     msgCode: Joi.string()
@@ -465,7 +463,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
+                                        .example(0),
                                     data: Joi.object(),
                                     msg: Joi.string(),
                                     msgCode: Joi.string()

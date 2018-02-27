@@ -50,7 +50,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                 {
                                     status: Joi
                                         .number()
-                                        .example(200),
+                                        .example(1),
                                     data: Joi
                                         .object(),
                                     msgcode: Joi.string(),
@@ -63,7 +63,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                             schema: Joi.object({
                                 status: Joi
                                     .number()
-                                    .example(200),
+                                    .example(0),
                                 data: Joi
                                     .object(),
                                 msgcode: Joi.string(),
@@ -97,12 +97,13 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 headers: headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        error: {
+                        statusCode: 0,
+                        data: {
                             code: 'ex_payload',
                             msg: 'payload dont valid',
-                            details: error
-                        }
+                        },
+                        msgCode: 'ex_payload',
+                        msg: 'payload dont valid',
                     };
                     LogUser.create({
                         type: 'updateprofile',
@@ -162,10 +163,13 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 headers: headersChecksumModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        data: error,
-                        msgCode: '',
-                        msg: ''
+                        statusCode: 0,
+                        data: {
+                            code: 'ex_payload',
+                            msg: 'payload dont valid',
+                        },
+                        msgCode: 'ex_payload',
+                        msg: 'payload dont valid',
                     };
                     LogUser.create({
                         type: 'updateprofile',
@@ -233,12 +237,13 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        error: {
+                        statusCode: 0,
+                        data: {
                             code: 'ex_payload',
                             msg: 'payload dont valid',
-                            details: error
-                        }
+                        },
+                        msgCode: 'ex_payload',
+                        msg: 'payload dont valid',
                     };
                     LogUser.create({
                         type: 'updateprofile',
@@ -300,12 +305,13 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 payload: UserValidator.createUserModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        error: {
+                        statusCode: 0,
+                        data: {
                             code: 'ex_payload',
                             msg: 'payload dont valid',
-                            details: error
-                        }
+                        },
+                        msgCode: 'ex_payload',
+                        msg: 'payload dont valid',
                     };
                     LogUser.create({
                         type: 'updateprofile',
@@ -360,12 +366,13 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 payload: UserValidator.changePassModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST,
-                        error: {
+                        statusCode: 0,
+                        data: {
                             code: 'ex_payload',
                             msg: 'payload dont valid',
-                            details: error
-                        }
+                        },
+                        msgCode: 'ex_payload',
+                        msg: 'payload dont valid',
                     };
                     LogUser.create({
                         type: 'changepassword',
@@ -445,7 +452,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST,
+                        statusCode: 0,
                         data: error,
                         msgCode: MsgCodeResponses.INPUT_INVALID,
                         msg: MsgCodeResponses.INPUT_INVALID
@@ -534,7 +541,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST,
+                        statusCode: 0,
                         data: error,
                         msgCode: MsgCodeResponses.INPUT_INVALID,
                         msg: MsgCodeResponses.INPUT_INVALID
@@ -553,7 +560,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(200),
+                                        .example(1),
                                     data: Joi.object({
                                         Status: Joi
                                             .object({
@@ -596,7 +603,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(200),
+                                        .example(1),
                                     data: {
                                         access_token: Joi.string(),
                                         token_type: Joi.string(),
@@ -639,7 +646,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(200),
+                                        .example(1),
                                     data: {
                                         access_token: Joi.string(),
                                         token_type: Joi.string(),
@@ -680,7 +687,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                 {
                                     statusCode: Joi
                                         .number()
-                                        .example(200),
+                                        .example(1),
                                     data: {
 
                                     },

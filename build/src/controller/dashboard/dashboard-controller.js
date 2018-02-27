@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const moment = require("moment");
-const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
 const index_2 = require("../../common/index");
 class DashboardController {
@@ -139,7 +138,7 @@ class DashboardController {
                     };
                 }
                 reply({
-                    statusCode: 200,
+                    statusCode: 1,
                     data: res,
                     msg: '',
                     msgCode: ''
@@ -165,14 +164,14 @@ class DashboardController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        statusCode: HTTP_STATUS.BAD_GATEWAY,
+                        statusCode: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        statusCode: HTTP_STATUS.BAD_GATEWAY,
+                        statusCode: 0,
                         url: request.url.path,
                         error: {
                             code: index_2.ManulifeErrors.EX_GENERAL,
@@ -193,8 +192,7 @@ class DashboardController {
                         response: res
                     },
                 });
-                reply(res)
-                    .code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }

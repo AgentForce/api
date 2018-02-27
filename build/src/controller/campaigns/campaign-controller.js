@@ -25,7 +25,7 @@ class CampaignController {
             // 1. Router Checking data input : commission > 0, loan > 0, monthly > 0
             try {
                 let res = {
-                    statusCode: HTTP_STATUS.OK,
+                    statusCode: 1,
                     data: {},
                     msg: 'Create success',
                     msgCode: ''
@@ -58,14 +58,14 @@ class CampaignController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: index_2.ManulifeErrors.EX_GENERAL,
@@ -85,7 +85,7 @@ class CampaignController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.OK);
+                reply(res);
             }
         });
     }
@@ -94,7 +94,7 @@ class CampaignController {
             // 1. Router Checking data input : commission > 0, loan > 0, monthly > 0
             try {
                 let res = {
-                    statusCode: HTTP_STATUS.OK,
+                    statusCode: 1,
                     data: {},
                     msg: 'Create success',
                     msgCode: ''
@@ -127,14 +127,14 @@ class CampaignController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: index_2.ManulifeErrors.EX_GENERAL,
@@ -165,7 +165,7 @@ class CampaignController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: HTTP_STATUS.OK,
+                    statusCode: 1,
                     data: {},
                     msg: '',
                     msgCode: ''
@@ -190,14 +190,15 @@ class CampaignController {
                 let obj = yield campaign_service_1.CampaignService.getTotalCamp(key);
                 if (obj) {
                     reply({
-                        status: HTTP_STATUS.OK,
+                        status: 1,
                         data: obj,
-                    }).code(HTTP_STATUS.OK);
+                    });
                 }
                 else {
                     reply({
-                        status: HTTP_STATUS.NOT_FOUND,
-                        msg: 'not found anything'
+                        status: 0,
+                        msg: 'not found anything',
+                        msgCode: '',
                     });
                 }
             }
@@ -205,14 +206,14 @@ class CampaignController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: index_2.ManulifeErrors.EX_GENERAL,
@@ -233,7 +234,7 @@ class CampaignController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }
@@ -244,7 +245,7 @@ class CampaignController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 200,
+                    statusCode: 1,
                     data: {
                         status: true
                     },
@@ -298,7 +299,7 @@ class CampaignController {
                 let data = {};
                 if (parseInt(request.params.period, 10) > 0) {
                     data = {
-                        statusCode: HTTP_STATUS.OK,
+                        statusCode: 1,
                         data: [{
                                 Period: 1,
                                 Week: 1,
@@ -343,18 +344,15 @@ class CampaignController {
                                 CurrentMetting: 1,
                                 CurrentPresentation: 1,
                                 CurrentContract: 0
-                            }]
-                    };
-                    reply({
-                        statusCode: 200,
-                        data: data,
+                            }],
                         msg: index_2.MsgCodeResponses.CAMP_EXIST,
                         msgCode: index_2.MsgCodeResponses.CAMP_EXIST
-                    });
+                    };
+                    reply(data);
                 }
                 else {
                     reply({
-                        statusCode: 404,
+                        statusCode: 0,
                         data: {},
                         msg: index_2.MsgCodeResponses.CAMP_NOT_EXIST,
                         msgCode: index_2.MsgCodeResponses.CAMP_NOT_EXIST
@@ -366,14 +364,14 @@ class CampaignController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: index_2.ManulifeErrors.EX_GENERAL,
@@ -408,9 +406,9 @@ class CampaignController {
                 let campaigns = yield campaign_service_1.CampaignService.findByUserId(UserId);
                 if (campaigns == null) {
                     return reply({
-                        status: HTTP_STATUS.NOT_FOUND,
+                        status: 0,
                         data: campaigns
-                    }).code(HTTP_STATUS.NOT_FOUND);
+                    });
                 }
                 else {
                     return reply({
@@ -424,14 +422,14 @@ class CampaignController {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: index_2.ManulifeErrors.EX_GENERAL,
