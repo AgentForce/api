@@ -221,59 +221,113 @@ class ActivitiesController {
                         page: request.query.page,
                         limit: request.query.limit,
                         rows: [{
-                                Id: 1,
-                                ProcessStep: 1,
-                                Type: 1,
-                                Repeat: 1,
-                                Notification: 1,
-                                FullDate: false,
-                                StartDate: moment().add(1, 'd'),
-                                EndDate: moment().add(1, 'd').endOf('day')
+                                "Id": 1,
+                                "ActivityTypeId": 1,
+                                "Phone": "",
+                                "Name": "string",
+                                "ProcessStep": 0,
+                                "Location": "string",
+                                "StartDate": "2017-11-11T00:00:00.000Z",
+                                "EndDate": "2017-11-12T00:00:00.000Z",
+                                "FullDate": true,
+                                "Notification": 0,
+                                "Description": "string",
+                                "Type": 0,
+                                "Status": false,
+                                "manulife_lead": {
+                                    "Name": "John",
+                                    "ProcessStep": 1
+                                }
                             }, {
-                                Id: 2,
-                                ProcessStep: 1,
-                                Type: 1,
-                                Repeat: 1000,
-                                Notification: 1,
-                                FullDate: false,
-                                StartDate: moment().add(1, 'd'),
-                                EndDate: moment().add(1, 'd').endOf('day')
+                                "Id": 2,
+                                "ActivityTypeId": 1,
+                                "Phone": "",
+                                "Name": "string",
+                                "ProcessStep": 0,
+                                "Location": "string",
+                                "StartDate": "2017-11-11T00:00:00.000Z",
+                                "EndDate": "2017-11-12T00:00:00.000Z",
+                                "FullDate": true,
+                                "Notification": 0,
+                                "Description": "string",
+                                "Type": 0,
+                                "Status": false,
+                                "manulife_lead": {
+                                    "Name": "John",
+                                    "ProcessStep": 1
+                                }
                             }, {
-                                Id: 2,
-                                ProcessStep: 1,
-                                Type: 1,
-                                Repeat: 1000,
-                                Notification: 1,
-                                FullDate: false,
-                                StartDate: moment().add(1, 'd'),
-                                EndDate: moment().add(1, 'd').endOf('day')
+                                "Id": 3,
+                                "ActivityTypeId": 1,
+                                "Phone": "",
+                                "Name": "string",
+                                "ProcessStep": 2,
+                                "Location": "string",
+                                "StartDate": "2017-11-11T00:00:00.000Z",
+                                "EndDate": "2017-11-12T00:00:00.000Z",
+                                "FullDate": true,
+                                "Notification": 0,
+                                "Description": "string",
+                                "Type": 0,
+                                "Status": false,
+                                "manulife_lead": {
+                                    "Name": "John",
+                                    "ProcessStep": 2
+                                }
                             }, {
-                                Id: 3,
-                                ProcessStep: 1,
-                                Type: 1,
-                                Repeat: 1000,
-                                Notification: 1,
-                                FullDate: false,
-                                StartDate: moment().add(1, 'd'),
-                                EndDate: moment().add(1, 'd').endOf('day')
+                                "Id": 4,
+                                "ActivityTypeId": 1,
+                                "Phone": "",
+                                "Name": "string",
+                                "ProcessStep": 3,
+                                "Location": "string",
+                                "StartDate": "2017-11-11T00:00:00.000Z",
+                                "EndDate": "2017-11-12T00:00:00.000Z",
+                                "FullDate": true,
+                                "Notification": 0,
+                                "Description": "string",
+                                "Type": 0,
+                                "Status": false,
+                                "manulife_lead": {
+                                    "Name": "John",
+                                    "ProcessStep": 3
+                                }
                             }, {
-                                Id: 4,
-                                ProcessStep: 1,
-                                Type: 1,
-                                Repeat: 1000,
-                                Notification: 1,
-                                FullDate: false,
-                                StartDate: moment().add(1, 'd'),
-                                EndDate: moment().add(1, 'd').endOf('day')
+                                "Id": 5,
+                                "ActivityTypeId": 1,
+                                "Phone": "",
+                                "Name": "string",
+                                "ProcessStep": 1,
+                                "Location": "string",
+                                "StartDate": "2017-11-11T00:00:00.000Z",
+                                "EndDate": "2017-11-12T00:00:00.000Z",
+                                "FullDate": true,
+                                "Notification": 0,
+                                "Description": "string",
+                                "Type": 0,
+                                "Status": false,
+                                "manulife_lead": {
+                                    "Name": "John",
+                                    "ProcessStep": 1
+                                }
                             }, {
-                                Id: 5,
-                                ProcessStep: 1,
-                                Type: 1,
-                                Repeat: 1000,
-                                Notification: 1,
-                                FullDate: false,
-                                StartDate: moment().add(1, 'd'),
-                                EndDate: moment().add(1, 'd').endOf('day')
+                                "Id": 6,
+                                "ActivityTypeId": 1,
+                                "Phone": "",
+                                "Name": "string",
+                                "ProcessStep": 1,
+                                "Location": "string",
+                                "StartDate": "2017-11-11T00:00:00.000Z",
+                                "EndDate": "2017-11-12T00:00:00.000Z",
+                                "FullDate": true,
+                                "Notification": 0,
+                                "Description": "string",
+                                "Type": 0,
+                                "Status": false,
+                                "manulife_lead": {
+                                    "Name": "John",
+                                    "ProcessStep": 1
+                                }
                             }]
                     },
                     msg: '',
