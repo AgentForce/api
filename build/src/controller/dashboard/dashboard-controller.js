@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const moment = require("moment");
 const index_1 = require("../../mongo/index");
 const index_2 = require("../../common/index");
 class DashboardController {
@@ -26,115 +25,77 @@ class DashboardController {
                 if (request.params.type === 'weekmonth') {
                     res = {
                         type: request.params.type,
-                        currentweek: 2,
+                        currentWeek: 2,
                         campaign: [{
                                 Period: 1,
                                 Week: 1,
-                                TargetCallSale: 25,
-                                TargetContractSale: 10,
-                                TargetMetting: 5,
-                                TargetPresentation: 2,
-                                CurrentCallSale: 1,
-                                CurrentMetting: 1,
-                                CurrentPresentation: 8,
-                                CurrentContract: 0
+                                TargetCallSale: 30,
+                                TargetMetting: 15,
+                                TargetPresentation: 9,
+                                TargetContractSale: 3,
+                                TargetReLead: 27,
+                                CurrentCallSale: 17,
+                                CurrentMetting: 12,
+                                CurrentPresentation: 7,
+                                CurrentContract: 3,
+                                CurrentReLead: 2,
                             }, {
                                 Period: 1,
                                 Week: 2,
-                                TargetCallSale: 25,
-                                TargetContractSale: 10,
-                                TargetMetting: 5,
-                                TargetPresentation: 2,
-                                CurrentCallSale: 1,
-                                CurrentMetting: 1,
-                                CurrentPresentation: 8,
-                                CurrentContract: 0
+                                TargetCallSale: 30,
+                                TargetMetting: 15,
+                                TargetPresentation: 9,
+                                TargetContractSale: 3,
+                                TargetReLead: 27,
+                                CurrentCallSale: 17,
+                                CurrentMetting: 12,
+                                CurrentPresentation: 7,
+                                CurrentContract: 3,
+                                CurrentReLead: 2,
                             }, {
                                 Period: 1,
                                 Week: 3,
-                                TargetCallSale: 25,
-                                TargetContractSale: 10,
-                                TargetMetting: 5,
-                                TargetPresentation: 2,
-                                CurrentCallSale: 1,
-                                CurrentMetting: 1,
-                                CurrentPresentation: 8,
-                                CurrentContract: 0
+                                TargetCallSale: 30,
+                                TargetMetting: 15,
+                                TargetPresentation: 9,
+                                TargetContractSale: 3,
+                                TargetReLead: 27,
+                                CurrentCallSale: 17,
+                                CurrentMetting: 12,
+                                CurrentPresentation: 7,
+                                CurrentContract: 3,
+                                CurrentReLead: 2,
                             }, {
                                 Period: 1,
                                 Week: 4,
-                                TargetCallSale: 25,
-                                TargetContractSale: 10,
-                                TargetMetting: 5,
-                                TargetPresentation: 2,
-                                CurrentCallSale: 1,
-                                CurrentMetting: 1,
-                                CurrentPresentation: 8,
-                                CurrentContract: 0
-                            }],
-                        activities: [{
-                                Id: 1,
-                                ProcessStep: 1,
-                                Type: 1,
-                                Repeat: 1,
-                                Notification: 1,
-                                FullDate: false,
-                                StartDate: moment().add(1, 'd'),
-                                EndDate: moment().add(1, 'd').endOf('day')
-                            }, {
-                                Id: 2,
-                                ProcessStep: 1,
-                                Type: 1,
-                                Repeat: 1000,
-                                Notification: 1,
-                                FullDate: false,
-                                StartDate: moment().add(1, 'd'),
-                                EndDate: moment().add(1, 'd').endOf('day')
+                                TargetCallSale: 30,
+                                TargetMetting: 15,
+                                TargetPresentation: 9,
+                                TargetContractSale: 3,
+                                TargetReLead: 27,
+                                CurrentCallSale: 17,
+                                CurrentMetting: 12,
+                                CurrentPresentation: 7,
+                                CurrentContract: 3,
+                                CurrentReLead: 2,
                             }]
                     };
                 }
                 else {
                     res = {
-                        typeTarget: request.params.type,
-                        target: {
+                        type: request.params.type,
+                        campaign: {
                             TargetCallSale: 100,
-                            TargetContractSale: 50,
-                            TargetMetting: 30,
-                            TargetPresentation: 10,
-                            CurrentCallSale: 10,
-                            CurrentMetting: 45,
-                            CurrentPresentation: 8,
-                            CurrentContract: 1
-                        },
-                        campaign: [{
-                                TargetCallSale: 25,
-                                TargetContractSale: 10,
-                                TargetMetting: 5,
-                                TargetPresentation: 8,
-                                CurrentCallSale: 1,
-                                CurrentMetting: 1,
-                                CurrentPresentation: 2,
-                                CurrentContract: 0
-                            }],
-                        activities: [{
-                                Id: 1,
-                                ProcessStep: 1,
-                                Type: 1,
-                                Repeat: 1,
-                                Notification: 1,
-                                FullDate: false,
-                                StartDate: moment().add(1, 'd'),
-                                EndDate: moment().add(1, 'd').endOf('day')
-                            }, {
-                                Id: 2,
-                                ProcessStep: 1,
-                                Type: 1,
-                                Repeat: 1000,
-                                Notification: 1,
-                                FullDate: false,
-                                StartDate: moment().add(1, 'd'),
-                                EndDate: moment().add(1, 'd').endOf('day')
-                            }]
+                            TargetMetting: 50,
+                            TargetPresentation: 30,
+                            TargetContractSale: 10,
+                            TargetReLead: 90,
+                            CurrentCallSale: 80,
+                            CurrentMetting: 40,
+                            CurrentPresentation: 20,
+                            CurrentContract: 10,
+                            CurrentReLead: 10,
+                        }
                     };
                 }
                 reply({
