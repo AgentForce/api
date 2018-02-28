@@ -211,7 +211,7 @@ export default class ActivitiesController {
             let res = {
                 statusCode: 1,
                 data: {
-                    count: request.query.count,
+                    count: 21,
                     page: request.query.page,
                     limit: request.query.limit,
                     rows: [{
