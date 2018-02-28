@@ -20,7 +20,7 @@ class CampaignController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 0,
+                    statusCode: 1,
                     data: {
                         "Id": 2,
                         "UserId": 5,

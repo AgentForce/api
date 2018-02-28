@@ -410,7 +410,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/activities/{id}',
         config: {
             handler: activitiesController.update,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['activities', 'api'],
             description: 'Update a activity',
             validate: {
@@ -478,5 +478,72 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             }
         }
     });
+
+    /**
+   * update a activity
+   */
+    server.route({
+        method: 'GET',
+        path: '/activities',
+        config: {
+            handler: activitiesController.list,
+            tags: ['activities', 'api'],
+            description: 'get list activities',
+            validate: {
+                headers: headerModel,
+                query: {
+                    page: Joi.number().required()
+                        .description('page'),
+                    limit: Joi.number().required(),
+                },
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: 0,
+                        data: error,
+                        msgCode: MsgCodeResponses.INPUT_INVALID,
+                        msg: MsgCodeResponses.INPUT_INVALID
+                    };
+                    SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(1),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgCode: Joi.string()
+                                }
+                            )
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(0),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgCode: Joi.string()
+                                }
+                            )
+                        }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
 
 }
