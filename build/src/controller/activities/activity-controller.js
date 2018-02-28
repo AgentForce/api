@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const moment = require("moment");
 const index_1 = require("../../mongo/index");
 const code_errors_1 = require("../../common/code-errors");
 const index_2 = require("../../common/index");
@@ -210,6 +211,83 @@ class ActivitiesController {
     /**
      * get list activities by leadid
      */
+    list(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let res = {
+                    statusCode: 1,
+                    data: {
+                        count: request.query.count,
+                        page: request.query.page,
+                        limit: request.query.limit,
+                        rows: [{
+                                Id: 1,
+                                ProcessStep: 1,
+                                Type: 1,
+                                Repeat: 1,
+                                Notification: 1,
+                                FullDate: false,
+                                StartDate: moment().add(1, 'd'),
+                                EndDate: moment().add(1, 'd').endOf('day')
+                            }, {
+                                Id: 2,
+                                ProcessStep: 1,
+                                Type: 1,
+                                Repeat: 1000,
+                                Notification: 1,
+                                FullDate: false,
+                                StartDate: moment().add(1, 'd'),
+                                EndDate: moment().add(1, 'd').endOf('day')
+                            }, {
+                                Id: 2,
+                                ProcessStep: 1,
+                                Type: 1,
+                                Repeat: 1000,
+                                Notification: 1,
+                                FullDate: false,
+                                StartDate: moment().add(1, 'd'),
+                                EndDate: moment().add(1, 'd').endOf('day')
+                            }, {
+                                Id: 3,
+                                ProcessStep: 1,
+                                Type: 1,
+                                Repeat: 1000,
+                                Notification: 1,
+                                FullDate: false,
+                                StartDate: moment().add(1, 'd'),
+                                EndDate: moment().add(1, 'd').endOf('day')
+                            }, {
+                                Id: 4,
+                                ProcessStep: 1,
+                                Type: 1,
+                                Repeat: 1000,
+                                Notification: 1,
+                                FullDate: false,
+                                StartDate: moment().add(1, 'd'),
+                                EndDate: moment().add(1, 'd').endOf('day')
+                            }, {
+                                Id: 5,
+                                ProcessStep: 1,
+                                Type: 1,
+                                Repeat: 1000,
+                                Notification: 1,
+                                FullDate: false,
+                                StartDate: moment().add(1, 'd'),
+                                EndDate: moment().add(1, 'd').endOf('day')
+                            }]
+                    },
+                    msg: '',
+                    msgCode: ''
+                };
+                reply(res);
+            }
+            catch (ex) {
+            }
+        });
+    }
+    /**
+     * get list activities by leadid
+     */
     activitiesLead(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -219,18 +297,20 @@ class ActivitiesController {
                             Id: 1,
                             ProcessStep: 1,
                             Type: 1,
-                            Phone: '01694248887',
-                            Name: 'Tu Nguyen',
-                            StartDate: '2018-01-26',
-                            FullDate: true,
+                            Repeat: 1,
+                            Notification: 1,
+                            FullDate: false,
+                            StartDate: moment().add(1, 'd'),
+                            EndDate: moment().add(1, 'd').endOf('day')
                         }, {
                             Id: 2,
                             ProcessStep: 1,
                             Type: 1,
-                            Phone: '01694248888',
-                            Name: 'John',
-                            StartDate: '2018-01-26',
-                            FullDate: true,
+                            Repeat: 1000,
+                            Notification: 1,
+                            FullDate: false,
+                            StartDate: moment().add(1, 'd'),
+                            EndDate: moment().add(1, 'd').endOf('day')
                         }],
                     msg: '',
                     msgCode: ''
@@ -256,19 +336,6 @@ class ActivitiesController {
                         }
                     };
                 }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogActivity.create({
-                    type: 'historyOfLead have errors',
-                    dataInput: {
-                        payload: request.payload,
-                        params: request.params
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
                 reply(res);
             }
         });

@@ -372,7 +372,7 @@ function default_1(server, configs, database) {
         path: '/activities/{id}',
         config: {
             handler: activitiesController.update,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['activities', 'api'],
             description: 'Update a activity',
             validate: {
@@ -400,6 +400,67 @@ function default_1(server, configs, database) {
                             response: res
                         },
                     });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(1),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgCode: Joi.string()
+                            })
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(0),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgCode: Joi.string()
+                            })
+                        }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
+                }
+            }
+        }
+    });
+    /**
+   * update a activity
+   */
+    server.route({
+        method: 'GET',
+        path: '/activities',
+        config: {
+            handler: activitiesController.list,
+            tags: ['activities', 'api'],
+            description: 'get list activities',
+            validate: {
+                headers: user_validator_1.headerModel,
+                query: {
+                    page: Joi.number().required()
+                        .description('page'),
+                    limit: Joi.number().required(),
+                },
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
+                    };
+                    index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                     return reply(res);
                 }
             },
