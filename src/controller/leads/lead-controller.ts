@@ -103,10 +103,10 @@ export default class LeadController {
             let res = {
                 statusCode: 1,
                 data: {
-                    totalCount: 2,
+                    couhnt: 2,
                     page: 1,
                     limit: 10,
-                    items: [{
+                    rows: [{
                         CampId: 1,
                         Phone: '+841603248887',
                         Name: Faker.name.firstName(),
