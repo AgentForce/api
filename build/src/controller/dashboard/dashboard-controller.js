@@ -84,18 +84,20 @@ class DashboardController {
                 else {
                     res = {
                         type: request.params.type,
-                        campaign: {
-                            TargetCallSale: 100,
-                            TargetMetting: 50,
-                            TargetPresentation: 30,
-                            TargetContractSale: 10,
-                            TargetReLead: 90,
-                            CurrentCallSale: 80,
-                            CurrentMetting: 40,
-                            CurrentPresentation: 20,
-                            CurrentContract: 10,
-                            CurrentReLead: 10,
-                        }
+                        campaign: [
+                            {
+                                TargetCallSale: 100,
+                                TargetMetting: 50,
+                                TargetPresentation: 30,
+                                TargetContractSale: 10,
+                                TargetReLead: 90,
+                                CurrentCallSale: 80,
+                                CurrentMetting: 40,
+                                CurrentPresentation: 20,
+                                CurrentContract: 10,
+                                CurrentReLead: 10,
+                            }
+                        ]
                     };
                 }
                 reply({
