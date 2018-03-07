@@ -211,118 +211,64 @@ export default class ActivitiesController {
             let res = {
                 statusCode: 1,
                 data: {
-                    count: 21,
+                    count: 4,
                     page: request.query.page,
                     limit: request.query.limit,
-                    rows: [{
+                    rows: [ {
                         "Id": 1,
                         "ActivityTypeId": 1,
-                        "Phone": "",
                         "Name": "string",
                         "ProcessStep": 0,
-                        "Location": "string",
-                        "StartDate": "2017-11-11T00:00:00.000Z",
-                        "EndDate": "2017-11-12T00:00:00.000Z",
-                        "FullDate": true,
-                        "Notification": 0,
                         "Description": "string",
-                        "Type": 0,
-                        "Status": false,
+                        "CreatedAt": "2018-02-28T02:15:42.934Z",
                         "manulife_lead": {
-                            "Name": "John",
-                            "ProcessStep": 1
+                          "Name": "string",
+                          "ProcessStep": 1,
+                          "StatusProcessStep": 2,
+                          "Phone": "01693248887"
                         }
-                    }, {
+                      },
+                      {
                         "Id": 2,
-                        "ActivityTypeId": 1,
-                        "Phone": "",
-                        "Name": "string",
-                        "ProcessStep": 0,
-                        "Location": "string",
-                        "StartDate": "2017-11-11T00:00:00.000Z",
-                        "EndDate": "2017-11-12T00:00:00.000Z",
-                        "FullDate": true,
-                        "Notification": 0,
-                        "Description": "string",
-                        "Type": 0,
-                        "Status": false,
-                        "manulife_lead": {
-                            "Name": "John",
-                            "ProcessStep": 1
-                        }
-                    }, {
-                        "Id": 3,
-                        "ActivityTypeId": 1,
-                        "Phone": "",
-                        "Name": "string",
+                        "ActivityTypeId": 2,
+                        "Name": "Lorem...",
                         "ProcessStep": 2,
-                        "Location": "string",
-                        "StartDate": "2017-11-11T00:00:00.000Z",
-                        "EndDate": "2017-11-12T00:00:00.000Z",
-                        "FullDate": true,
-                        "Notification": 0,
                         "Description": "string",
-                        "Type": 0,
-                        "Status": false,
+                        "CreatedAt": "2018-02-28T02:15:42.934Z",
                         "manulife_lead": {
-                            "Name": "John",
-                            "ProcessStep": 2
+                          "Name": "string",
+                          "ProcessStep": 2,
+                          "StatusProcessStep": 2,
+                          "Phone": "01693248887"
                         }
-                    }, {
+                      }, {
+                        "Id": 3,
+                        "ActivityTypeId": 3,
+                        "Name": "Lorem...",
+                        "ProcessStep": 2,
+                        "Description": "string",
+                        "CreatedAt": "2018-02-28T02:15:42.934Z",
+                        "manulife_lead": {
+                          "Name": "string",
+                          "ProcessStep": 3,
+                          "StatusProcessStep": 2,
+                          "Phone": "01693248887"
+                        }
+                      },
+                      {
                         "Id": 4,
-                        "ActivityTypeId": 1,
-                        "Phone": "",
-                        "Name": "string",
-                        "ProcessStep": 3,
-                        "Location": "string",
-                        "StartDate": "2017-11-11T00:00:00.000Z",
-                        "EndDate": "2017-11-12T00:00:00.000Z",
-                        "FullDate": true,
-                        "Notification": 0,
+                        "ActivityTypeId": 4,
+                        "Name": "Lorem...",
+                        "ProcessStep": 4,
                         "Description": "string",
-                        "Type": 0,
-                        "Status": false,
+                        "CreatedAt": "2018-02-28T02:15:42.934Z",
                         "manulife_lead": {
-                            "Name": "John",
-                            "ProcessStep": 3
+                          "Name": "string",
+                          "ProcessStep": 4,
+                          "StatusProcessStep": 3,
+                          "Phone": "01693248887"
                         }
-                    }, {
-                        "Id": 5,
-                        "ActivityTypeId": 1,
-                        "Phone": "",
-                        "Name": "string",
-                        "ProcessStep": 1,
-                        "Location": "string",
-                        "StartDate": "2017-11-11T00:00:00.000Z",
-                        "EndDate": "2017-11-12T00:00:00.000Z",
-                        "FullDate": true,
-                        "Notification": 0,
-                        "Description": "string",
-                        "Type": 0,
-                        "Status": false,
-                        "manulife_lead": {
-                            "Name": "John",
-                            "ProcessStep": 1
-                        }
-                    }, {
-                        "Id": 6,
-                        "ActivityTypeId": 1,
-                        "Phone": "",
-                        "Name": "string",
-                        "ProcessStep": 1,
-                        "Location": "string",
-                        "StartDate": "2017-11-11T00:00:00.000Z",
-                        "EndDate": "2017-11-12T00:00:00.000Z",
-                        "FullDate": true,
-                        "Notification": 0,
-                        "Description": "string",
-                        "Type": 0,
-                        "Status": false,
-                        "manulife_lead": {
-                            "Name": "John",
-                            "ProcessStep": 1
-                        }
-                    }]
+                      }]
                 },
                 msg: '',
                 msgCode: ''
