@@ -679,10 +679,12 @@ class UserController {
                 }
                 else {
                     res = {
-                        statusCode: HTTP_STATUS.BAD_REQUEST,
+                        statusCode: 0,
                         data: {
-                            status: false
-                        }
+                            status: true
+                        },
+                        msg: 'khong thanh cong',
+                        msgCode: 'khong thanh cong'
                     };
                     reply(res);
                 }
@@ -716,7 +718,7 @@ class UserController {
             }
             else if (request.params.phone === '841693248888' && request.params.username === 'm123455') {
                 res = {
-                    statusCode: 1,
+                    statusCode: 0,
                     data: {
                         status: 2
                     },
@@ -726,7 +728,7 @@ class UserController {
             }
             else if (request.params.phone === '841693248889' && request.params.username === 'd123456') {
                 res = {
-                    statusCode: 1,
+                    statusCode: 0,
                     data: {
                         status: 3
                     },
