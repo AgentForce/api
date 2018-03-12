@@ -29,11 +29,8 @@ export default class CampaignController {
                 statusCode: 1,
                 data: {
                     "Id": 2,
-                    "UserId": 5,
-                    "CampId": 134,
                     "Phone": "01693248887",
                     "Name": "string",
-                    "Period": 2
                 },
                 msg: '',
                 msgCode: 'get_success'
@@ -55,7 +52,7 @@ export default class CampaignController {
             let res = {
                 statusCode: 1,
                 data: {
-                    items: [{
+                    rows: [{
                         Phone: '841693258887',
                         FullName: 'Tu Nguyen'
                     }, {
@@ -65,7 +62,7 @@ export default class CampaignController {
                         Phone: '841693258889',
                         FullName: 'Alex'
                     }],
-                    totalItem: 20,
+                    count: 20,
                     page: 1,
                     limit: 10
                 },
@@ -88,14 +85,7 @@ export default class CampaignController {
         try {
             let res = {
                 statusCode: 1,
-                data: {
-                    "Id": 2,
-                    "UserId": 5,
-                    "CampId": 134,
-                    "Phone": "01693248887",
-                    "Name": "string",
-                    "Period": 2
-                },
+                data: true,
                 msg: 'Create success',
                 msgCode: ''
             };

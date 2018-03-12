@@ -113,55 +113,9 @@ export default class DashboardController {
                 msg: '',
                 msgCode: ''
             });
-            // let type = request.params.type as typeTarget;
-            // let UserId = 5;
-            // let dashboard: any = await DashboardService.dashboard(type, UserId);
-            // if (dashboard == null) {
-            //     return reply({
-            //         statusCode: HTTP_STATUS.NOT_FOUND,
-            //         data: dashboard
-            //     })
-            //         .code(HTTP_STATUS.NOT_FOUND);
-            // } else {
 
-            //     return reply({
-            //         statusCode: HTTP_STATUS.OK,
-            //         data: dashboard
-            //     }).code(HTTP_STATUS.OK);
-            // }
         } catch (ex) {
-            // log mongo create fail
-            let res = {};
-            if (ex.code) {
-                res = {
-                    statusCode: 0,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    statusCode: 0,
-                    url: request.url.path,
-                    error: {
-                        code: Ex.EX_GENERAL,
-                        msg: 'get dashboard have errors'
-                    }
-                };
-            }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogCamp.create({
-                type: 'dashboard',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res);
+
         }
     }
 }

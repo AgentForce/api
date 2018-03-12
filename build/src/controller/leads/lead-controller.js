@@ -11,8 +11,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const lead_service_1 = require("../../services/lead.service");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
-const Faker = require("faker");
-const _ = require("lodash");
 const index_2 = require("../../common/index");
 class LeadController {
     constructor(configs, database) {
@@ -25,74 +23,28 @@ class LeadController {
                 let res = {
                     statusCode: 1,
                     data: {
-                        CampId: 1,
-                        Phone: '+841603248887',
-                        Name: Faker.name.firstName(),
-                        Age: _.sample([1, 2, 3, 4]),
-                        Gender: 1,
-                        IncomMontly: _.sample([1, 2, 3, 4]),
+                        Id: 4,
+                        Phone: '01693248887',
+                        Name: 'string',
+                        Age: 1,
+                        Gender: 0,
+                        IncomeMonthly: 1,
                         MaritalStatus: 1,
-                        Address: 'Quận 8',
-                        City: 1,
-                        District: 1,
-                        Relationship: _.sample([1, 2, 3, 4]),
-                        source: 1,
+                        Relationship: 1,
+                        Source: 0,
                         LeadType: 1,
-                        ProcessStep: 1,
-                        Description: 'lorem...',
-                        StatusProcessStep: 1,
-                        Status: false
+                        ProcessStep: 3,
+                        Description: 'string',
+                        Status: false,
+                        StatusProcessStep: 2,
+                        Score: 0
                     },
-                    msg: '',
-                    msgCode: ''
+                    msgCode: 'success',
+                    msg: 'success'
                 };
                 reply(res);
-                // let idEvent = parseInt(request.params.id, 10);
-                // let lead: any = await LeadService.findById(idEvent);
-                // if (lead == null) {
-                //     return reply({
-                //         status: HTTP_STATUS.NOT_FOUND,
-                //         data: null,
-                //     }).code(HTTP_STATUS.NOT_FOUND);
-                // } else {
-                //     return reply({
-                //         status: HTTP_STATUS.OK,
-                //         data: lead,
-                //     }).code(HTTP_STATUS.OK);
-                // }
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: {
-                            code: index_2.ManulifeErrors.EX_GENERAL,
-                            msg: 'find lead have errors'
-                        }
-                    };
-                }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogLead.create({
-                    type: 'findById',
-                    dataInput: {
-                        params: request.params
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res);
             }
         });
     }
@@ -105,79 +57,33 @@ class LeadController {
                 let res = {
                     statusCode: 1,
                     data: {
-                        couhnt: 2,
-                        page: 1,
-                        limit: 10,
-                        rows: [{
-                                CampId: 1,
-                                Phone: '+841603248887',
-                                Name: Faker.name.firstName(),
-                                Age: _.sample([1, 2, 3, 4]),
-                                Gender: 1,
-                                IncomMontly: _.sample([1, 2, 3, 4]),
+                        count: 5,
+                        rows: [
+                            {
+                                Phone: '01693248887',
+                                Name: 'string',
+                                Age: 1,
+                                Gender: 0,
+                                IncomeMonthly: 1,
                                 MaritalStatus: 1,
-                                Address: 'Quận 8',
-                                City: 1,
-                                District: 1,
-                                Relationship: _.sample([1, 2, 3, 4]),
-                                source: 1,
+                                Relationship: 1,
+                                Source: 0,
                                 LeadType: 1,
-                                ProcessStep: 1,
-                                Description: 'lorem...',
-                                StatusProcessStep: 1,
-                                Status: false
-                            }]
+                                ProcessStep: 0,
+                                Description: 'string',
+                                StatusProcessStep: 0,
+                                Score: 0
+                            }
+                        ],
+                        page: 1,
+                        limit: 1
                     },
-                    msg: '',
-                    msgCode: ''
+                    msgCode: 'success',
+                    msg: 'success'
                 };
                 reply(res);
-                // let idEvent = parseInt(request.params.id, 10);
-                // let lead: any = await LeadService.findById(idEvent);
-                // if (lead == null) {
-                //     return reply({
-                //         status: HTTP_STATUS.NOT_FOUND,
-                //         data: null,
-                //     }).code(HTTP_STATUS.NOT_FOUND);
-                // } else {
-                //     return reply({
-                //         status: HTTP_STATUS.OK,
-                //         data: lead,
-                //     }).code(HTTP_STATUS.OK);
-                // }
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: {
-                            code: index_2.ManulifeErrors.EX_GENERAL,
-                            msg: 'find lead have errors'
-                        }
-                    };
-                }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogLead.create({
-                    type: 'findById',
-                    dataInput: {
-                        params: request.params
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res);
             }
         });
     }
@@ -190,77 +96,26 @@ class LeadController {
                 let res = {
                     statusCode: 1,
                     data: {
-                        totalCount: 2,
-                        page: 1,
-                        limit: 10,
-                        rows: [{
-                                Id: 1,
-                                Phone: '+841603248887',
-                                ProcessStep: 1,
-                                StatusProcessStep: 1,
-                                Name: Faker.name.firstName(),
-                                activities: [{
-                                        Id: 1,
-                                        ProcessStep: 1,
-                                        Type: 1,
-                                        StartDate: '2018-01-26',
-                                        EndDate: '2018-01-26',
-                                        FullDate: true,
-                                    }]
-                            }, {
-                                Id: 2,
-                                Phone: '+841603248888',
-                                ProcessStep: 1,
+                        page: '1',
+                        limit: '1',
+                        count: 1,
+                        rows: [
+                            {
+                                Phone: '01693248887',
+                                Name: 'string',
+                                Score: 0,
+                                ProcessStep: 3,
                                 StatusProcessStep: 2,
-                                Name: Faker.name.firstName(),
-                                activities: [{
-                                        Id: 1,
-                                        ProcessStep: 1,
-                                        Type: 1,
-                                        StartDate: '2018-01-26',
-                                        EndDate: '2018-01-26',
-                                        FullDate: true,
-                                    }]
-                            }]
+                                Id: 4
+                            }
+                        ]
                     },
-                    msg: '',
-                    msgCode: ''
+                    msgCode: 'success',
+                    msg: 'success'
                 };
                 reply(res);
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        url: request.url.path,
-                        error: {
-                            code: index_2.ManulifeErrors.EX_GENERAL,
-                            msg: 'update activity have errors'
-                        }
-                    };
-                }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogLead.create({
-                    type: 'get list activity',
-                    dataInput: {
-                        payload: request.payload,
-                        params: request.params
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res);
             }
         });
     }
@@ -324,60 +179,13 @@ class LeadController {
             try {
                 let res = {
                     statusCode: 1,
-                    data: {
-                        Id: 1,
-                        Phone: '+841603248887',
-                        Name: Faker.name.firstName(),
-                        Age: _.sample([1, 2, 3, 4]),
-                        Gender: 1,
-                        IncomMontly: _.sample([1, 2, 3, 4]),
-                        MaritalStatus: 1,
-                        Address: 'Quận 8',
-                        City: 1,
-                        District: 1,
-                        Relationship: _.sample([1, 2, 3, 4]),
-                        source: 1,
-                        LeadType: 1,
-                        ProcessStep: 1,
-                        Description: 'lorem...',
-                        StatusProcessStep: 1,
-                        Status: false
-                    },
-                    msg: '',
-                    msgCode: ''
+                    data: true,
+                    msg: 'Thành công',
+                    msgCode: 'success'
                 };
                 reply(res);
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: { code: index_2.ManulifeErrors.EX_GENERAL, msg: 'Create lead have errors' }
-                    };
-                }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogLead.create({
-                    type: 'update lead',
-                    dataInput: {
-                        payload: request.payload,
-                        params: request.params
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res);
             }
         });
     }
@@ -389,60 +197,13 @@ class LeadController {
             try {
                 let res = {
                     statusCode: 1,
-                    data: {
-                        CampId: 1,
-                        Phone: '+841603248887',
-                        Name: Faker.name.firstName(),
-                        Age: _.sample([1, 2, 3, 4]),
-                        Gender: 1,
-                        IncomMontly: _.sample([1, 2, 3, 4]),
-                        MaritalStatus: 1,
-                        Address: 'Quận 8',
-                        City: 1,
-                        District: 1,
-                        Relationship: _.sample([1, 2, 3, 4]),
-                        source: 1,
-                        LeadType: 1,
-                        ProcessStep: 1,
-                        Description: 'lorem...',
-                        StatusProcessStep: 1,
-                        Status: false
-                    },
-                    msg: '',
-                    msgCode: ''
+                    data: true,
+                    msg: 'Thành công',
+                    msgCode: 'success'
                 };
                 reply(res);
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: { code: index_2.ManulifeErrors.EX_GENERAL, msg: 'Create lead have errors' }
-                    };
-                }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogLead.create({
-                    type: 'update lead',
-                    dataInput: {
-                        payload: request.payload,
-                        params: request.params
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res);
             }
         });
     }
@@ -456,67 +217,13 @@ class LeadController {
             try {
                 let res = {
                     statusCode: 1,
-                    data: {
-                        CampId: 1,
-                        Phone: '+841603248887',
-                        Name: Faker.name.firstName(),
-                        Age: _.sample([1, 2, 3, 4]),
-                        Gender: 1,
-                        IncomMontly: _.sample([1, 2, 3, 4]),
-                        MaritalStatus: 1,
-                        Address: 'Quận 8',
-                        City: 1,
-                        District: 1,
-                        Relationship: _.sample([1, 2, 3, 4]),
-                        source: 1,
-                        LeadType: 1,
-                        ProcessStep: 1,
-                        Description: 'lorem...',
-                        StatusProcessStep: 1,
-                        Status: false
-                    },
-                    msg: '',
-                    msgCode: ''
+                    data: true,
+                    msg: 'Thành công',
+                    msgCode: 'success'
                 };
                 reply(res);
-                // let iLead = request.payload as ILead;
-                // let lead: any = await LeadService.create(iLead)
-                //     .catch(ex => {
-                //         throw ex;
-                //     });
-                // // log mongo create success
-                // reply({
-                //     status: HTTP_STATUS.OK,
-                //     data: lead
-                // }).code(HTTP_STATUS.OK);
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: { code: 'ex', msg: 'Create lead have errors' }
-                    };
-                }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogLead.create({
-                    type: 'create lead',
-                    dataInput: request.payload,
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res);
             }
         });
     }

@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const campaign_service_1 = require("../../services/campaign.service");
-const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
 const index_2 = require("../../common/index");
 class CampaignController {
@@ -31,61 +30,8 @@ class CampaignController {
                     msgCode: ''
                 };
                 reply(res);
-                // let iCamp: ICampaign = request.payload;
-                // let userId = 5;
-                // const camps = <any>await CampaignService.createOfFA(iCamp, userId);
-                // let logcamps = _.map(camps, (camp: any) => {
-                //     return {
-                //         type: 'createcampaign',
-                //         dataInput: {
-                //             payload: request.payload
-                //         },
-                //         msg: 'success',
-                //         meta: {
-                //             response: camp.dataValues
-                //         },
-                //     };
-                // });
-                // // save mongo log
-                // LogCamp
-                //     .insertMany(logcamps);
-                // reply({
-                //     status: HTTP_STATUS.OK,
-                //     data: camps
-                // }).code(200);
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: {
-                            code: index_2.ManulifeErrors.EX_GENERAL,
-                            msg: 'Create campaign have errors'
-                        }
-                    };
-                }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogCamp.create({
-                    type: 'createcampaign',
-                    dataInput: {
-                        payload: request.payload
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res);
             }
         });
     }
@@ -255,38 +201,6 @@ class CampaignController {
                 reply(res);
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: {
-                            code: index_2.ManulifeErrors.EX_GENERAL,
-                            msg: 'get leadsOfCamp have errors'
-                        }
-                    };
-                }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogCamp.create({
-                    type: 'leadsOfCamp',
-                    dataInput: {
-                        payload: request.payload,
-                        params: request.params
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res);
             }
         });
     }
@@ -362,106 +276,9 @@ class CampaignController {
                     reply(data);
                 }
                 else {
-                    reply({
-                        statusCode: 0,
-                        data: {},
-                        msg: index_2.MsgCodeResponses.CAMP_NOT_EXIST,
-                        msgCode: index_2.MsgCodeResponses.CAMP_NOT_EXIST
-                    });
                 }
             }
             catch (ex) {
-                // log mongo create fail
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: {
-                            code: index_2.ManulifeErrors.EX_GENERAL,
-                            msg: 'get getByCampaignId have errors'
-                        }
-                    };
-                }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogCamp.create({
-                    type: 'getByCampaignId',
-                    dataInput: {
-                        payload: request.payload,
-                        params: request.params
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res);
-            }
-        });
-    }
-    /**
-     * get list campaign of userid
-     */
-    getByUserId(request, reply) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                let UserId = request.params.userid;
-                let campaigns = yield campaign_service_1.CampaignService.findByUserId(UserId);
-                if (campaigns == null) {
-                    return reply({
-                        status: 0,
-                        data: campaigns
-                    });
-                }
-                else {
-                    return reply({
-                        status: HTTP_STATUS.OK,
-                        data: campaigns
-                    }).code(HTTP_STATUS.OK);
-                }
-            }
-            catch (ex) {
-                // log mongo create fail
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: {
-                            code: index_2.ManulifeErrors.EX_GENERAL,
-                            msg: 'get getByUserId have errors'
-                        }
-                    };
-                }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogCamp.create({
-                    type: 'getByUserId',
-                    dataInput: {
-                        payload: request.payload,
-                        params: request.params
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res);
             }
         });
     }

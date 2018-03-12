@@ -8,11 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const moment = require("moment");
 const index_1 = require("../../mongo/index");
 const code_errors_1 = require("../../common/code-errors");
 const index_2 = require("../../common/index");
-const Faker = require("faker");
 class ActivitiesController {
     constructor(configs, database) {
         this.configs = configs;
@@ -28,55 +26,24 @@ class ActivitiesController {
                     statusCode: 1,
                     data: {
                         Id: 1,
-                        ProcessStep: 2,
-                        Type: 2,
-                        Phone: '01694248887',
-                        Name: 'Gặp khách hàng',
-                        StartDate: '2018-01-26',
-                        EndDate: '2018-01-26',
+                        Phone: '841693248887',
+                        Name: 'string',
+                        ProcessStep: 0,
+                        Location: 'string',
+                        StartDate: '2017-11-11T00:00:00.000Z',
+                        EndDate: '2017-11-12T00:00:00.000Z',
                         FullDate: true,
-                        Repeat: 1,
-                        Notification: 3600,
-                        Status: true,
-                        Location: Faker.lorem.sentence(),
-                        Description: Faker.lorem.lines()
-                    }
+                        Notification: 0,
+                        Description: 'lorem note',
+                        Type: 2,
+                        Status: false
+                    },
+                    msgCode: 'success',
+                    msg: 'success'
                 };
-                reply(res);
+                return reply(res);
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: {
-                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
-                            msg: 'activity findById have errors'
-                        }
-                    };
-                }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogActivity.create({
-                    type: 'activity findById have errors',
-                    dataInput: {
-                        payload: request.payload,
-                        params: request.params
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res);
             }
         });
     }
@@ -88,59 +55,25 @@ class ActivitiesController {
             try {
                 let res = {
                     statusCode: 1,
-                    data: [{
-                            StartDate: '2018-01-18',
-                            Type: 1,
-                            count: 1
-                        }, {
-                            StartDate: '2018-01-18',
-                            Type: 2,
-                            count: 2
-                        }, {
-                            StartDate: '2018-01-18',
-                            Type: 3,
-                            count: 2
-                        }, {
-                            StartDate: '2018-01-18',
-                            Type: 4,
-                            count: 2
-                        }]
+                    data: {
+                        '2018-03-12': [
+                            {
+                                ProcessStep: 2
+                            },
+                            {
+                                ProcessStep: 1
+                            },
+                            {
+                                ProcessStep: 3
+                            }
+                        ]
+                    },
+                    msgCode: 'success',
+                    msg: 'success'
                 };
                 reply(res);
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: {
-                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
-                            msg: 'activity findById have errors'
-                        }
-                    };
-                }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogActivity.create({
-                    type: 'activity findById have errors',
-                    dataInput: {
-                        payload: request.payload,
-                        params: request.params
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res);
             }
         });
     }
@@ -217,67 +150,42 @@ class ActivitiesController {
                 let res = {
                     statusCode: 1,
                     data: {
-                        count: 4,
-                        page: request.query.page,
-                        limit: request.query.limit,
-                        rows: [{
-                                "Id": 1,
-                                "ActivityTypeId": 1,
-                                "Name": "string",
-                                "ProcessStep": 0,
-                                "Description": "string",
-                                "CreatedAt": "2018-02-28T02:15:42.934Z",
-                                "manulife_lead": {
-                                    "Name": "string",
-                                    "ProcessStep": 1,
-                                    "StatusProcessStep": 2,
-                                    "Phone": "01693248887"
+                        page: '1',
+                        limit: '2',
+                        count: 2,
+                        rows: [
+                            {
+                                Id: 2,
+                                Name: 'string',
+                                ProcessStep: 2,
+                                Location: 'string',
+                                Description: 'string',
+                                CreatedAt: '2018-02-28T02:15:42.934Z',
+                                manulife_lead: {
+                                    Name: 'string',
+                                    ProcessStep: 3,
+                                    StatusProcessStep: 2,
+                                    Phone: '01693248887'
                                 }
                             },
                             {
-                                "Id": 2,
-                                "ActivityTypeId": 2,
-                                "Name": "Lorem...",
-                                "ProcessStep": 2,
-                                "Description": "string",
-                                "CreatedAt": "2018-02-28T02:15:42.934Z",
-                                "manulife_lead": {
-                                    "Name": "string",
-                                    "ProcessStep": 2,
-                                    "StatusProcessStep": 2,
-                                    "Phone": "01693248887"
+                                Id: 1,
+                                Name: 'string',
+                                ProcessStep: 0,
+                                Location: 'string',
+                                Description: 'lorem note',
+                                CreatedAt: '2018-02-28T02:15:42.934Z',
+                                manulife_lead: {
+                                    Name: 'string',
+                                    ProcessStep: 3,
+                                    StatusProcessStep: 2,
+                                    Phone: '01693248887'
                                 }
-                            }, {
-                                "Id": 3,
-                                "ActivityTypeId": 3,
-                                "Name": "Lorem...",
-                                "ProcessStep": 2,
-                                "Description": "string",
-                                "CreatedAt": "2018-02-28T02:15:42.934Z",
-                                "manulife_lead": {
-                                    "Name": "string",
-                                    "ProcessStep": 3,
-                                    "StatusProcessStep": 2,
-                                    "Phone": "01693248887"
-                                }
-                            },
-                            {
-                                "Id": 4,
-                                "ActivityTypeId": 4,
-                                "Name": "Lorem...",
-                                "ProcessStep": 4,
-                                "Description": "string",
-                                "CreatedAt": "2018-02-28T02:15:42.934Z",
-                                "manulife_lead": {
-                                    "Name": "string",
-                                    "ProcessStep": 4,
-                                    "StatusProcessStep": 3,
-                                    "Phone": "01693248887"
-                                }
-                            }]
+                            }
+                        ]
                     },
-                    msg: '',
-                    msgCode: ''
+                    msgCode: 'success',
+                    msg: 'success'
                 };
                 reply(res);
             }
@@ -292,51 +200,33 @@ class ActivitiesController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 1,
-                    data: [{
-                            Id: 1,
-                            ProcessStep: 1,
-                            Type: 1,
-                            Repeat: 1,
-                            Notification: 1,
-                            FullDate: false,
-                            StartDate: moment().add(1, 'd'),
-                            EndDate: moment().add(1, 'd').endOf('day')
-                        }, {
-                            Id: 2,
-                            ProcessStep: 1,
-                            Type: 1,
-                            Repeat: 1000,
-                            Notification: 1,
-                            FullDate: false,
-                            StartDate: moment().add(1, 'd'),
-                            EndDate: moment().add(1, 'd').endOf('day')
-                        }],
-                    msg: '',
-                    msgCode: ''
+                    "statusCode": 1,
+                    "data": [
+                        {
+                            "Id": 2,
+                            "Status": false,
+                            "CreatedAt": "2018-02-28T02:15:42.934Z",
+                            "ProcessStep": 2,
+                            "manulife_lead": {
+                                "Name": "string"
+                            }
+                        },
+                        {
+                            "Id": 1,
+                            "Status": false,
+                            "CreatedAt": "2018-02-28T02:15:42.934Z",
+                            "ProcessStep": 0,
+                            "manulife_lead": {
+                                "Name": "string"
+                            }
+                        }
+                    ],
+                    "msgCode": "success",
+                    "msg": "Thành công"
                 };
                 reply(res);
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: {
-                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
-                            msg: 'historyOfLead have errors'
-                        }
-                    };
-                }
-                reply(res);
             }
         });
     }
@@ -349,78 +239,14 @@ class ActivitiesController {
                 let res = {
                     statusCode: 1,
                     data: {
-                        Id: 1,
-                        ProcessStep: 2,
-                        Type: 2,
-                        Phone: '01694248887',
-                        Name: 'Gặp khách hàng',
-                        StartDate: '2018-01-26',
-                        EndDate: '2018-01-26',
-                        FullDate: true,
-                        Repeat: 1,
-                        Notification: 3600,
-                        Status: true,
-                        Location: Faker.lorem.sentence(),
-                        Description: Faker.lorem.lines()
+                        status: true
                     },
-                    msg: '',
-                    msgCode: ''
+                    msg: 'Thành công',
+                    msgCode: 'success'
                 };
                 reply(res);
-                // let iAc = request.payload as IPayloadUpdate;
-                // let id = parseInt(request.params.id, 10);
-                // let lead: any = await ActivityService.update(id, iAc);
-                // // log mongo create success
-                // LogActivity.create({
-                //     type: 'update activity',
-                //     dataInput: {
-                //         payload: request.payload,
-                //         params: request.params
-                //     },
-                //     msg: 'success',
-                //     meta: {
-                //         exception: '',
-                //         response: JSON.parse(JSON.stringify(lead))
-                //     },
-                // });
-                // reply({
-                //     status: HTTP_STATUS.OK,
-                //     data: lead
-                // }).code(HTTP_STATUS.OK);
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: {
-                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
-                            msg: 'update activity have errors'
-                        }
-                    };
-                }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogActivity.create({
-                    type: 'update activity',
-                    dataInput: {
-                        payload: request.payload,
-                        params: request.params
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res);
             }
         });
     }
@@ -433,62 +259,14 @@ class ActivitiesController {
                 let res = {
                     statusCode: 1,
                     data: {
-                        Id: 1,
-                        ProcessStep: 2,
-                        Type: 2,
-                        Phone: '01694248887',
-                        Name: 'Gặp khách hàng',
-                        StartDate: '2018-01-26',
-                        EndDate: '2018-01-26',
-                        FullDate: true,
-                        Repeat: 1,
-                        Notification: 3600,
-                        Status: true,
-                        Location: Faker.lorem.sentence(),
-                        Description: Faker.lorem.lines()
+                        status: true
                     },
                     msg: '',
                     msgCode: ''
                 };
                 reply(res);
-                // let iAc = request.payload as IPayloadCreate;
-                // let lead: any = await ActivityService.create(iAc);
-                // // log mongo create success
-                // reply({
-                //     status: HTTP_STATUS.OK,
-                //     data: lead
-                // }).code(HTTP_STATUS.OK);
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 0,
-                        url: request.url.path,
-                        error: {
-                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
-                            msg: 'Create activity have errors'
-                        }
-                    };
-                }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogActivity.create({
-                    type: 'createactivity',
-                    dataInput: request.payload,
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res);
             }
         });
     }
