@@ -36,60 +36,8 @@ export default class CampaignController {
                 msgCode: ''
             };
             reply(res);
-            // let iCamp: ICampaign = request.payload;
-            // let userId = 5;
-            // const camps = <any>await CampaignService.createOfFA(iCamp, userId);
-            // let logcamps = _.map(camps, (camp: any) => {
-            //     return {
-            //         type: 'createcampaign',
-            //         dataInput: {
-            //             payload: request.payload
-            //         },
-            //         msg: 'success',
-            //         meta: {
-            //             response: camp.dataValues
-            //         },
-            //     };
-            // });
-            // // save mongo log
-            // LogCamp
-            //     .insertMany(logcamps);
-            // reply({
-            //     status: HTTP_STATUS.OK,
-            //     data: camps
-            // }).code(200);
 
         } catch (ex) {
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 0,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 0,
-                    url: request.url.path,
-                    error: {
-                        code: Ex.EX_GENERAL,
-                        msg: 'Create campaign have errors'
-                    }
-                };
-            }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogCamp.create({
-                type: 'createcampaign',
-                dataInput: {
-                    payload: request.payload
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res);
         }
     }
 
@@ -254,37 +202,7 @@ export default class CampaignController {
             };
             reply(res);
         } catch (ex) {
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: {
-                        code: Ex.EX_GENERAL,
-                        msg: 'get leadsOfCamp have errors'
-                    }
-                };
-            }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogCamp.create({
-                type: 'leadsOfCamp',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res);
+
         }
     }
 
@@ -361,101 +279,12 @@ export default class CampaignController {
                 };
                 reply(data);
             } else {
-                reply({
-                    statusCode: 0,
-                    data: {},
-                    msg: MsgCodeResponses.CAMP_NOT_EXIST,
-                    msgCode: MsgCodeResponses.CAMP_NOT_EXIST
-                });
+
             }
 
         } catch (ex) {
-            // log mongo create fail
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 0,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 0,
-                    url: request.url.path,
-                    error: {
-                        code: Ex.EX_GENERAL,
-                        msg: 'get getByCampaignId have errors'
-                    }
-                };
-            }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogCamp.create({
-                type: 'getByCampaignId',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res);
+
         }
     }
 
-    /**
-     * get list campaign of userid
-     */
-    public async getByUserId(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        try {
-            let UserId = request.params.userid;
-            let campaigns: any = await CampaignService.findByUserId(UserId);
-            if (campaigns == null) {
-                return reply({
-                    status: 0,
-                    data: campaigns
-                });
-            } else {
-                return reply({
-                    status: HTTP_STATUS.OK,
-                    data: campaigns
-                }).code(HTTP_STATUS.OK);
-            }
-        } catch (ex) {
-            // log mongo create fail
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 0,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 0,
-                    url: request.url.path,
-                    error: {
-                        code: Ex.EX_GENERAL,
-                        msg: 'get getByUserId have errors'
-                    }
-                };
-            }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogCamp.create({
-                type: 'getByUserId',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res);
-        }
-    }
 }

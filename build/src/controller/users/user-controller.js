@@ -359,25 +359,6 @@ class UserController {
                 msg: index_2.MsgCodeResponses.USER_OTP_SUCCESS,
                 msgCode: index_2.MsgCodeResponses.USER_OTP_SUCCESS
             });
-            // const username = request.payload.Username;
-            // const password = request.payload.Password;
-            // let user: IUser = await this.database
-            //     .userModel
-            //     .findOne({ username: username });
-            // if (!user) {
-            //     return reply({
-            //         status: HTTP_STATUS.OK,
-            //         token: Faker.random.alphaNumeric(250)
-            //     });
-            // }
-            // if (!user.validatePassword(password)) {
-            //     return reply(Boom.unauthorized("Password is invalid."));
-            // }
-            // let userPg = await UserService.findByCode(username);
-            // reply({
-            //     token: this.generateToken(user),
-            //     info: userPg
-            // });
         });
     }
     testUser(request, reply) {
@@ -387,25 +368,6 @@ class UserController {
                 .spread((output, records) => {
                 return records.rows;
             });
-            // const username = request.payload.Username;
-            // const password = request.payload.Password;
-            // let user: IUser = await this.database
-            //     .userModel
-            //     .findOne({ username: username });
-            // if (!user) {
-            //     return reply({
-            //         status: HTTP_STATUS.OK,
-            //         token: Faker.random.alphaNumeric(250)
-            //     });
-            // }
-            // if (!user.validatePassword(password)) {
-            //     return reply(Boom.unauthorized("Password is invalid."));
-            // }
-            // let userPg = await UserService.findByCode(username);
-            // reply({
-            //     token: this.generateToken(user),
-            //     info: userPg
-            // });
         });
     }
     /**
@@ -427,17 +389,6 @@ class UserController {
                     msg: ''
                 };
                 reply(res).code(HTTP_STATUS.OK);
-                // if (user !== null) {
-                //     reply({
-                //         status: HTTP_STATUS.OK,
-                //         data: user
-                //     }).code(HTTP_STATUS.OK);
-                // } else {
-                //     throw {
-                //         code: Ex.EX_USERNAME_NOT_FOUND,
-                //         msg: 'UserName not found'
-                //     };
-                // }
             }
             catch (ex) {
                 let res = {};

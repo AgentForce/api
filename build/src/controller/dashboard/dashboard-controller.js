@@ -8,8 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../../mongo/index");
-const index_2 = require("../../common/index");
 class DashboardController {
     constructor(configs, database) {
         this.configs = configs;
@@ -106,56 +104,8 @@ class DashboardController {
                     msg: '',
                     msgCode: ''
                 });
-                // let type = request.params.type as typeTarget;
-                // let UserId = 5;
-                // let dashboard: any = await DashboardService.dashboard(type, UserId);
-                // if (dashboard == null) {
-                //     return reply({
-                //         statusCode: HTTP_STATUS.NOT_FOUND,
-                //         data: dashboard
-                //     })
-                //         .code(HTTP_STATUS.NOT_FOUND);
-                // } else {
-                //     return reply({
-                //         statusCode: HTTP_STATUS.OK,
-                //         data: dashboard
-                //     }).code(HTTP_STATUS.OK);
-                // }
             }
             catch (ex) {
-                // log mongo create fail
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        statusCode: 0,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        statusCode: 0,
-                        url: request.url.path,
-                        error: {
-                            code: index_2.ManulifeErrors.EX_GENERAL,
-                            msg: 'get dashboard have errors'
-                        }
-                    };
-                }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogCamp.create({
-                    type: 'dashboard',
-                    dataInput: {
-                        payload: request.payload,
-                        params: request.params
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res);
             }
         });
     }
