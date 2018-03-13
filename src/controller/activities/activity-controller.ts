@@ -60,7 +60,7 @@ export default class ActivitiesController {
                 "statusCode": 1,
                 "data": [
                     {
-                        "date": "2018-11-09",
+                        "date": moment().format('YYYY-MM-DD'),
                         "activities": [
                             {
                                 "ProcessStep": 1
@@ -68,7 +68,17 @@ export default class ActivitiesController {
                         ]
                     },
                     {
-                        "date": "2018-11-11",
+                        "date": moment().add('1 d').format('YYYY-MM-DD'),
+                        "activities": [
+                            {
+                                "ProcessStep": 2
+                            },
+                            {
+                                "ProcessStep": 3
+                            }
+                        ]
+                    }, {
+                        "date": moment().add('2 d').format('YYYY-MM-DD'),
                         "activities": [
                             {
                                 "ProcessStep": 2

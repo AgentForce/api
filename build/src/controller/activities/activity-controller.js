@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const moment = require("moment");
 const code_errors_1 = require("../../common/code-errors");
 class ActivitiesController {
     constructor(configs, database) {
@@ -55,7 +56,7 @@ class ActivitiesController {
                     "statusCode": 1,
                     "data": [
                         {
-                            "date": "2018-11-09",
+                            "date": moment().format('YYYY-MM-DD'),
                             "activities": [
                                 {
                                     "ProcessStep": 1
@@ -63,7 +64,17 @@ class ActivitiesController {
                             ]
                         },
                         {
-                            "date": "2018-11-11",
+                            "date": moment().add('1 d').format('YYYY-MM-DD'),
+                            "activities": [
+                                {
+                                    "ProcessStep": 2
+                                },
+                                {
+                                    "ProcessStep": 3
+                                }
+                            ]
+                        }, {
+                            "date": moment().add('2 d').format('YYYY-MM-DD'),
                             "activities": [
                                 {
                                     "ProcessStep": 2
