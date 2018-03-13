@@ -98,17 +98,17 @@ export default class ActivitiesController {
                     {
                         "Status": false,
                         "StartDate": "2018-11-11T00:00:00.000Z",
-                        "ProcessStep": 0,
+                        "ProcessStep": 2,
                         "manulife_lead": {
-                            "Name": "1"
+                            "Name": "Jhonh Hong"
                         }
                     },
                     {
                         "Status": false,
                         "StartDate": "2018-11-11T00:00:00.000Z",
-                        "ProcessStep": 0,
+                        "ProcessStep": 1,
                         "manulife_lead": {
-                            "Name": "1"
+                            "Name": 'Tu Nguyen'
                         }
                     }
                 ],
@@ -134,19 +134,7 @@ export default class ActivitiesController {
                     }
                 };
             }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogActivity.create({
-                type: 'activity findById have errors',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
+
             reply(res);
         }
     }
@@ -212,7 +200,7 @@ export default class ActivitiesController {
                     {
                         "Id": 2,
                         "Status": false,
-                        "CreatedAt": "2018-02-28T02:15:42.934Z",
+                        "StartDate": "2018-02-28T02:15:42.934Z",
                         "ProcessStep": 2,
                         "manulife_lead": {
                             "Name": "string"
@@ -221,8 +209,8 @@ export default class ActivitiesController {
                     {
                         "Id": 1,
                         "Status": false,
-                        "CreatedAt": "2018-02-28T02:15:42.934Z",
-                        "ProcessStep": 0,
+                        "StartDate": "2018-02-28T02:15:42.934Z",
+                        "ProcessStep": 1,
                         "manulife_lead": {
                             "Name": "string"
                         }
@@ -266,7 +254,7 @@ export default class ActivitiesController {
                 data: {
                     status: true
                 },
-                msg: '',
+                msg: 'Thành công',
                 msgCode: ''
             };
             reply(res);
