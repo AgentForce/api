@@ -86,7 +86,7 @@ const updateModel = Joi.object().keys({
 
 
 const updateStatusModel = Joi.object().keys({
-    ProcessStep: Joi.number().required(),
+    NextProcessStep: Joi.boolean().required(),
     StatusProcessStep: Joi.number().required()
 });
 export { createLeadModel, updateModel, updateStatusModel };

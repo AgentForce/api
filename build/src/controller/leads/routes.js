@@ -236,7 +236,7 @@ function default_1(server, configs, database) {
         path: '/leads/{id}',
         config: {
             handler: leadController.update,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'leads'],
             description: 'update  info a leads',
             validate: {
@@ -257,15 +257,6 @@ function default_1(server, configs, database) {
                         msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
                         msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
                     };
-                    index_1.LogLead.create({
-                        type: 'updatelead',
-                        dataInput: request.payload,
-                        msg: 'payload do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        },
-                    });
                     return reply(res);
                 }
             },
@@ -284,17 +275,6 @@ function default_1(server, configs, database) {
                                 msgcode: Joi.string()
                             })
                         },
-                        400: {
-                            description: '',
-                            schema: Joi.object({
-                                statusCode: Joi
-                                    .number()
-                                    .example(0),
-                                data: Joi.object(),
-                                msg: Joi.string(),
-                                msgcode: Joi.string()
-                            })
-                        }
                     },
                     security: [{
                             'jwt': []

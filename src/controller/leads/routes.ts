@@ -261,7 +261,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/leads/{id}',
         config: {
             handler: leadController.update,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'leads'],
             description: 'update  info a leads',
             validate: {
@@ -282,15 +282,6 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         msgCode: MsgCodeResponses.INPUT_INVALID,
                         msg: MsgCodeResponses.INPUT_INVALID
                     };
-                    LogLead.create({
-                        type: 'updatelead',
-                        dataInput: request.payload,
-                        msg: 'payload do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        },
-                    });
                     return reply(res);
                 }
             },
@@ -311,19 +302,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 }
                             )
                         },
-                        400: {
-                            description: '',
-                            schema: Joi.object(
-                                {
-                                    statusCode: Joi
-                                        .number()
-                                        .example(0),
-                                    data: Joi.object(),
-                                    msg: Joi.string(),
-                                    msgcode: Joi.string()
-                                }
-                            )
-                        }
+
                     },
                     security: [{
                         'jwt': []
