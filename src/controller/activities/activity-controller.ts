@@ -57,22 +57,30 @@ export default class ActivitiesController {
     public async calendar(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
             let res = {
-                statusCode: 1,
-                data: {
-                    '2018-03-12': [
-                        {
-                            ProcessStep: 2
-                        },
-                        {
-                            ProcessStep: 1
-                        },
-                        {
-                            ProcessStep: 3
-                        }
-                    ]
-                },
-                msgCode: 'success',
-                msg: 'success'
+                "statusCode": 1,
+                "data": [
+                    {
+                        "date": "2018-11-09",
+                        "activities": [
+                            {
+                                "ProcessStep": 1
+                            }
+                        ]
+                    },
+                    {
+                        "date": "2018-11-11",
+                        "activities": [
+                            {
+                                "ProcessStep": 2
+                            },
+                            {
+                                "ProcessStep": 3
+                            }
+                        ]
+                    }
+                ],
+                "msgCode": "success",
+                "msg": "success"
             };
             reply(res);
         } catch (ex) {
