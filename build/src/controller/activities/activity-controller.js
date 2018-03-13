@@ -92,24 +92,27 @@ class ActivitiesController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let res = {
-                    statusCode: 1,
-                    data: [{
-                            Id: 1,
-                            ProcessStep: 1,
-                            Type: 1,
-                            Phone: '01694248887',
-                            Name: 'TuNguyen',
-                            StartDate: '2018-01-26',
-                            FullDate: true,
-                        }, {
-                            Id: 1,
-                            ProcessStep: 1,
-                            Type: 1,
-                            Phone: '01694248888',
-                            Name: 'John',
-                            StartDate: '2018-01-26',
-                            FullDate: true,
-                        }]
+                    "statusCode": 1,
+                    "data": [
+                        {
+                            "Status": false,
+                            "StartDate": "2018-11-11T00:00:00.000Z",
+                            "ProcessStep": 0,
+                            "manulife_lead": {
+                                "Name": "1"
+                            }
+                        },
+                        {
+                            "Status": false,
+                            "StartDate": "2018-11-11T00:00:00.000Z",
+                            "ProcessStep": 0,
+                            "manulife_lead": {
+                                "Name": "1"
+                            }
+                        }
+                    ],
+                    "msgCode": "success",
+                    "msg": "success"
                 };
                 reply(res);
             }
