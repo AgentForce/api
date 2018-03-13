@@ -215,63 +215,72 @@ class CampaignController {
                     data = {
                         statusCode: 1,
                         data: {
-                            currentWeek: 2,
-                            campaigns: [{
-                                    Period: 1,
+                            campaigns: [
+                                {
+                                    Id: 278,
+                                    Period: 2,
                                     Week: 1,
-                                    TargetCallSale: 30,
-                                    TargetMetting: 15,
-                                    TargetPresentation: 9,
+                                    TargetCallSale: 23,
+                                    TargetMetting: 12,
+                                    TargetPresentation: 7,
                                     TargetContractSale: 3,
-                                    TargetReLead: 27,
-                                    CurrentCallSale: 17,
-                                    CurrentMetting: 12,
-                                    CurrentPresentation: 7,
-                                    CurrentContract: 3,
-                                    CurrentReLead: 2,
-                                }, {
-                                    Period: 1,
+                                    TargetReLead: 21,
+                                    CurrentCallSale: 0,
+                                    CurrentMetting: 0,
+                                    CurrentPresentation: 0,
+                                    CurrentContract: 0,
+                                    CurrentReLead: 0
+                                },
+                                {
+                                    Id: 279,
+                                    Period: 2,
                                     Week: 2,
-                                    TargetCallSale: 30,
-                                    TargetMetting: 15,
-                                    TargetPresentation: 9,
-                                    TargetContractSale: 3,
-                                    TargetReLead: 27,
-                                    CurrentCallSale: 17,
-                                    CurrentMetting: 12,
-                                    CurrentPresentation: 7,
-                                    CurrentContract: 3,
-                                    CurrentReLead: 2,
-                                }, {
-                                    Period: 1,
+                                    TargetCallSale: 23,
+                                    TargetMetting: 11,
+                                    TargetPresentation: 7,
+                                    TargetContractSale: 2,
+                                    TargetReLead: 20,
+                                    CurrentCallSale: 0,
+                                    CurrentMetting: 0,
+                                    CurrentPresentation: 0,
+                                    CurrentContract: 0,
+                                    CurrentReLead: 0
+                                },
+                                {
+                                    Id: 280,
+                                    Period: 2,
                                     Week: 3,
-                                    TargetCallSale: 30,
-                                    TargetMetting: 15,
-                                    TargetPresentation: 9,
-                                    TargetContractSale: 3,
-                                    TargetReLead: 27,
-                                    CurrentCallSale: 17,
-                                    CurrentMetting: 12,
-                                    CurrentPresentation: 7,
-                                    CurrentContract: 3,
-                                    CurrentReLead: 2,
-                                }, {
-                                    Period: 1,
+                                    TargetCallSale: 22,
+                                    TargetMetting: 11,
+                                    TargetPresentation: 7,
+                                    TargetContractSale: 2,
+                                    TargetReLead: 20,
+                                    CurrentCallSale: 0,
+                                    CurrentMetting: 0,
+                                    CurrentPresentation: 0,
+                                    CurrentContract: 0,
+                                    CurrentReLead: 0
+                                },
+                                {
+                                    Id: 281,
+                                    Period: 2,
                                     Week: 4,
-                                    TargetCallSale: 30,
-                                    TargetMetting: 15,
-                                    TargetPresentation: 9,
-                                    TargetContractSale: 3,
-                                    TargetReLead: 27,
-                                    CurrentCallSale: 17,
-                                    CurrentMetting: 12,
-                                    CurrentPresentation: 7,
-                                    CurrentContract: 3,
-                                    CurrentReLead: 2,
-                                }]
+                                    TargetCallSale: 22,
+                                    TargetMetting: 11,
+                                    TargetPresentation: 6,
+                                    TargetContractSale: 2,
+                                    TargetReLead: 20,
+                                    CurrentCallSale: 0,
+                                    CurrentMetting: 0,
+                                    CurrentPresentation: 0,
+                                    CurrentContract: 0,
+                                    CurrentReLead: 0
+                                }
+                            ],
+                            currentWeek: 2
                         },
-                        msg: index_2.MsgCodeResponses.CAMP_EXIST,
-                        msgCode: index_2.MsgCodeResponses.CAMP_EXIST
+                        msg: 'success',
+                        msgCode: 'success'
                     };
                     reply(data);
                 }
