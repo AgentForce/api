@@ -8,9 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../../mongo/index");
 const code_errors_1 = require("../../common/code-errors");
-const index_2 = require("../../common/index");
 class ActivitiesController {
     constructor(configs, database) {
         this.configs = configs;
@@ -97,17 +95,17 @@ class ActivitiesController {
                         {
                             "Status": false,
                             "StartDate": "2018-11-11T00:00:00.000Z",
-                            "ProcessStep": 0,
+                            "ProcessStep": 2,
                             "manulife_lead": {
-                                "Name": "1"
+                                "Name": "Jhonh Hong"
                             }
                         },
                         {
                             "Status": false,
                             "StartDate": "2018-11-11T00:00:00.000Z",
-                            "ProcessStep": 0,
+                            "ProcessStep": 1,
                             "manulife_lead": {
-                                "Name": "1"
+                                "Name": 'Tu Nguyen'
                             }
                         }
                     ],
@@ -135,19 +133,6 @@ class ActivitiesController {
                         }
                     };
                 }
-                index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-                index_1.LogActivity.create({
-                    type: 'activity findById have errors',
-                    dataInput: {
-                        payload: request.payload,
-                        params: request.params
-                    },
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
                 reply(res);
             }
         });
@@ -216,7 +201,7 @@ class ActivitiesController {
                         {
                             "Id": 2,
                             "Status": false,
-                            "CreatedAt": "2018-02-28T02:15:42.934Z",
+                            "StartDate": "2018-02-28T02:15:42.934Z",
                             "ProcessStep": 2,
                             "manulife_lead": {
                                 "Name": "string"
@@ -225,8 +210,8 @@ class ActivitiesController {
                         {
                             "Id": 1,
                             "Status": false,
-                            "CreatedAt": "2018-02-28T02:15:42.934Z",
-                            "ProcessStep": 0,
+                            "StartDate": "2018-02-28T02:15:42.934Z",
+                            "ProcessStep": 1,
                             "manulife_lead": {
                                 "Name": "string"
                             }
@@ -272,7 +257,7 @@ class ActivitiesController {
                     data: {
                         status: true
                     },
-                    msg: '',
+                    msg: 'Thành công',
                     msgCode: ''
                 };
                 reply(res);

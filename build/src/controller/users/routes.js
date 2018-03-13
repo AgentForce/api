@@ -409,7 +409,9 @@ function default_1(server, serverConfigs, database) {
                 payload: {
                     Password: Joi.string()
                         .regex(/^[0-9]*$/)
-                        .length(6).required()
+                        .length(6).required(),
+                    UserName: Joi.string()
+                        .required()
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {

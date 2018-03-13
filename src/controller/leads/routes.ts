@@ -302,7 +302,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                                 }
                             )
                         },
-                     
+
                     },
                     security: [{
                         'jwt': []
