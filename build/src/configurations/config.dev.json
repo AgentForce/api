@@ -1,16 +1,19 @@
 {
     "database": {
-        "connectionString": "mongodb://manulife:manulife!!!@103.48.191.254:27017/manulife"
+        "connectionString": "mongodb://manulife:manulife!!!@13.250.129.169:27017/manulife"
     },
     "server": {
         "port": 5000,
         "jwtSecret": "random-secret-password",
-        "jwtExpiration": "1h",
+        "jwtExpiration": "48h",
         "routePrefix": "/api",
         "plugins": [
             "logger",
             "jwt-auth",
             "swagger"
         ]
+    },
+    "redis": {
+        "url": "//redis:ManuliFe@13.250.129.169:6379"
     }
 }

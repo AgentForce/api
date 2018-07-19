@@ -7,8 +7,9 @@ import { ActivityService, IActivity } from '../../services/activity.service';
 import * as HTTP_STATUS from 'http-status';
 import { IPayloadCreate, IPayloadUpdate } from "./activity";
 import { LogActivity } from "../../mongo/index";
-import { ManulifeErrors as EX } from '../../helpers/code-errors';
-import { SlackAlert } from "../../helpers/index";
+import { ManulifeErrors as EX } from '../../common/code-errors';
+import { SlackAlert } from "../../common/index";
+import * as Faker from 'faker';
 export default class ActivitiesController {
 
     private database: IDatabase;
@@ -25,23 +26,117 @@ export default class ActivitiesController {
      */
     public async findById(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let id = parseInt(request.params.id, 10);
-            let activities: any = await ActivityService.findById(id);
-            reply({
-                status: HTTP_STATUS.OK,
-                data: activities
-            }).code(HTTP_STATUS.OK);
+            let res = {
+                statusCode: 1,
+                data: {
+                    Id: 1,
+                    Phone: '841693248887',
+                    Name: 'string',
+                    ProcessStep: 0,
+                    Location: 'string',
+                    StartDate: '2017-11-11T00:00:00.000Z',
+                    EndDate: '2017-11-12T00:00:00.000Z',
+                    FullDate: true,
+                    Notification: 0,
+                    Description: 'lorem note',
+                    Type: 2,
+                    Status: false
+                },
+                msgCode: 'success',
+                msg: 'success'
+            };
+            return reply(res);
+        } catch (ex) {
+
+        }
+    }
+
+    /**
+        * get activity by perild
+        */
+    public async calendar(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let res = {
+                "statusCode": 1,
+                "data": [
+                    {
+                        "date": moment().format('YYYY-MM-DD'),
+                        "activities": [
+                            {
+                                "ProcessStep": 1
+                            }
+                        ]
+                    },
+                    {
+                        "date": moment().add('1 d').format('YYYY-MM-DD'),
+                        "activities": [
+                            {
+                                "ProcessStep": 2
+                            },
+                            {
+                                "ProcessStep": 3
+                            }
+                        ]
+                    }, {
+                        "date": moment().add('2 d').format('YYYY-MM-DD'),
+                        "activities": [
+                            {
+                                "ProcessStep": 2
+                            },
+                            {
+                                "ProcessStep": 3
+                            }
+                        ]
+                    }
+                ],
+                "msgCode": "success",
+                "msg": "success"
+            };
+            reply(res);
+        } catch (ex) {
+        }
+    }
+
+    /**
+      * get activitis in a day
+      */
+    public async activitiesDay(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let res = {
+                "statusCode": 1,
+                "data": [
+                    {
+                        "Status": false,
+                        "StartDate": "2018-11-11T00:00:00.000Z",
+                        "ProcessStep": 2,
+                        "manulife_lead": {
+                            "Name": "Jhonh Hong"
+                        }
+                    },
+                    {
+                        "Status": false,
+                        "StartDate": "2018-11-11T00:00:00.000Z",
+                        "ProcessStep": 1,
+                        "manulife_lead": {
+                            "Name": 'Tu Nguyen'
+                        }
+                    }
+                ],
+                "msgCode": "success",
+                "msg": "success"
+            };
+            reply(res);
         } catch (ex) {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: HTTP_STATUS.BAD_REQUEST,
+                    status: 0,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: HTTP_STATUS.BAD_REQUEST,
+                    status: 0,
                     url: request.url.path,
                     error: {
                         code: EX.EX_GENERAL,
@@ -49,68 +144,94 @@ export default class ActivitiesController {
                     }
                 };
             }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogActivity.create({
-                type: 'activity findById have errors',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+
+            reply(res);
         }
     }
 
+
     /**
-     * get list activities by campaignid, filter by processstep
+     * get list activities by leadid
      */
-    public async historyOfLead(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+    public async list(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let leadId = parseInt(request.params.leadid, 10);
-            let limit = parseInt(request.query.limit, 10);
-            let page = parseInt(request.query.page, 10);
-            let activities: any = await ActivityService.listByCampaignId(leadId, limit, page);
-            reply({
-                status: HTTP_STATUS.OK,
-                data: activities
-            }).code(HTTP_STATUS.OK);
+            let res = {
+                statusCode: 1,
+                data: {
+                    page: '1',
+                    limit: '2',
+                    count: 2,
+                    rows: [
+                        {
+                            Id: 2,
+                            Name: 'string',
+                            ProcessStep: 2,
+                            Location: 'string',
+                            Description: 'string',
+                            CreatedAt: '2018-02-28T02:15:42.934Z',
+                            manulife_lead: {
+                                Name: 'string',
+                                ProcessStep: 3,
+                                StatusProcessStep: 2,
+                                Phone: '01693248887'
+                            }
+                        },
+                        {
+                            Id: 1,
+                            Name: 'string',
+                            ProcessStep: 0,
+                            Location: 'string',
+                            Description: 'lorem note',
+                            CreatedAt: '2018-02-28T02:15:42.934Z',
+                            manulife_lead: {
+                                Name: 'string',
+                                ProcessStep: 3,
+                                StatusProcessStep: 2,
+                                Phone: '01693248887'
+                            }
+                        }
+                    ]
+                },
+                msgCode: 'success',
+                msg: 'success'
+            };
+            reply(res);
         } catch (ex) {
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: HTTP_STATUS.BAD_REQUEST,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: HTTP_STATUS.BAD_REQUEST,
-                    url: request.url.path,
-                    error: {
-                        code: EX.EX_GENERAL,
-                        msg: 'historyOfLead have errors'
+        }
+    }
+    /**
+     * get list activities by leadid
+     */
+    public async activitiesLead(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let res = {
+                "statusCode": 1,
+                "data": [
+                    {
+                        "Id": 2,
+                        "Status": false,
+                        "StartDate": "2018-02-28T02:15:42.934Z",
+                        "ProcessStep": 2,
+                        "manulife_lead": {
+                            "Name": "string"
+                        }
+                    },
+                    {
+                        "Id": 1,
+                        "Status": false,
+                        "StartDate": "2018-02-28T02:15:42.934Z",
+                        "ProcessStep": 1,
+                        "manulife_lead": {
+                            "Name": "string"
+                        }
                     }
-                };
-            }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogActivity.create({
-                type: 'historyOfLead have errors',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                ],
+                "msgCode": "success",
+                "msg": "Thành công"
+            };
+            reply(res);
+        } catch (ex) {
+
         }
     }
 
@@ -119,58 +240,16 @@ export default class ActivitiesController {
      */
     public async update(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let iAc = request.payload as IPayloadUpdate;
-            let id = parseInt(request.params.id, 10);
-            let lead: any = await ActivityService.update(id, iAc);
-            // log mongo create success
-            LogActivity.create({
-                type: 'update activity',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
+            let res = {
+                statusCode: 1,
+                data: {
+                    status: true
                 },
-                msg: 'success',
-                meta: {
-                    exception: '',
-                    response: JSON.parse(JSON.stringify(lead))
-                },
-            });
-            reply({
-                status: HTTP_STATUS.OK,
-                data: lead
-            }).code(HTTP_STATUS.OK);
+                msg: 'Thành công',
+                msgCode: 'success'
+            };
+            reply(res);
         } catch (ex) {
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: {
-                        code: EX.EX_GENERAL,
-                        msg: 'update activity have errors'
-                    }
-                };
-            }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogActivity.create({
-                type: 'update activity',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
 
@@ -179,42 +258,18 @@ export default class ActivitiesController {
      */
     public async create(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let iAc = request.payload as IPayloadCreate;
-            let lead: any = await ActivityService.create(iAc);
-            // log mongo create success
-            reply({
-                status: HTTP_STATUS.OK,
-                data: lead
-            }).code(HTTP_STATUS.OK);
-        } catch (ex) {
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: {
-                        code: EX.EX_GENERAL,
-                        msg: 'Create activity have errors'
-                    }
-                };
-            }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogActivity.create({
-                type: 'createactivity',
-                dataInput: request.payload,
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
+
+            let res = {
+                statusCode: 1,
+                data: {
+                    status: true
                 },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                msg: 'Thành công',
+                msgCode: ''
+            };
+            reply(res);
+        } catch (ex) {
+
         }
     }
 

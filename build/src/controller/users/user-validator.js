@@ -76,6 +76,20 @@ const changePassModel = Joi.object().keys({
 });
 exports.changePassModel = changePassModel;
 /**
+ * change password model
+ */
+const verifyOTPModel = Joi.object().keys({
+    Code: Joi.string()
+        .trim()
+        .required(),
+    UserName: Joi.string()
+        .required(),
+    Phone: Joi
+        .string()
+        .required()
+});
+exports.verifyOTPModel = verifyOTPModel;
+/**
  * validate profile
  */
 const updateProfileModel = Joi.object().keys({
@@ -112,13 +126,57 @@ const updateProfileModel = Joi.object().keys({
 });
 exports.updateProfileModel = updateProfileModel;
 const loginUserModel = Joi.object().keys({
-    Username: Joi.string().required(),
-    Password: Joi.string().trim().required()
+    UserName: Joi
+        .string()
+        .required(),
+    Password: Joi
+        .string()
+        .trim()
+        .required(),
 });
 exports.loginUserModel = loginUserModel;
+const headerModel = Joi.object().keys({
+    clientid: Joi
+        .string()
+        .default('123456')
+        .required(),
+    versionos: Joi
+        .string()
+        .default('1.3 fix')
+        .required(),
+    versionapp: Joi.string()
+        .default('2.0')
+        .required(),
+    devicename: Joi.string().default('samsung').required(),
+    imei: Joi.string().required().default('123456')
+}).unknown();
+exports.headerModel = headerModel;
+const headersChecksumModel = Joi.object().keys({
+    clientid: Joi
+        .string()
+        .default('123456')
+        .required(),
+    versionos: Joi
+        .string()
+        .default('1.3 fix')
+        .required(),
+    versionapp: Joi.string()
+        .default('2.0')
+        .required(),
+    devicename: Joi.string().default('samsung').required(),
+    imei: Joi.string().required()
+        .default('123456'),
+    checksum: Joi.string()
+        .default('22342345')
+        .required()
+}).unknown();
+exports.headersChecksumModel = headersChecksumModel;
 const loginResourceModel = Joi.object().keys({
-    Email: Joi.string().required(),
-    Password: Joi.string().trim().required()
+    UserName: Joi.string().required(),
+    Password: Joi
+        .string()
+        .trim()
+        .required()
 });
 exports.loginResourceModel = loginResourceModel;
 const jwtValidator = Joi.object({ 'authorization': Joi.string().required() }).unknown();

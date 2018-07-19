@@ -38,6 +38,8 @@ const createModel = Joi.object().keys({
     Type: Joi.number()
         .valid([1, 2, 3, 4])
         .example(1),
+    Name: Joi.string()
+        .required(), // Title of actiivty
     Location: Joi.string().allow(null),
     StartDate: Joi.date().required()
         .example('2017-11-11')
@@ -51,7 +53,11 @@ const createModel = Joi.object().keys({
         .description('false=waiting, true=done'),
     Notification: Joi.number()
         .required()
-        .description('minutes popup alert before activity happen')
+        .description('minutes popup alert before activity happen'),
+    IsSupport: Joi
+        .boolean()
+        .default(false)
+        .required()
 });
 
 
@@ -59,8 +65,10 @@ const updateModel = Joi.object().keys({
     // Phone: Joi.string()
     //     .regex(/[0-9]/)
     //     .required(), se lay trong table lead
-    // Name: string; khong can thiet, ten se gan them processttep
-    CampId: Joi.number().required(),
+    // Name: string; khong can thiet, ten se gan them processttep?
+    // CampId: Joi.number().required(),
+    Name: Joi.string()
+        .required(), // Title of actiivty
     Location: Joi.string()
         .description('lorem location')
         .allow(null),
@@ -85,6 +93,11 @@ const updateModel = Joi.object().keys({
     Notification: Joi
         .number()
         .required()
-        .description('minutes popup alert before activity happen')
+        .description('minutes popup alert before activity happen'),
+    IsSupport: Joi
+        .boolean()
+        .default(false)
+        .required()
+
 });
 export { createModel, updateModel };

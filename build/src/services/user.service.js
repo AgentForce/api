@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const postgres_1 = require("../postgres");
-const code_errors_1 = require("../helpers/code-errors");
+const code_errors_1 = require("../common/code-errors");
 class UserService {
     /**
      * Check if user exist
@@ -133,7 +133,7 @@ class UserService {
                     ReportTo = parent.Id;
                 }
             }
-            console.log(ReportTo);
+            // console.log(ReportTo);
             let user = {
                 Address: payload.Address,
                 Birthday: payload.Birthday,
@@ -147,7 +147,8 @@ class UserService {
                 Phone: payload.Phone,
                 Password: payload.Password,
                 ReportTo: ReportTo,
-                ReportToList: [],
+                ReportToList: '',
+                Credit: 0
             };
             return postgres_1.User
                 .create(user)

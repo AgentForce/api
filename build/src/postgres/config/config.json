@@ -1,41 +1,4 @@
 {
-  "dev": {
-    "username": "cympkcbyfpapfz",
-    "password": "7a55bb1fb79fd098b1b6e940d582535fe1ee0ff91284358d254dc70a6cd89327",
-    "database": "d3oe6olpfbra0j",
-    "host": "ec2-54-243-185-123.compute-1.amazonaws.com",
-    "port": 5432,
-    "dialect": "postgres",
-    "logging": true,
-    "force": true,
-    "dialectOptions": {
-      "ssl": true
-    },
-    "timezone": "+00:00"
-  },
-  "bk": {
-    "username": "cympkcbyfpapfz",
-    "password": "7a55bb1fb79fd098b1b6e940d582535fe1ee0ff91284358d254dc70a6cd89327",
-    "database": "d3oe6olpfbra0j",
-    "host": "ec2-54-243-185-123.compute-1.amazonaws.com",
-    "port": 5432,
-    "dialect": "postgres",
-    "logging": true,
-    "force": true,
-    "dialectOptions": {
-      "ssl": true
-    },
-    "timezone": "+00:00"
-  },
-  "local": {
-    "username": "tunguyene",
-    "password": "admin$123",
-    "database": "manulife",
-    "host": "127.0.0.1",
-    "port": 5433,
-    "dialect": "postgres",
-    "timezone": "+07:00"
-  },
   "development": {
     "username": "tunguyene",
     "password": "admin$123",
@@ -45,26 +8,40 @@
     "dialect": "postgres",
     "timezone": "+07:00"
   },
-  "test": {
-    "username": "postgres",
+  "dev": {
+    "username": "tunguyene",
     "password": "admin$123",
-    "database": "migrate_manulife",
+    "database": "manulife",
     "host": "127.0.0.1",
+    "port": 5433,
+    "dialect": "postgres",
+    "timezone": "+07:00"
+  },
+  "aws": {
+    "username": "manulife",
+    "password": "manulifePsql",
+    "database": "manulife",
+    "host": "ec2-13-250-56-100.ap-southeast-1.compute.amazonaws.com",
     "port": 5432,
     "dialect": "postgres",
-    "logging": true,
-    "force": true,
-    "timezone": "+00:00"
+    "timezone": "+07:00"
+  },
+  "test": {
+    "username": "manulife",
+    "password": "ManuLife",
+    "database": "manulife",
+    "host": "13.250.129.169",
+    "port": 5432,
+    "dialect": "postgres",
+    "timezone": "+07:00"
   },
   "production": {
-    "username": "postgres",
-    "password": "admin$123",
-    "database": "migrate_manulife",
-    "host": "127.0.0.1",
+    "username": "manulife",
+    "password": "ManuLife",
+    "database": "manulife",
+    "host": "13.250.129.169",
     "port": 5432,
     "dialect": "postgres",
-    "logging": true,
-    "force": true,
-    "timezone": "+00:00"
+    "timezone": "+07:00"
   }
 }

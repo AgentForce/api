@@ -8,19 +8,23 @@ const configs = new nconf.Provider({
     argv: true,
     store: {
         type: 'file',
-        file: path.join(__dirname, `./config.${process.env.NODE_ENV || "dev"}.json`)
+        file: path.join(__dirname, `./config.${process.env.NODE_ENV || 'dev'}.json`)
     }
 });
 function getDatabaseConfig() {
-    return configs.get("database");
+    return configs.get('database');
 }
 exports.getDatabaseConfig = getDatabaseConfig;
 function getDatabasePgConfig() {
-    return configs.get("development");
+    return configs.get('development');
 }
 exports.getDatabasePgConfig = getDatabasePgConfig;
 function getServerConfigs() {
-    return configs.get("server");
+    return configs.get('server');
 }
 exports.getServerConfigs = getServerConfigs;
+function getRedisConfigs() {
+    return configs.get('redis');
+}
+exports.getRedisConfigs = getRedisConfigs;
 //# sourceMappingURL=index.js.map

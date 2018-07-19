@@ -2,8 +2,9 @@ import { User } from '../postgres';
 import * as _ from 'lodash';
 import { IPayloadCreate, IPayloadChangePass } from '../controller/users/user';
 import * as Bcrypt from "bcryptjs";
-import { ManulifeErrors as Ex } from '../helpers/code-errors';
+import { ManulifeErrors as Ex } from '../common/code-errors';
 interface IIUser {
+    Id?: number;
     Password: string;
     Email: string;
     Phone: string;
@@ -12,11 +13,14 @@ interface IIUser {
     Gender: string;
     Birthday: Date;
     GroupId: string;
-    ReportToList: number[];
+    ReportToList: string;
     Address: string;
     City: number;
     District: number;
     ReportTo: number;
+    LastLogin?: Date;
+    Experience?: Date;
+    Credit: number;
 }
 
 
@@ -144,7 +148,7 @@ class UserService {
                 ReportTo = parent.Id;
             }
         }
-        console.log(ReportTo);
+        // console.log(ReportTo);
         let user: IIUser = {
             Address: payload.Address,
             Birthday: payload.Birthday,
@@ -158,7 +162,8 @@ class UserService {
             Phone: payload.Phone,
             Password: payload.Password,
             ReportTo: ReportTo,
-            ReportToList: [],
+            ReportToList: '',
+            Credit: 0
         };
         return User
             .create(user)

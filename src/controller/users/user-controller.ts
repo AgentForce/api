@@ -10,20 +10,24 @@ import { IServerConfigurations } from "../../configurations";
 import * as Joi from 'joi';
 import * as HTTP_STATUS from 'http-status';
 import { LogUser } from "../../mongo/index";
-import { ManulifeErrors as Ex } from '../../helpers/code-errors';
+import { ManulifeErrors as Ex } from '../../common/code-errors';
 const nodemailer = require('nodemailer');
 import * as EmailTemplate from 'email-templates';
 import { User } from "../../postgres/user";
-import * as Faker from 'faker';
-import { SlackAlert } from "../../helpers/index";
+import * as faker from 'faker';
+import { SlackAlert, MsgCodeResponses, MsgResponses } from "../../common/index";
 
 import * as path from 'path';
 import * as fs from 'fs';
 import * as Loki from 'lokijs';
+
+import { db as dbPostgres } from '../../postgres/db';
+
+
 import {
     imageFilter, loadCollection, cleanFolder,
     uploader
-} from '../../helpers/utils';
+} from '../../common/utils';
 
 // setup
 const DB_NAME = 'db.json';
@@ -35,7 +39,7 @@ const db = new Loki(`${UPLOAD_PATH}/${DB_NAME}`, { persistenceMethod: 'fs' });
 // optional: clean all data before start
 // cleanFolder(UPLOAD_PATH);
 if (!fs.existsSync(UPLOAD_PATH)) {
-    fs.mkdirSync(UPLOAD_PATH);
+    // fs.mkdirSync(UPLOAD_PATH);
 }
 
 export default class UserController {
@@ -90,23 +94,23 @@ export default class UserController {
                 SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                 reply(res).code(HTTP_STATUS.BAD_GATEWAY);
             }
-            let randPass = Faker.random.alphaNumeric(6);
+            let randPass = faker.random.alphaNumeric(6);
             let passwordHash = Bcrypt.hashSync(randPass, Bcrypt.genSaltSync(8));
             let userPg: any = await User
                 .update({
                     Password: passwordHash,
                 }, {
-                    where: {
-                        Email: request.payload.Email
-                    }
-                });
+                        where: {
+                            Email: request.payload.Email
+                        }
+                    });
 
             let userMongo: any = await this.database.userModel
                 .update({
                     email: request.payload.Email,
                 }, {
-                    password: passwordHash
-                });
+                        password: passwordHash
+                    });
 
 
             nodemailer.createTestAccount((err, account) => {
@@ -183,57 +187,124 @@ export default class UserController {
 
     public async changePassword(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            const dataInput = request.payload as IPayloadChangePass;
-            const username = request.params.username;
-            const user = <any>await UserService.findByCode(username);
-            if (user !== null) {
-                if (Bcrypt.compareSync(dataInput.OldPassword, user.Password)) {
-                    let passwordHash = Bcrypt.hashSync(dataInput.NewPassword, Bcrypt.genSaltSync(8));
-                    let userPg: any = await UserService
-                        .changePassword(user.Id, dataInput, passwordHash);
-                    let userMongo: any = await this.database.userModel
-                        .update({
-                            userId: user.Id,
-                        }, {
-                            password: passwordHash
-                        });
-                    let res = {
-                        status: HTTP_STATUS.OK,
-                        url: request.url.path,
-                    };
-                    LogUser.create({
-                        type: 'changepassword',
-                        dataInput: {
-                            params: request.params,
-                            payload: request.payload
-                        },
-                        msg: 'change password success',
-                        meta: {
-                            response: res
-                        }
-                    });
-                    reply(res).code(HTTP_STATUS.OK);
-                } else {
-                    throw {
-                        code: Ex.EX_OLDPASSWORD_DONT_CORRECT,
-                        msg: 'oldpass dont correct'
-                    };
-                }
+            let res = {
 
+            };
+            if (request.payload.OldPassword === '123456') {
+                res = {
+                    statusCode: 1,
+                    data: {
+                        status: true
+                    },
+                    msg: MsgCodeResponses.USER_CHANGE_PASS_SUCCESS,
+                    msgCode: MsgCodeResponses.USER_CHANGE_PASS_SUCCESS
+                };
             } else {
-                throw { code: Ex.EX_USERID_NOT_FOUND, msg: 'userid not found' };
+                res = {
+                    statusCode: 1,
+                    data: {
+                        status: false
+                    },
+                    msg: MsgCodeResponses.USER_CHANGE_PASS_DONT_MATCH,
+                    msgCode: MsgCodeResponses.USER_CHANGE_PASS_DONT_MATCH
+                };
             }
+            reply(res);
+
         } catch (ex) {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: 400,
+                    status: 0,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: 400,
+                    status: 0,
+                    url: request.url.path,
+                    error: {
+                        code: 'ex',
+                        msg:
+                            'Exception occurred change password'
+                    }
+                };
+            }
+            LogUser.create({
+                type: 'changepassword',
+                dataInput: request.payload,
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res);
+        }
+    }
+
+    public async setPassword(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let res = {
+                statusCode: 1,
+                data: {
+                    status: true
+                },
+                msgCode: MsgCodeResponses.USER_SET_PASSWORD_SUCCESS,
+                msg: MsgCodeResponses.USER_SET_PASSWORD_SUCCESS,
+            };
+            reply(res);
+            // const dataInput = request.payload as IPayloadChangePass;
+            // const username = request.params.username;
+            // const user = <any>await UserService.findByCode(username);
+            // if (user !== null) {
+            //     if (Bcrypt.compareSync(dataInput.OldPassword, user.Password)) {
+            //         let passwordHash = Bcrypt.hashSync(dataInput.NewPassword, Bcrypt.genSaltSync(8));
+            //         let userPg: any = await UserService
+            //             .changePassword(user.Id, dataInput, passwordHash);
+            //         let userMongo: any = await this.database.userModel
+            //             .update({
+            //                 userId: user.Id,
+            //             }, {
+            //                 password: passwordHash
+            //             });
+            //         let res = {
+            //             status: HTTP_STATUS.OK,
+            //             url: request.url.path,
+            //         };
+            //         LogUser.create({
+            //             type: 'changepassword',
+            //             dataInput: {
+            //                 params: request.params,
+            //                 payload: request.payload
+            //             },
+            //             msg: 'change password success',
+            //             meta: {
+            //                 response: res
+            //             }
+            //         });
+            //         reply(res).code(HTTP_STATUS.OK);
+            //     } else {
+            //         throw {
+            //             code: Ex.EX_OLDPASSWORD_DONT_CORRECT,
+            //             msg: 'oldpass dont correct'
+            //         };
+            //     }
+
+            // } else {
+            //     throw { code: Ex.EX_USERID_NOT_FOUND, msg: 'userid not found' };
+            // }
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 0,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 0,
                     url: request.url.path,
                     error: {
                         code: 'ex', msg:
@@ -250,7 +321,7 @@ export default class UserController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -258,76 +329,97 @@ export default class UserController {
      * User login
      */
     public async loginUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        const username = request.payload.Username;
-        const password = request.payload.Password;
-        let user: IUser = await this.database
-            .userModel
-            .findOne({ username: username });
-        if (!user) {
-            return reply(Boom.unauthorized("User does not exists."));
-        }
-
-        if (!user.validatePassword(password)) {
-            return reply(Boom.unauthorized("Password is invalid."));
-        }
-        let userPg = await UserService.findByCode(username);
-
-        reply({
-            token: this.generateToken(user),
-            info: userPg
+        return reply({
+            status: 1,
+            data: {
+                access_token: '2f8ac8b7255355afab238b45e9289d9504344ba5',
+                token_type: 'Bearer',
+                expires_in: 599,
+                refresh_token: 'ce4309b70cdc150de0e41295aa28009b65c42d26',
+                scope: 'user_info:read'
+            },
+            msgCode: '',
+            msg: ''
         });
+        // const username = request.payload.Username;
+        // const password = request.payload.Password;
+        // let user: IUser = await this.database
+        //     .userModel
+        //     .findOne({ username: username });
+        // if (!user) {
+        //     return reply({
+        //         status: HTTP_STATUS.OK,
+        //         token: Faker.random.alphaNumeric(250)
+        //     });
+        // }
+
+        // if (!user.validatePassword(password)) {
+        //     return reply(Boom.unauthorized("Password is invalid."));
+        // }
+        // let userPg = await UserService.findByCode(username);
+
+        // reply({
+        //     token: this.generateToken(user),
+        //     info: userPg
+        // });
+    }
+
+    /**
+   * User login
+   */
+    public async requestOTP(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        return reply({
+            status: 1,
+            data: {
+                Status: true
+            },
+            msg: MsgCodeResponses.USER_OTP_SUCCESS,
+            msgCode: MsgCodeResponses.USER_OTP_SUCCESS
+        });
+
     }
 
 
+    public async testUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        return dbPostgres
+            .query(`select * from reporttolist(${request.params.userid}, lquery_in('${request.params.query}'))`,
+                { replacements: { email: 42 } })
+            .spread((output, records: any) => {
+                return records.rows;
+            });
+
+
+    }
     /**
     * Authentication
     */
-    public async loginAuthen(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        const email = request.payload.Email;
-        const password = request.payload.Password;
-        let user: IUser = await this.database
-            .userModel
-            .findOne({ email: email });
-        if (!user) {
-            return reply(Boom.unauthorized("User does not exists."));
-        }
-
-        if (!user.validatePassword(password)) {
-            return reply(Boom.unauthorized("Password is invalid."));
-        }
-
-        reply({
-            token: this.generateToken(user),
-        });
-    }
-
-
-    public async getByUsername(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+    public async refreshToken(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            const username = request.params.username;
-            const user = <any>await UserService.findByCode(username);
-            if (user !== null) {
-                reply({
-                    status: HTTP_STATUS.OK,
-                    data: user
-                }).code(HTTP_STATUS.OK);
-            } else {
-                throw {
-                    code: Ex.EX_USERNAME_NOT_FOUND,
-                    msg: 'UserName not found'
-                };
-            }
+            let res = {
+                status: 1,
+                data: {
+                    access_token: "9d22ef67c5ff1e6d6f7c06ca75267220951970d9",
+                    token_type: "Bearer",
+                    expires_in: 599,
+                    refresh_token: "6e918eee79c9bf0d49e687ca7ff1848bc64d1f4f",
+                    scope: "user_info:read"
+                },
+                msgCode: '',
+                msg: ''
+            };
+            reply(res).code(HTTP_STATUS.OK);
+
         } catch (ex) {
             let res = {};
             if (ex.code) {
                 res = {
-                    status: 400,
+                    status: 1,
                     url: request.url.path,
                     error: ex
                 };
             } else {
                 res = {
-                    status: 400,
+                    status: 1,
                     url: request.url.path,
                     error: {
                         code: Ex.EX_GENERAL,
@@ -346,7 +438,71 @@ export default class UserController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
+        }
+    }
+
+
+    public async profile(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            const username = request.params.username;
+            // const user = <any>await UserService.findByCode(username);
+            console.log(request.params.hihi);
+            let fakerUser = {
+                FullName: faker.name.firstName(),
+                Phone: '+841693248887',
+                Email: faker.internet.email(),
+                Credit: 10,
+                Gender: 'male',
+                Address: faker.address.city,
+                Code: '234234'
+
+            };
+            reply({
+                status: 1,
+                data: fakerUser
+            });
+            // if (user !== null) {
+            //     reply({
+            //         status: HTTP_STATUS.OK,
+            //         data: user
+            //     }).code(HTTP_STATUS.OK);
+            // } else {
+            //     throw {
+            //         code: Ex.EX_USERNAME_NOT_FOUND,
+            //         msg: 'UserName not found'
+            //     };
+            // }
+        } catch (ex) {
+            let res = {};
+            if (ex.code) {
+                res = {
+                    status: 0,
+                    url: request.url.path,
+                    error: ex
+                };
+            } else {
+                res = {
+                    status: 0,
+                    url: request.url.path,
+                    error: {
+                        code: Ex.EX_GENERAL,
+                        msg: 'Exception occurred find username'
+                    }
+                };
+            }
+            LogUser.create({
+                type: 'findusername',
+                dataInput: {
+                    params: request.params
+                },
+                msg: 'errors',
+                meta: {
+                    exception: ex,
+                    response: res
+                },
+            });
+            reply(res);
         }
     }
 
@@ -355,52 +511,25 @@ export default class UserController {
      */
     public async updateProfile(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            const dataInput = request.payload;
-            const user = <any>await UserService.findByCode(dataInput.UserName);
-            if (user !== null) {
-                let userMongo: any = await this.database.userModel
-                    .update({
-                        userId: user.Id,
-                    }, {
-                        fullName: dataInput.FullName,
-                        email: dataInput.Email
-                    });
-                let userPg = await UserService
-                    .updateProfile(user.Id, dataInput);
+            let fakerUser = {
+                FullName: faker.name.firstName(),
+                Phone: '+841693248887',
+                Email: faker.internet.email(),
+                Credit: 10,
+                Gender: 'male',
+                Address: faker.address.city,
+                Code: '234234'
 
-                reply({
-                    status: HTTP_STATUS.OK,
-                    data: userPg
-                }).code(HTTP_STATUS.OK);
-            } else {
-                throw { code: Ex.EX_USERNAME_NOT_FOUND, msg: 'UserName not found' };
-            }
+            };
+            reply({
+                status: 1,
+                data: fakerUser,
+                msg: 'Tìm thấy tài khoảng',
+                msgcode: 'found'
+            }).code(HTTP_STATUS.OK);
+
         } catch (ex) {
-            console.log(ex);
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: { code: 'ex', msg: 'Exception occurred update profile user' }
-                };
-            }
-            LogUser.create({
-                type: 'updateprofile',
-                dataInput: request.payload,
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+
         }
     }
 
@@ -432,7 +561,7 @@ export default class UserController {
                         console.log(ex);
                     });
                 return reply({
-                    status: HTTP_STATUS.OK,
+                    status: 1,
                     data: {
                         token: this.generateToken(newUser),
                         info: newUserPg
@@ -443,33 +572,7 @@ export default class UserController {
                 throw { code: Ex.EX_USERNAME_EXIST, msg: 'username exist or email exist' };
             }
         } catch (ex) {
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: {
-                        code: Ex.EX_GENERAL,
-                        msg: 'Exception occurred create user'
-                    }
-                };
-            }
-            LogUser.create({
-                type: 'createuser',
-                dataInput: request.payload,
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+
         }
     }
 
@@ -497,7 +600,7 @@ export default class UserController {
                         throw ex;
                     });
                 return reply({
-                    status: HTTP_STATUS.OK,
+                    status: 1,
                     data: {
                         token: this.generateToken(newUser)
                     }
@@ -515,50 +618,126 @@ export default class UserController {
                     error: ex
                 };
             } else {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: {
-                        code: Ex.EX_GENERAL,
-                        msg: 'Exception occurred create authorize'
-                    }
-                };
+
             }
-            LogUser.create({
-                type: 'createauthorize',
-                dataInput: request.payload,
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
         }
     }
 
-    /*public async updateUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        const id = request.auth.credentials.id;
-
+    /**
+    *  Check SMS OTP
+    */
+    public async verifyOTP(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        let res = {};
         try {
-            let  user: IUser = await this.database.userModel.findByIdAndUpdate(id, { $set: request.payload }, { new: true });
-            return reply(user);
-        } catch (error) {
-            return reply(Boom.badImplementation(error));
+            if (request.payload.Code === '123456') {
+                res = {
+                    statusCode: 1,
+                    data: {
+                        status: true
+                    },
+                    msg: '',
+                    msgCode: ''
+                };
+                reply(res);
+
+            } else {
+                res = {
+                    statusCode: 0,
+                    data: {
+                        status: true
+                    },
+                    msg: 'khong thanh cong',
+                    msgCode: 'khong thanh cong'
+                };
+                reply(res);
+
+            }
+
+        } catch (ex) {
+
         }
     }
 
-    public async deleteUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        const id = request.auth.credentials.id;
-        let user: IUser = await this.database.userModel.findByIdAndRemove(id);
 
-        return reply(user);
+    /**
+   *  Check SMS OTP
+   */
+    public async check(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        let res = {
+            statusCode: 1,
+            data: {
+                status: 1
+            },
+            msg: '',
+            msgCode: ''
+        };
+        if (request.params.phone === '841693248887' && request.params.username === 'm123456') {
+            res = {
+                statusCode: 1,
+                data: {
+                    status: 1
+                },
+                msg: MsgCodeResponses.USER_INACTIVE,
+                msgCode: MsgCodeResponses.USER_INACTIVE
+            };
+        } else if (request.params.phone === '841693248888' && request.params.username === 'm123455') {
+            res = {
+                statusCode: 0,
+                data: {
+                    status: 2
+                },
+                msg: MsgCodeResponses.USER_DONT_MATCH,
+                msgCode: MsgCodeResponses.USER_DONT_MATCH
+            };
+        } else if (request.params.phone === '841693248889' && request.params.username === 'd123456') {
+            res = {
+                statusCode: 0,
+                data: {
+                    status: 3
+                },
+                msg: MsgCodeResponses.USER_DEACTIVED,
+                msgCode: MsgCodeResponses.USER_DEACTIVED
+            };
+        } else if (request.params.phone === '841693248880' && request.params.username === 'a123456') {
+            res = {
+                statusCode: 1,
+                data: {
+                    status: 5
+                },
+                msg: MsgCodeResponses.USER_ACTIVED,
+                msgCode: MsgCodeResponses.USER_ACTIVED
+            };
+        } else {
+            res = {
+                statusCode: 0,
+                data: {
+                    status: 4
+                },
+                msg: MsgCodeResponses.USER_NOT_FOUND,
+                msgCode: MsgCodeResponses.USER_NOT_FOUND
+            };
+
+        }
+        reply(res);
     }
 
-    public async infoUser(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        const id = request.auth.credentials.id;
-        let user: IUser = await this.database.userModel.findById(id);
+    /**
+ *  Check SMS OTP
+ */
+    public async checkApp(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        let res = {
+            statusCode: 1,
+            data: {
+                active: 0,
+                description: "",
+                link: "",
+                mobile_type: request.params.type,
+                version: "3.0",
+            },
+            msgCode: '',
+            msg: ''
+        };
 
-        reply(user);
-    }*/
+        reply(res);
+    }
 }

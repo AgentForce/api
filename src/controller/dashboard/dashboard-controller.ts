@@ -1,5 +1,4 @@
 import * as Hapi from "hapi";
-import * as Boom from "boom";
 import * as moment from "moment";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
@@ -8,8 +7,10 @@ import * as HTTP_STATUS from 'http-status';
 import { Campaign } from "../../postgres/campaign";
 import { LogCamp } from "../../mongo/index";
 import * as _ from 'lodash';
-import { SlackAlert, ManulifeErrors as Ex } from "../../helpers/index";
-import { DashboardService } from "../../services/dashboard.service";
+import { SlackAlert, ManulifeErrors as Ex } from "../../common/index";
+import { DashboardService, typeTarget } from "../../services/dashboard.service";
+import { boomify } from "boom";
+import * as Faker from 'faker';
 export default class DashboardController {
 
     private database: IDatabase;
@@ -27,52 +28,94 @@ export default class DashboardController {
      */
     public async dashboard(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let UserId = parseInt(request.params.userid, 10);
-            let dashboard: any = await DashboardService.dashboard(UserId);
-            if (dashboard == null) {
-                return reply({
-                    status: HTTP_STATUS.NOT_FOUND,
-                    data: dashboard
-                }).code(HTTP_STATUS.NOT_FOUND);
-            } else {
-                return reply({
-                    status: HTTP_STATUS.OK,
-                    data: dashboard
-                }).code(HTTP_STATUS.OK);
-            }
-        } catch (ex) {
-            // log mongo create fail
             let res = {};
-            if (ex.code) {
+            if (request.params.type === 'weekmonth') {
                 res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: ex
+                    type: request.params.type,
+                    currentWeek: 2,
+                    campaign: [{
+                        Period: 1,
+                        Week: 1,
+                        TargetCallSale: 30,
+                        TargetMetting: 15,
+                        TargetPresentation: 9,
+                        TargetContractSale: 3,
+                        TargetReLead: 27,
+                        CurrentCallSale: 17,
+                        CurrentMetting: 12,
+                        CurrentPresentation: 7,
+                        CurrentContract: 3,
+                        CurrentReLead: 2,
+                    }, {
+                        Period: 1,
+                        Week: 2,
+                        TargetCallSale: 30,
+                        TargetMetting: 15,
+                        TargetPresentation: 9,
+                        TargetContractSale: 3,
+                        TargetReLead: 27,
+                        CurrentCallSale: 17,
+                        CurrentMetting: 12,
+                        CurrentPresentation: 7,
+                        CurrentContract: 3,
+                        CurrentReLead: 2,
+                    }, {
+                        Period: 1,
+                        Week: 3,
+                        TargetCallSale: 30,
+                        TargetMetting: 15,
+                        TargetPresentation: 9,
+                        TargetContractSale: 3,
+                        TargetReLead: 27,
+                        CurrentCallSale: 17,
+                        CurrentMetting: 12,
+                        CurrentPresentation: 7,
+                        CurrentContract: 3,
+                        CurrentReLead: 2,
+                    }, {
+                        Period: 1,
+                        Week: 4,
+                        TargetCallSale: 30,
+                        TargetMetting: 15,
+                        TargetPresentation: 9,
+                        TargetContractSale: 3,
+                        TargetReLead: 27,
+                        CurrentCallSale: 17,
+                        CurrentMetting: 12,
+                        CurrentPresentation: 7,
+                        CurrentContract: 3,
+                        CurrentReLead: 2,
+                    }]
                 };
             } else {
                 res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: {
-                        code: Ex.EX_GENERAL,
-                        msg: 'get dashboard have errors'
-                    }
+                    type: request.params.type,
+                    campaign: [
+                        {
+                            TargetCallSale: 100,
+                            TargetMetting: 50,
+                            TargetPresentation: 30,
+                            TargetContractSale: 10,
+                            TargetReLead: 90,
+                            CurrentCallSale: 80,
+                            CurrentMetting: 40,
+                            CurrentPresentation: 20,
+                            CurrentContract: 10,
+                            CurrentReLead: 10,
+                        }
+                    ]
                 };
             }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogCamp.create({
-                type: 'dashboard',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
+
+            reply({
+                statusCode: 1,
+                data: res,
+                msg: '',
+                msgCode: ''
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+
+        } catch (ex) {
+
         }
     }
 }

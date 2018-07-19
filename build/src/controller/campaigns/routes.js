@@ -1,98 +1,48 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
+const Boom = require("boom");
 const campaign_controller_1 = require("./campaign-controller");
 const CampaignValidator = require("./campaign-validator");
-const HTTP_STATUS = require("http-status");
-const code_errors_1 = require("../../helpers/code-errors");
+const user_validator_1 = require("../users/user-validator");
+/**
+ * constant error
+ */
+const code_errors_1 = require("../../common/code-errors");
+/**
+ * plugin log campaign
+ */
 const index_1 = require("../../mongo/index");
-const index_2 = require("../../helpers/index");
+const index_2 = require("../../common/index");
 function default_1(server, configs, database) {
     const campaignController = new campaign_controller_1.default(configs, database);
     server.bind(campaignController);
     /**
-     * get list leads of campaign with type and campaignid
+     * get a campaign by period
      */
     server.route({
         method: 'GET',
-        path: '/campaigns/{id}/customers/{type}',
-        config: {
-            handler: campaignController.leadsOfCamp,
-            auth: "jwt",
-            tags: ['api', 'campaigns'],
-            description: 'Get Customer(leads) in a campaigns by id.',
-            validate: {
-                params: {
-                    id: Joi.number().required().description('Campaignid'),
-                    type: Joi.number().required().valid([1, 2, 3, 4])
-                        .description('4 processtep in lead')
-                },
-                // headers: jwtValidator,
-                failAction: (request, reply, source, error) => {
-                    let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
-                            msg: 'payload dont valid',
-                            details: error
-                        }
-                    };
-                    index_1.LogCamp.create({
-                        type: '/campaigns/{id}/customers/{type}',
-                        dataInput: {
-                            params: request.params,
-                        },
-                        msg: 'payload do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        },
-                    });
-                    reply(res);
-                }
-            },
-            plugins: {
-                'hapi-swagger': {
-                    responses: {
-                        '200': {
-                            'description': 'Campaign .'
-                        },
-                        '404': {
-                            'description': 'Campaign does not exists.'
-                        }
-                    },
-                    security: [{
-                            'jwt': []
-                        }]
-                }
-            }
-        }
-    });
-    /**
-     * get a campaign by campaignid
-     */
-    server.route({
-        method: 'GET',
-        path: '/campaigns/{id}',
+        path: '/campaigns/period/{period}',
         config: {
             handler: campaignController.getByCampaignId,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'campaigns'],
-            description: 'Get campaign by campaignid.',
+            description: '#drivev3/dangnhap,KH-lienhe:1 #screen11,12,12copy2,12copy3. Trả về danh sách plan 4 tuần của một tháng',
             validate: {
-                // headers: jwtValidator,
+                headers: user_validator_1.headerModel,
                 params: {
-                    id: Joi.number().required().description('campaignid')
+                    period: Joi.number()
+                        .required()
                 },
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
-                            msg: 'params dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
                     };
                     index_1.LogCamp.create({
-                        type: '/campaigns/{id}/customers/{type}',
+                        type: '/campaigns/current',
                         dataInput: {
                             params: request.params,
                         },
@@ -100,21 +50,39 @@ function default_1(server, configs, database) {
                         meta: {
                             exception: error,
                             response: res
-                        },
+                        }
                     });
-                    reply(res);
+                    reply(Boom);
                 }
                 // headers: jwtValidator
             },
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Campaign founded.'
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(1),
+                                data: Joi
+                                    .object(),
+                                msg: Joi.string(),
+                                msgCode: Joi.string()
+                            })
                         },
-                        '404': {
-                            'description': 'Campaign does not exists.'
-                        }
+                        404: {
+                            description: '',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(0),
+                                data: Joi
+                                    .object(),
+                                msg: Joi.string(),
+                                msgCode: Joi.string()
+                            })
+                        },
                     },
                     security: [{
                             'jwt': []
@@ -124,33 +92,27 @@ function default_1(server, configs, database) {
         }
     });
     /**
-     * get list campaign of 1 user
+     * get a campaign by period
      */
     server.route({
         method: 'GET',
-        path: '/campaigns/userid/{userid}',
+        path: '/campaigns/check',
         config: {
-            handler: campaignController.getByUserId,
-            auth: "jwt",
+            handler: campaignController.checkCampaign,
+            // auth: "jwt",
             tags: ['api', 'campaigns'],
-            description: 'Get all campaigns of 1 userid',
+            description: '#screenv3/dangnhap:3 Check campaign exist in current day ',
             validate: {
-                // headers: jwtValidator,
-                params: {
-                    userid: Joi.string().required()
-                },
-                // headers: jwtValidator
+                headers: user_validator_1.headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
-                            msg: 'params dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
                     };
-                    index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                     index_1.LogCamp.create({
-                        type: '/campaigns/userid/{userid}',
+                        type: '/campaigns/current',
                         dataInput: {
                             params: request.params,
                         },
@@ -158,20 +120,41 @@ function default_1(server, configs, database) {
                         meta: {
                             exception: error,
                             response: res
-                        },
+                        }
                     });
-                    reply(res);
+                    reply(Boom);
                 }
+                // headers: jwtValidator
             },
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Campaign founded.'
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(1),
+                                data: Joi
+                                    .object({
+                                    status: Joi.boolean().example(true)
+                                }),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
                         },
-                        '404': {
-                            'description': 'Campaign does not exists.'
-                        }
+                        404: {
+                            description: '',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(0),
+                                data: Joi
+                                    .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
+                        },
                     },
                     security: [{
                             'jwt': []
@@ -181,26 +164,85 @@ function default_1(server, configs, database) {
         }
     });
     /**
-     * creat new campaign
+     * get a campaign by period
      */
     server.route({
-        method: 'POST',
-        path: '/campaigns',
+        method: 'GET',
+        path: '/campaigns/forwardtarget',
         config: {
-            handler: campaignController.createCampaign,
-            auth: "jwt",
+            handler: campaignController.checkCampaign,
+            // auth: "jwt",
             tags: ['api', 'campaigns'],
-            description: 'Create a campaign.',
+            description: 'for screen dashboard: ',
             validate: {
-                payload: CampaignValidator.createCampaignFAModel,
-                // headers: jwtValidator,
+                headers: user_validator_1.headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: code_errors_1.ManulifeErrors.EX_PAYLOAD,
-                            msg: 'payload dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
+                    };
+                    reply(Boom);
+                }
+                // headers: jwtValidator
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(1),
+                                data: Joi
+                                    .object({
+                                    status: Joi.boolean().example(true)
+                                }),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
+                        },
+                        404: {
+                            description: '',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(0),
+                                data: Joi
+                                    .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
+                        },
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
+                }
+            }
+        }
+    });
+    /**
+        * forcast
+        */
+    server.route({
+        method: 'GET',
+        path: '/campaigns/forcast',
+        config: {
+            handler: campaignController.forcast,
+            // auth: "jwt",
+            tags: ['api', 'campaigns'],
+            description: 'API for SM. forcast target',
+            validate: {
+                headers: user_validator_1.headerModel,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
                     };
                     index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                     index_1.LogCamp.create({
@@ -218,8 +260,232 @@ function default_1(server, configs, database) {
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'Created campaign.'
+                        200: {
+                            description: 'success',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(1),
+                                data: Joi
+                                    .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
+                        },
+                        400: {
+                            description: 'Error something',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(0),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
+                        }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
+                }
+            }
+        }
+    });
+    /**
+     * creat new campaign fa
+     */
+    server.route({
+        method: 'POST',
+        path: '/campaigns/fa',
+        config: {
+            handler: campaignController.createCampaign,
+            // auth: "jwt",
+            tags: ['api', 'campaigns'],
+            description: '#googledrive/dangky #screen10. Create a campaign FA',
+            validate: {
+                payload: CampaignValidator.createCampaignFAModel,
+                headers: user_validator_1.headerModel,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
+                    };
+                    index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                    index_1.LogCamp.create({
+                        type: 'createcamp',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: 'success',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(1),
+                                data: Joi
+                                    .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
+                        },
+                        400: {
+                            description: 'Error something',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(0),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
+                        }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
+                }
+            }
+        }
+    });
+    /**
+   * creat new campaign fa
+   */
+    server.route({
+        method: 'POST',
+        path: '/campaigns/sm',
+        config: {
+            handler: campaignController.createCampaignSM,
+            // auth: "jwt",
+            tags: ['api', 'campaigns'],
+            description: '#googledrive/dangky #screen10. Create a campaign SM',
+            validate: {
+                payload: CampaignValidator.createCampaignFAModel,
+                headers: user_validator_1.headerModel,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
+                    };
+                    index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                    index_1.LogCamp.create({
+                        type: 'createcamp',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: 'success',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(1),
+                                data: Joi
+                                    .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
+                        },
+                        400: {
+                            description: 'Error something',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(0),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
+                        }
+                    },
+                    security: [{
+                            'jwt': []
+                        }]
+                }
+            }
+        }
+    });
+    /**
+    * creat new campaign fa
+    */
+    server.route({
+        method: 'POST',
+        path: '/campaigns/um',
+        config: {
+            handler: campaignController.createCampaign,
+            // auth: "jwt",
+            tags: ['api', 'campaigns'],
+            description: '#googledrive/dangky #screen10. Create a campaign UM',
+            validate: {
+                payload: CampaignValidator.createCampaignFAModel,
+                headers: user_validator_1.headerModel,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: 0,
+                        data: error,
+                        msgCode: code_errors_1.MsgCodeResponses.INPUT_INVALID,
+                        msg: code_errors_1.MsgCodeResponses.INPUT_INVALID
+                    };
+                    index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
+                    index_1.LogCamp.create({
+                        type: 'createcamp',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: 'success',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(1),
+                                data: Joi
+                                    .object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
+                        },
+                        400: {
+                            description: 'Error something',
+                            schema: Joi.object({
+                                statusCode: Joi
+                                    .number()
+                                    .example(0),
+                                data: Joi.object(),
+                                msg: Joi.string(),
+                                msgcode: Joi.string()
+                            })
                         }
                     },
                     security: [{

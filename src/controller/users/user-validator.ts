@@ -78,6 +78,20 @@ const changePassModel = Joi.object().keys({
 });
 
 /**
+ * change password model
+ */
+const verifyOTPModel = Joi.object().keys({
+    Code: Joi.string()
+        .trim()
+        .required(),
+    UserName: Joi.string()
+        .required(),
+    Phone: Joi
+        .string()
+        .required()
+});
+
+/**
  * validate profile
  */
 const updateProfileModel = Joi.object().keys({
@@ -116,14 +130,60 @@ const updateProfileModel = Joi.object().keys({
 
 
 const loginUserModel = Joi.object().keys({
-    Username: Joi.string().required(),
-    Password: Joi.string().trim().required()
+    UserName: Joi
+        .string()
+        .required(),
+    Password: Joi
+        .string()
+        .trim()
+        .required(),
 });
+
+const headerModel = Joi.object().keys({
+    clientid: Joi
+        .string()
+        .default('123456')
+        .required(),
+    versionos: Joi
+        .string()
+        .default('1.3 fix')
+        .required(),
+    versionapp: Joi.string()
+        .default('2.0')
+        .required(),
+    devicename: Joi.string().default('samsung').required(),
+    imei: Joi.string().required().default('123456')
+
+}).unknown();
+
+const headersChecksumModel = Joi.object().keys({
+    clientid: Joi
+        .string()
+        .default('123456')
+        .required(),
+    versionos: Joi
+        .string()
+        .default('1.3 fix')
+        .required(),
+    versionapp: Joi.string()
+        .default('2.0')
+        .required(),
+    devicename: Joi.string().default('samsung').required(),
+    imei: Joi.string().required()
+        .default('123456'),
+    checksum: Joi.string()
+        .default('22342345')
+        .required()
+
+}).unknown();
 
 
 const loginResourceModel = Joi.object().keys({
-    Email: Joi.string().required(),
-    Password: Joi.string().trim().required()
+    UserName: Joi.string().required(),
+    Password: Joi
+        .string()
+        .trim()
+        .required()
 });
 const jwtValidator = Joi.object({ 'authorization': Joi.string().required() }).unknown();
 export {
@@ -133,5 +193,8 @@ export {
     jwtValidator,
     changePassModel,
     ResourceModel,
-    loginResourceModel
+    loginResourceModel,
+    verifyOTPModel,
+    headerModel,
+    headersChecksumModel
 };

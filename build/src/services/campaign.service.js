@@ -14,17 +14,17 @@ const _ = require("lodash");
 const moment = require("moment");
 const bluebird_1 = require("bluebird");
 const lead_1 = require("../postgres/lead");
-const winston_1 = require("winston");
-const code_errors_1 = require("../helpers/code-errors");
-var logger = new (winston_1.Logger)({
-    transports: [
-        new (winston_1.transports.Console)({ level: 'error' }),
-        new (winston_1.transports.File)({
-            filename: 'somefile.log',
-            level: 'info'
-        }),
-    ]
-});
+const code_errors_1 = require("../common/code-errors");
+const redis_1 = require("../cache/redis");
+// var logger = new (Logger)({
+//     transports: [
+//         new (transports.Console)({ level: 'error' }),
+//         new (transports.File)({
+//             filename: 'somefile.log',
+//             level: 'info'
+//         }),
+//     ]
+// });
 class CampaignService {
     /**
      * find campaign by
@@ -43,6 +43,71 @@ class CampaignService {
         })
             .catch(ex => {
             throw ex;
+        });
+    }
+    /**
+     * get total campaign of a user
+     * @key: userid
+     */
+    static getTotalCamp(key) {
+        return new Promise((resolve, reject) => {
+            redis_1.default.hgetall(`campaign-total:userid${key}`, (err, res) => __awaiter(this, void 0, void 0, function* () {
+                if (err) {
+                    throw err;
+                }
+                console.log(res);
+                if (res) {
+                    resolve(res);
+                }
+                else {
+                    // TODO: recache
+                    // get 1 record campaign have NumGoal max
+                    const maxNumGoal = yield postgres_1.Campaign.max('NumGoal', {
+                        where: {
+                            UserId: key
+                        }
+                    });
+                    if (_.isInteger(maxNumGoal)) {
+                        const campsLastUser = yield postgres_1.Campaign.findAll({
+                            where: {
+                                UserId: key,
+                                NumGoal: maxNumGoal,
+                                IsDeleted: false
+                            },
+                            order: [
+                                ['StartDate', 'DESC']
+                            ]
+                        });
+                        let campTotal = {
+                            UserId: key,
+                            TargetCallSale: 0,
+                            TargetMetting: 0,
+                            TargetPresentation: 0,
+                            TargetContractSale: 0,
+                            IncomeMonthly: 0,
+                            CurrentCallSale: 0,
+                            CurrentMetting: 0,
+                            CurrentPresentation: 0,
+                            CurentContract: 0,
+                            StartDate: null,
+                            EndDate: null
+                        };
+                        campTotal.StartDate = _.first(campsLastUser).StartDate;
+                        campTotal.EndDate = _.last(campsLastUser).EndDate;
+                        _.reduce(campsLastUser, (campTotal, value, key) => {
+                            campTotal.TargetCallSale += value.TargetCallSale;
+                            campTotal.TargetMetting += value.TargetMetting;
+                            campTotal.TargetPresentation += value.TargetPresentation;
+                            campTotal.TargetContractSale += value.TargetContractSale;
+                            return campTotal;
+                        }, campTotal);
+                        this.cacheCampTotal(campTotal);
+                        resolve(campTotal);
+                    }
+                }
+                // dont exist any camp
+                resolve(null);
+            }));
         });
     }
     /**
@@ -81,11 +146,43 @@ class CampaignService {
      * @param campaignId number
      */
     static findById(campaignId) {
+        // return db
+        //     .query(`select * from reporttolist(5, lquery_in('*'))`,
+        //     { replacements: { email: 42 } })
+        //     .spread((output, records: any) => {
+        //         return records.rows;
+        //     });
         return postgres_1.Campaign
             .findOne({
             where: {
                 Id: campaignId,
                 IsDeleted: false
+            },
+            attributes: {
+                exclude: [
+                    'IsDeleted',
+                    'NumGoal',
+                    'Credit',
+                    'ReportToList',
+                    'ReportTo',
+                    'Results',
+                    'FypRaito',
+                    'M3AA',
+                    'AverageCC',
+                    'AgentTer',
+                    'CurrentMit',
+                    'CreatedAt',
+                    'UpdatedAt',
+                    'ActiveRaito',
+                    'M3AARaito',
+                    'TargetPamphlet',
+                    'TargetCop',
+                    'TargetAgentCode',
+                    'Description',
+                    'CurrentTest',
+                    'CurentTer',
+                    'CurrentPamphlet'
+                ]
             }
         })
             .catch(ex => {
@@ -93,7 +190,7 @@ class CampaignService {
         });
     }
     /**
-     * List leads of campaign, filter by processtep
+     * return leads of campaign, filter by processtep
      * @param campaignId campaignid
      * @param processStep 4 step in lead
      */
@@ -128,10 +225,16 @@ class CampaignService {
             .findById(campid)
             .then((campDb) => {
             if (campDb == null) {
-                throw { code: code_errors_1.ManulifeErrors.EX_CAMPID_NOT_FOUND, msg: 'campaignid not found' };
+                throw {
+                    code: code_errors_1.ManulifeErrors.EX_CAMPID_NOT_FOUND,
+                    msg: 'campaignid not found'
+                };
             }
             if (campDb.EndDate < moment().toDate()) {
-                throw { code: code_errors_1.ManulifeErrors.EX_CAMP_FINISH, msg: 'campaign completed' };
+                throw {
+                    code: code_errors_1.ManulifeErrors.EX_CAMP_FINISH,
+                    msg: 'campaign completed'
+                };
             }
             return postgres_1.Campaign
                 .update(payload, {
@@ -152,68 +255,118 @@ class CampaignService {
      * create new user
      * @param user IUser
      */
-    static createOfFA(campaign) {
+    static createOfFA(campaign, userId) {
         return bluebird_1.Promise
             .all([
-            user_service_1.UserService.findById(campaign.UserId),
-            this.findByUserIdAndDate(campaign.UserId, campaign.StartDate)
+            user_service_1.UserService.findById(userId),
+            this.findByUserIdAndDate(userId, campaign.StartDate)
         ])
             .spread((user, camps) => __awaiter(this, void 0, void 0, function* () {
             if (user == null) {
-                throw ({ code: code_errors_1.ManulifeErrors.EX_USERNAME_NOT_FOUND, msg: 'UserId not found' });
+                throw ({
+                    code: code_errors_1.ManulifeErrors.EX_USERNAME_NOT_FOUND,
+                    msg: 'UserId not found'
+                });
             }
             if (_.size(camps) > 0) {
-                throw ({ code: code_errors_1.ManulifeErrors.EX_CAMP_FINISH, msg: `this user have campaign in ${campaign.StartDate}.` });
+                throw ({
+                    code: code_errors_1.ManulifeErrors.EX_CAMP_FINISH,
+                    msg: `this user have campaign in ${campaign.StartDate}.`
+                });
             }
-            let campPrepare = yield this.prepareCamp(campaign, user)
+            campaign.UserId = userId;
+            campaign.ReportTo = user.ReportTo;
+            campaign.ReportToList = user.ReportToList;
+            let campsPrepare = yield this.prepareCamp(campaign)
                 .catch(ex => {
                 throw ex;
             });
-            let campsPostgres = yield postgres_1.Campaign.bulkCreate(campPrepare, { returning: true })
+            let campsPostgres = yield postgres_1.Campaign.bulkCreate(campsPrepare, {
+                returning: true,
+            })
                 .catch(ex => {
                 throw ex;
             });
+            // TODO: cache campaign total
+            let campTotal = {
+                UserId: campaign.UserId,
+                TargetCallSale: 0,
+                TargetMetting: 0,
+                TargetPresentation: 0,
+                TargetContractSale: 0,
+                // IncomeMonthly: 0,
+                CurrentCallSale: 0,
+                CurrentMetting: 0,
+                CurrentPresentation: 0,
+                CurrentContract: 0,
+                StartDate: campaign.StartDate,
+                EndDate: moment(campaign.StartDate).add(12, 'M').endOf('d').toDate()
+            };
+            _.reduce(campsPostgres, (campTotal, value, key) => {
+                campTotal.TargetCallSale += value.TargetCallSale;
+                campTotal.TargetMetting += value.TargetMetting;
+                campTotal.TargetPresentation += value.TargetPresentation;
+                campTotal.TargetContractSale += value.TargetContractSale;
+                campTotal.CurrentCallSale += value.CurrentCallSale;
+                campTotal.CurrentMetting += value.CurrentMetting;
+                campTotal.CurrentPresentation += value.CurrentPresentation;
+                campTotal.CurrentContract += value.CurrentContract;
+                return campTotal;
+            }, campTotal);
+            this.cacheCampTotal(campTotal);
             return campsPostgres;
         }))
             .catch((ex) => __awaiter(this, void 0, void 0, function* () {
-            // let a = await LogCamp.find({});
-            // logger.info('test winton');
-            // logger.log('error', 'hello');
             throw ex;
         }));
     }
-    static prepareCamp(campaign, user) {
+    /**
+     * prepare campaign from input client to create 12 campaign insert into database
+     * @param campaign campaign
+     */
+    static prepareCamp(campaign) {
         return new Promise((resolve, reject) => {
-            campaign.ReportTo = user.ReportTo;
-            campaign.ReportToList = user.ReportToList;
             let camps = [];
+            // TODO: number contract
+            // (Thu nhập x 100 / tỉ lệ hoa hồng)/loan
             let numContract = Math.ceil((campaign.IncomeMonthly * 100 / campaign.CommissionRate) / campaign.CaseSize);
-            // // (Thu nhập x 100 / tỉ lệ hoa hồng)/loan
-            let maxCustomers = numContract * 10;
-            let campTotal = _.clone(campaign);
-            campTotal.Period = 13;
-            campTotal.Name = 'Camp total';
-            campTotal.TargetCallSale = numContract * 5 * 12;
-            campTotal.TargetMetting = numContract * 3 * 12;
-            campTotal.TargetContractSale = numContract * 12;
-            campTotal.EndDate = moment(campaign.StartDate).add(12, 'M').endOf('d').toDate();
             camps = _.times(12, (val) => {
                 let camp = _.clone(campaign);
                 camp.Period = val + 1;
                 camp.StartDate = moment(campaign.StartDate).add(val, 'M').toDate();
                 camp.EndDate = moment(campaign.StartDate).add(val + 1, 'M').subtract(1, 'd').endOf('d').toDate();
-                camp.TargetCallSale = numContract * 5;
-                // dataInput.meetingCustomers = dataInput.contracts * 3;
-                camp.TargetMetting = numContract * 3;
-                camp.Name = `Camp ${val + 1}`;
+                camp.TargetCallSale = numContract * 10;
+                camp.TargetMetting = numContract * 5;
+                camp.TargetPresentation = numContract * 3;
                 camp.TargetContractSale = numContract;
+                // TODO: default before months full target
+                if (moment(camp.StartDate).unix() < moment().startOf('date').unix()) {
+                    camp.CurrentCallSale = camp.TargetCallSale;
+                    camp.CurrentMetting = camp.TargetMetting;
+                    camp.CurrentPresentation = camp.TargetPresentation;
+                    camp.CurrentContract = camp.TargetContractSale;
+                }
                 return camp;
             });
-            camps.push(campTotal);
             resolve(camps);
         })
             .catch(ex => {
             throw ex;
+        });
+    }
+    /**
+     * cache total campaign
+     * @param totalCampaign total campaign
+     */
+    static cacheCampTotal(totalCampaign) {
+        return redis_1.default.hmset(`campaign-total:userid${totalCampaign.UserId}`, 'TargetCallSale', totalCampaign.TargetCallSale, 'TargetMetting', totalCampaign.TargetMetting, 'TargetPresentation', totalCampaign.TargetPresentation, 'TargetContractSale', totalCampaign.TargetContractSale, 
+        // 'IncomeMonthly',
+        // totalCampaign.IncomeMonthly,
+        'CurrentCallSale', totalCampaign.CurrentCallSale, 'CurrentMetting', totalCampaign.CurrentMetting, 'CurrentPresentation', totalCampaign.CurrentPresentation, 'CurrentContract', totalCampaign.CurrentContract, 'StartDate', moment(totalCampaign.StartDate).format('YYYY-MM-DD'), 'EndDate', moment(totalCampaign.EndDate).format('YYYY-MM-DD'), (err, res) => {
+            if (err) {
+                throw err;
+            }
+            console.log(res);
         });
     }
 }

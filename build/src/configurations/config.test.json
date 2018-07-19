@@ -1,48 +1,19 @@
 {
     "database": {
-        "connectionString": "mongodb://manulife:manulife!!!@103.48.191.254:27017/manulife"
+        "connectionString": "mongodb://manulife:manulife!!!@13.250.129.169:27017/manulife"
     },
     "server": {
         "port": 5000,
         "jwtSecret": "random-secret-password",
-        "jwtExpiration": "1h",
+        "jwtExpiration": "48h",
         "routePrefix": "/api",
         "plugins": [
             "logger",
-            "jwt-auth"
+            "jwt-auth",
+            "swagger"
         ]
     },
-    "development": {
-        "username": "postgres",
-        "password": "postgres",
-        "database": "app-dev",
-        "host": "127.0.0.1",
-        "port": 5432,
-        "dialect": "postgres",
-        "logging": true,
-        "force": true,
-        "timezone": "+00:00"
-      },
-      "test": {
-        "username": "postgres",
-        "password": "postgres",
-        "database": "app-test",
-        "host": "127.0.0.1",
-        "port": 5432,
-        "dialect": "postgres",
-        "logging": true,
-        "force": true,
-        "timezone": "+00:00"
-      },
-      "production": {
-        "username": "postgres",
-        "password": "postgres",
-        "database": "app",
-        "host": "127.0.0.1",
-        "port": 5432,
-        "dialect": "postgres",
-        "logging": true,
-        "force": true,
-        "timezone": "+00:00"
-      }
+    "redis": {
+        "url": "//redis:ManuliFe@13.250.129.169:6379"
+    }
 }

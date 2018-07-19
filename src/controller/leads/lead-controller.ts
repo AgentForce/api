@@ -8,7 +8,9 @@ import * as HTTP_STATUS from 'http-status';
 import { createLeadModel } from './lead-validator';
 import { LogLead } from "../../mongo/index";
 import { IPayloadUpdate } from "./lead";
-import { SlackAlert, ManulifeErrors as Ex, ManulifeErrors } from "../../helpers/index";
+import * as Faker from 'faker';
+import * as _ from 'lodash';
+import { SlackAlert, ManulifeErrors as Ex, ManulifeErrors } from "../../common/index";
 export default class LeadController {
 
     private database: IDatabase;
@@ -20,152 +22,103 @@ export default class LeadController {
 
     public async findById(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let idEvent = parseInt(request.params.id, 10);
-            let lead: any = await LeadService.findById(idEvent);
-            if (lead == null) {
-                return reply({
-                    status: HTTP_STATUS.NOT_FOUND,
-                    data: null,
-                }).code(HTTP_STATUS.NOT_FOUND);
-            } else {
-                return reply({
-                    status: HTTP_STATUS.OK,
-                    data: lead,
-                }).code(HTTP_STATUS.OK);
-            }
+            let res = {
+                statusCode: 1,
+                data: {
+                    Id: 4,
+                    Phone: '01693248887',
+                    Name: 'string',
+                    Age: 1,
+                    Gender: 0,
+                    IncomeMonthly: 1,
+                    MaritalStatus: 1,
+                    Relationship: 1,
+                    Source: 0,
+                    LeadType: 1,
+                    ProcessStep: 3,
+                    Description: 'string',
+                    Status: false,
+                    StatusProcessStep: 2,
+                    Score: 0
+                },
+                msgCode: 'success',
+                msg: 'success'
+            };
+            reply(res);
         } catch (ex) {
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: {
-                        code: Ex.EX_GENERAL,
-                        msg: 'find lead have errors'
-                    }
-                };
-            }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogLead.create({
-                type: 'findById',
-                dataInput: {
-                    params: request.params
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+
         }
     }
 
+
     /**
-     * caculator and group processStep in leads in a campaignid
-     * 
+     *  get transaction of leadid
      */
-    public async groupProcessStepInCamp(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+    public async histories(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let campId = parseInt(request.params.campid, 10);
-            let lead: any = await LeadService.groupProcessStepInCamp(campId);
-            if (lead == null) {
-                return reply({
-                    status: HTTP_STATUS.NOT_FOUND,
-                    data: null,
-                }).code(HTTP_STATUS.NOT_FOUND);
-            } else {
-                return reply({
-                    status: HTTP_STATUS.OK,
-                    data: lead,
-                }).code(HTTP_STATUS.OK);
-            }
+            let res = {
+                statusCode: 1,
+                data: {
+                    count: 5,
+                    rows: [
+                        {
+                            Phone: '01693248887',
+                            Name: 'string',
+                            Age: 1,
+                            Gender: 0,
+                            IncomeMonthly: 1,
+                            MaritalStatus: 1,
+                            Relationship: 1,
+                            Source: 0,
+                            LeadType: 1,
+                            ProcessStep: 0,
+                            Description: 'string',
+                            StatusProcessStep: 0,
+                            Score: 0
+                        }
+                    ],
+                    page: 1,
+                    limit: 1
+                },
+                msgCode: 'success',
+                msg: 'success'
+            };
+            reply(res);
+
         } catch (ex) {
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: {
-                        code: Ex.EX_GENERAL,
-                        msg: 'get group lead have errors'
-                    }
-                };
-            }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogLead.create({
-                type: 'groupProcessStepInCamp',
-                dataInput: {
-                    params: request.params
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+
         }
     }
+
 
     /**
         * get list activities by campaignid, filter by processstep
         */
     public async list(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let processStep = parseInt(request.params.processstep, 10);
-            let campaignId = parseInt(request.params.campid, 10);
-            let limit = parseInt(request.query.limit, 10);
-            let page = parseInt(request.query.page, 10);
-            let activities: any = await LeadService.listByCampaignId(campaignId, processStep, limit, page);
-            reply({
-                status: HTTP_STATUS.OK,
-                data: activities
-            }).code(HTTP_STATUS.OK);
+            let res = {
+                statusCode: 1,
+                data: {
+                    page: '1',
+                    limit: '1',
+                    count: 1,
+                    rows: [
+                        {
+                            Phone: '01693248887',
+                            Name: 'string',
+                            Score: 0,
+                            ProcessStep: 3,
+                            StatusProcessStep: 2,
+                            Id: 4
+                        }
+                    ]
+                },
+                msgCode: 'success',
+                msg: 'success'
+            };
+            reply(res);
         } catch (ex) {
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: HTTP_STATUS.BAD_REQUEST,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: HTTP_STATUS.BAD_REQUEST,
-                    url: request.url.path,
-                    error: {
-                        code: ManulifeErrors.EX_GENERAL,
-                        msg: 'update activity have errors'
-                    }
-                };
-            }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogLead.create({
-                type: 'get list activity',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+
         }
     }
 
@@ -178,7 +131,7 @@ export default class LeadController {
             let campaignId = parseInt(request.params.campid, 10);
             let leads: any = await LeadService.getLeadReject(campaignId, processStep);
             reply({
-                status: HTTP_STATUS.OK,
+                status: 1,
                 data: leads
             }).code(HTTP_STATUS.OK);
         } catch (ex) {
@@ -212,7 +165,7 @@ export default class LeadController {
                     response: res
                 },
             });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+            reply(res);
         }
     }
 
@@ -225,52 +178,34 @@ export default class LeadController {
      */
     public async update(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let id = parseInt(request.params.id, 10);
-            let payload = request.payload as IPayloadUpdate;
-            let lead: any = await LeadService.update(id, payload);
-            // log mongo create success
-            LogLead
-                .create({
-                    type: 'create',
-                    msg: 'success',
-                    dataInput: request.payload,
-                    meta: {
-                        lead: lead.dataValues
-                    }
-                });
-            reply({
-                status: HTTP_STATUS.OK,
-                data: lead
-            }).code(HTTP_STATUS.OK);
+            let res = {
+                statusCode: 1,
+                data: true,
+                msg: 'Thành công',
+                msgCode: 'success'
+            };
+            reply(res);
         } catch (ex) {
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: { code: Ex.EX_GENERAL, msg: 'Create lead have errors' }
-                };
-            }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogLead.create({
-                type: 'update lead',
-                dataInput: {
-                    payload: request.payload,
-                    params: request.params
-                },
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+
+        }
+    }
+
+
+
+    /**
+    * update status lead
+    */
+    public async updateStatus(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+        try {
+            let res = {
+                statusCode: 1,
+                data: true,
+                msg: 'Thành công',
+                msgCode: 'success'
+            };
+            reply(res);
+        } catch (ex) {
+
         }
     }
 
@@ -281,42 +216,16 @@ export default class LeadController {
      */
     public async create(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
         try {
-            let iLead = request.payload as ILead;
-            let lead: any = await LeadService.create(iLead)
-                .catch(ex => {
-                    throw ex;
-                });
-            // log mongo create success
-            reply({
-                status: HTTP_STATUS.OK,
-                data: lead
-            }).code(HTTP_STATUS.OK);
+            let res = {
+                statusCode: 1,
+                data: true,
+                msg: 'Thành công',
+                msgCode: 'success'
+            };
+            reply(res);
+
         } catch (ex) {
-            let res = {};
-            if (ex.code) {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: ex
-                };
-            } else {
-                res = {
-                    status: 400,
-                    url: request.url.path,
-                    error: { code: 'ex', msg: 'Create lead have errors' }
-                };
-            }
-            SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
-            LogLead.create({
-                type: 'create lead',
-                dataInput: request.payload,
-                msg: 'errors',
-                meta: {
-                    exception: ex,
-                    response: res
-                },
-            });
-            reply(res).code(HTTP_STATUS.BAD_REQUEST);
+
         }
     }
 

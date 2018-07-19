@@ -9,12 +9,14 @@ const Metatypes = require("./controller/metatype");
 // import * as Invites from './controller/invites';
 const Dashboard = require("./controller/dashboard");
 const Actvities = require("./controller/activities");
+const Relead = require("./controller/relead");
 function init(configs, database) {
     return new Promise(resolve => {
-        const port = process.env.PORT;
+        const port = process.env.PORT || 3000;
         const server = new Hapi.Server();
         server.connection({
             port: port,
+            host: '0.0.0.0',
             routes: {
                 cors: true,
             },
@@ -37,11 +39,11 @@ function init(configs, database) {
         });
         Promise.all(pluginPromises).then(() => {
             console.log('All plugins registered successfully.');
-            console.log('Register Routes');
             Users.init(server, configs, database);
             Campaigns.init(server, configs, database);
             Leads.init(server, configs, database);
             Actvities.init(server, configs, database);
+            Relead.init(server, configs, database);
             // Events.init(server, configs, database);
             Metatypes.init(server, configs, database);
             Dashboard.init(server, configs, database);

@@ -1,27 +1,26 @@
 import * as Hapi from "hapi";
 import * as Joi from "joi";
 import LeadController from "./lead-controller";
-import { jwtValidator } from "../users/user-validator";
+import { jwtValidator, headerModel } from "../users/user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
 import { LogLead } from "../../mongo/index";
-import { ManulifeErrors as Ex } from '../../helpers/code-errors';
+import { ManulifeErrors as Ex, MsgCodeResponses } from '../../common/code-errors';
 import * as LeadValidator from "./lead-validator";
-import { Constants, ManulifeErrors } from "../../helpers/index";
+import { Constants, ManulifeErrors } from "../../common/index";
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
     const leadController = new LeadController(configs, database);
     server.bind(leadController);
-
 
     server.route({
         method: 'GET',
         path: '/leads/{id}',
         config: {
             handler: leadController.findById,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'Find a lead by leadId',
+            description: '#googledrive #KH-lienhe14 Find a lead by leadId',
             validate: {
                 params: {
                     id: Joi.number()
@@ -29,14 +28,13 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                         .example(38)
                         .description('leadid')
                 },
-                // headers: jwtValidator,
+                headers: headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: Ex.EX_PAYLOAD, msg:
-                                'payload dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: MsgCodeResponses.INPUT_INVALID,
+                        msg: MsgCodeResponses.INPUT_INVALID
                     };
                     LogLead.create({
                         type: 'detaillead',
@@ -57,11 +55,12 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
-                                        .example(200),
+                                        .example(1),
                                     data: Joi
                                         .object(),
+                                    msg: Joi.string()
                                 }
                             )
                         },
@@ -69,11 +68,88 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: 'not found',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
-                                        .example(HTTP_STATUS.NOT_FOUND),
-                                    code: Joi.string().example(ManulifeErrors.EX_LEADID_NOT_FOUND),
+                                        .example(0),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
+                                }
+                            )
+                        },
+
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
+
+    server.route({
+        method: 'GET',
+        path: '/leads/history/{leadid}',
+        config: {
+            handler: leadController.histories,
+            // auth: "jwt",
+            tags: ['api', 'leads'],
+            description: '#screenv3/KH-tuvan:16, #screenv3/KH-lienhe:16 get histories of leadId',
+            validate: {
+                headers: headerModel,
+                params: {
+                    leadid: Joi.number()
+                        .required()
+                        .example(38)
+                        .description('leadid')
+                },
+                // headers: jwtValidator,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: 0,
+                        data: error,
+                        msgCode: MsgCodeResponses.INPUT_INVALID,
+                        msg: MsgCodeResponses.INPUT_INVALID
+                    };
+                    LogLead.create({
+                        type: 'detaillead',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(1),
+                                    data: Joi
+                                        .object(),
                                     msg: Joi.string()
+                                }
+                            )
+                        },
+                        404: {
+                            description: 'not found',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(0),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -88,27 +164,36 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     });
 
     /**
-   * lấy 1 campaign theo campaignid
+   * lấy 1 campaign theo period
    */
     server.route({
         method: 'GET',
-        path: '/leads/camp/{campid}/{processstep}',
+        path: '/leads/{period}/{processstep}/{status}',
         config: {
             handler: leadController.list,
             // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'Get leads and activities of lead by campaignid',
+            description: '#driveKH-lienhe, #screen 12,13 Get leads and activities of lead by period',
             validate: {
+                headers: headerModel,
                 params: {
-                    campid: Joi
+                    period: Joi
                         .number()
                         .integer()
                         .default(1)
+                        .description('12 month')
                         .required(),
                     processstep: Joi
                         .number()
                         .integer()
                         .default(1)
+                        .valid([1, 2, 3, 4])
+                        .required(),
+                    status: Joi
+                        .number()
+                        .integer()
+                        .description('status of process step')
+                        .valid([1, 2, 3, 4])
                         .required()
                 },
                 query: Joi.object({
@@ -132,15 +217,17 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
-                                        .example(200),
+                                        .example(1),
                                     data: Joi
                                         .object({
                                             data: Joi.array().example([]),
                                             limit: Joi.number(),
-                                            page: Joi.number()
-                                        })
+                                            page: Joi.number(),
+                                            totalCount: Joi.number().required()
+                                        }),
+                                    msg: Joi.string()
                                 }
                             )
                         },
@@ -148,10 +235,12 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
+                                        .example(0),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         }
@@ -161,120 +250,9 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         }
     });
 
-    /**
-     * lấy 1 campaign theo campaignid
-     */
-    server.route({
-        method: 'GET',
-        path: '/leads/reject/{campid}/{processstep}',
-        config: {
-            handler: leadController.getLeadsReject,
-            // auth: "jwt",
-            tags: ['api', 'leads'],
-            description: 'Get leads reject by campaignId and process step of lead',
-            validate: {
-                params: {
-                    campid: Joi
-                        .number()
-                        .integer()
-                        .default(1)
-                        .required(),
-                    processstep: Joi
-                        .number()
-                        .integer()
-                        .default(1)
-                        .required()
-                }
-                // headers: jwtValidator
-            },
-            plugins: {
-                'hapi-swagger': {
-                    responses: {
-                        200: {
-                            description: '',
-                            schema: Joi.object(
-                                {
-                                    status: Joi
-                                        .number()
-                                        .example(200),
-                                    data: Joi
-                                        .object({
-                                            data: Joi.array().example([]),
-                                        })
-                                }
-                            )
-                        },
-                        400: {
-                            description: '',
-                            schema: Joi.object(
-                                {
-                                    status: Joi
-                                        .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    });
 
-    /**
-    * group count leads in a campaign
-    */
-    server.route({
-        method: 'GET',
-        path: '/leads/group/processstep/{campid}',
-        config: {
-            handler: leadController.groupProcessStepInCamp,
-            // auth: "jwt",
-            tags: ['api', 'leads'],
-            description: 'group count leads in a campaign',
-            validate: {
-                params: {
-                    campid: Joi
-                        .number()
-                        .integer()
-                        .default(1)
-                        .required(),
-                }
-                // headers: jwtValidator
-            },
-            plugins: {
-                'hapi-swagger': {
-                    responses: {
-                        200: {
-                            description: '',
-                            schema: Joi.object(
-                                {
-                                    status: Joi
-                                        .number()
-                                        .example(200),
-                                    data: Joi
-                                        .object({
-                                            data: Joi.array().example([]),
-                                        })
-                                }
-                            )
-                        },
-                        400: {
-                            description: '',
-                            schema: Joi.object(
-                                {
-                                    status: Joi
-                                        .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    });
+
+
     /**
      * Update a lead
      */
@@ -283,10 +261,11 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
         path: '/leads/{id}',
         config: {
             handler: leadController.update,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'update a leads',
+            description: 'update  info a leads',
             validate: {
+                headers: headerModel,
                 payload: LeadValidator.updateModel,
                 params: {
                     id: Joi
@@ -298,10 +277,71 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                 // headers: jwtValidator,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: Ex.EX_PAYLOAD, msg: 'payload dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: MsgCodeResponses.INPUT_INVALID,
+                        msg: MsgCodeResponses.INPUT_INVALID
+                    };
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(1),
+                                    data: Joi
+                                        .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
+                                }
+                            )
+                        },
+
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
+
+
+    /**
+     * Update a lead
+     */
+    server.route({
+        method: 'PUT',
+        path: '/leads/status/{id}',
+        config: {
+            handler: leadController.updateStatus,
+            // auth: "jwt",
+            tags: ['api', 'leads'],
+            description: 'update status of leads',
+            validate: {
+                headers: headerModel,
+                payload: LeadValidator.updateStatusModel,
+                params: {
+                    id: Joi
+                        .number().
+                        required()
+                        .example(38)
+                        .description('leadid')
+                },
+                // headers: jwtValidator,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: 0,
+                        data: error,
+                        msgCode: MsgCodeResponses.INPUT_INVALID,
+                        msg: MsgCodeResponses.INPUT_INVALID
                     };
                     LogLead.create({
                         type: 'updatelead',
@@ -322,11 +362,13 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
-                                        .example(200),
+                                        .example(1),
                                     data: Joi
-                                        .object()
+                                        .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -334,10 +376,12 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
+                                        .example(0),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         }
@@ -361,16 +405,16 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
             handler: leadController.create,
             // auth: "jwt",
             tags: ['api', 'leads'],
-            description: 'Create new lead',
+            description: '#driveKH-lienhe #screen 11Create list lead ',
             validate: {
                 payload: LeadValidator.createLeadModel,
-                // headers: jwtValidator,
+                headers: headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST, error: {
-                            code: Ex.EX_PAYLOAD, msg: 'payload dont valid',
-                            details: error
-                        }
+                        statusCode: 0,
+                        data: error,
+                        msgCode: MsgCodeResponses.INPUT_INVALID,
+                        msg: MsgCodeResponses.INPUT_INVALID
                     };
                     LogLead.create({
                         type: 'createlead',
@@ -391,11 +435,13 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
-                                        .example(200),
+                                        .example(1),
                                     data: Joi
-                                        .object()
+                                        .object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -403,10 +449,12 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
-                                        .example(HTTP_STATUS.BAD_REQUEST),
-                                    error: Joi.string(),
+                                        .example(0),
+                                    data: Joi.object(),
+                                    msg: Joi.string(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         }

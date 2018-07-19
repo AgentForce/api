@@ -14,15 +14,16 @@ const Jwt = require("jsonwebtoken");
 const user_service_1 = require("../../services/user.service");
 const HTTP_STATUS = require("http-status");
 const index_1 = require("../../mongo/index");
-const code_errors_1 = require("../../helpers/code-errors");
+const code_errors_1 = require("../../common/code-errors");
 const nodemailer = require('nodemailer');
 const EmailTemplate = require("email-templates");
 const user_1 = require("../../postgres/user");
-const Faker = require("faker");
-const index_2 = require("../../helpers/index");
+const faker = require("faker");
+const index_2 = require("../../common/index");
 const fs = require("fs");
 const Loki = require("lokijs");
-const utils_1 = require("../../helpers/utils");
+const db_1 = require("../../postgres/db");
+const utils_1 = require("../../common/utils");
 // setup
 const DB_NAME = 'db.json';
 const COLLECTION_NAME = 'images';
@@ -32,7 +33,7 @@ const db = new Loki(`${UPLOAD_PATH}/${DB_NAME}`, { persistenceMethod: 'fs' });
 // optional: clean all data before start
 // cleanFolder(UPLOAD_PATH);
 if (!fs.existsSync(UPLOAD_PATH)) {
-    fs.mkdirSync(UPLOAD_PATH);
+    // fs.mkdirSync(UPLOAD_PATH);
 }
 class UserController {
     constructor(configs, database) {
@@ -80,7 +81,7 @@ class UserController {
                     index_2.SlackAlert('```' + JSON.stringify(res, null, 2) + '```');
                     reply(res).code(HTTP_STATUS.BAD_GATEWAY);
                 }
-                let randPass = Faker.random.alphaNumeric(6);
+                let randPass = faker.random.alphaNumeric(6);
                 let passwordHash = Bcrypt.hashSync(randPass, Bcrypt.genSaltSync(8));
                 let userPg = yield user_1.User
                     .update({
@@ -169,60 +170,125 @@ class UserController {
     changePassword(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const dataInput = request.payload;
-                const username = request.params.username;
-                const user = yield user_service_1.UserService.findByCode(username);
-                if (user !== null) {
-                    if (Bcrypt.compareSync(dataInput.OldPassword, user.Password)) {
-                        let passwordHash = Bcrypt.hashSync(dataInput.NewPassword, Bcrypt.genSaltSync(8));
-                        let userPg = yield user_service_1.UserService
-                            .changePassword(user.Id, dataInput, passwordHash);
-                        let userMongo = yield this.database.userModel
-                            .update({
-                            userId: user.Id,
-                        }, {
-                            password: passwordHash
-                        });
-                        let res = {
-                            status: HTTP_STATUS.OK,
-                            url: request.url.path,
-                        };
-                        index_1.LogUser.create({
-                            type: 'changepassword',
-                            dataInput: {
-                                params: request.params,
-                                payload: request.payload
-                            },
-                            msg: 'change password success',
-                            meta: {
-                                response: res
-                            }
-                        });
-                        reply(res).code(HTTP_STATUS.OK);
-                    }
-                    else {
-                        throw {
-                            code: code_errors_1.ManulifeErrors.EX_OLDPASSWORD_DONT_CORRECT,
-                            msg: 'oldpass dont correct'
-                        };
-                    }
+                let res = {};
+                if (request.payload.OldPassword === '123456') {
+                    res = {
+                        statusCode: 1,
+                        data: {
+                            status: true
+                        },
+                        msg: index_2.MsgCodeResponses.USER_CHANGE_PASS_SUCCESS,
+                        msgCode: index_2.MsgCodeResponses.USER_CHANGE_PASS_SUCCESS
+                    };
                 }
                 else {
-                    throw { code: code_errors_1.ManulifeErrors.EX_USERID_NOT_FOUND, msg: 'userid not found' };
+                    res = {
+                        statusCode: 1,
+                        data: {
+                            status: false
+                        },
+                        msg: index_2.MsgCodeResponses.USER_CHANGE_PASS_DONT_MATCH,
+                        msgCode: index_2.MsgCodeResponses.USER_CHANGE_PASS_DONT_MATCH
+                    };
                 }
+                reply(res);
             }
             catch (ex) {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 0,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: 400,
+                        status: 0,
+                        url: request.url.path,
+                        error: {
+                            code: 'ex',
+                            msg: 'Exception occurred change password'
+                        }
+                    };
+                }
+                index_1.LogUser.create({
+                    type: 'changepassword',
+                    dataInput: request.payload,
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res);
+            }
+        });
+    }
+    setPassword(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let res = {
+                    statusCode: 1,
+                    data: {
+                        status: true
+                    },
+                    msgCode: index_2.MsgCodeResponses.USER_SET_PASSWORD_SUCCESS,
+                    msg: index_2.MsgCodeResponses.USER_SET_PASSWORD_SUCCESS,
+                };
+                reply(res);
+                // const dataInput = request.payload as IPayloadChangePass;
+                // const username = request.params.username;
+                // const user = <any>await UserService.findByCode(username);
+                // if (user !== null) {
+                //     if (Bcrypt.compareSync(dataInput.OldPassword, user.Password)) {
+                //         let passwordHash = Bcrypt.hashSync(dataInput.NewPassword, Bcrypt.genSaltSync(8));
+                //         let userPg: any = await UserService
+                //             .changePassword(user.Id, dataInput, passwordHash);
+                //         let userMongo: any = await this.database.userModel
+                //             .update({
+                //                 userId: user.Id,
+                //             }, {
+                //                 password: passwordHash
+                //             });
+                //         let res = {
+                //             status: HTTP_STATUS.OK,
+                //             url: request.url.path,
+                //         };
+                //         LogUser.create({
+                //             type: 'changepassword',
+                //             dataInput: {
+                //                 params: request.params,
+                //                 payload: request.payload
+                //             },
+                //             msg: 'change password success',
+                //             meta: {
+                //                 response: res
+                //             }
+                //         });
+                //         reply(res).code(HTTP_STATUS.OK);
+                //     } else {
+                //         throw {
+                //             code: Ex.EX_OLDPASSWORD_DONT_CORRECT,
+                //             msg: 'oldpass dont correct'
+                //         };
+                //     }
+                // } else {
+                //     throw { code: Ex.EX_USERID_NOT_FOUND, msg: 'userid not found' };
+                // }
+            }
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 0,
+                        url: request.url.path,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 0,
                         url: request.url.path,
                         error: {
                             code: 'ex', msg: 'Exception occurred change password'
@@ -238,7 +304,7 @@ class UserController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
             }
         });
     }
@@ -247,75 +313,95 @@ class UserController {
      */
     loginUser(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
-            const username = request.payload.Username;
-            const password = request.payload.Password;
-            let user = yield this.database
-                .userModel
-                .findOne({ username: username });
-            if (!user) {
-                return reply(Boom.unauthorized("User does not exists."));
-            }
-            if (!user.validatePassword(password)) {
-                return reply(Boom.unauthorized("Password is invalid."));
-            }
-            let userPg = yield user_service_1.UserService.findByCode(username);
-            reply({
-                token: this.generateToken(user),
-                info: userPg
+            return reply({
+                status: 1,
+                data: {
+                    access_token: '2f8ac8b7255355afab238b45e9289d9504344ba5',
+                    token_type: 'Bearer',
+                    expires_in: 599,
+                    refresh_token: 'ce4309b70cdc150de0e41295aa28009b65c42d26',
+                    scope: 'user_info:read'
+                },
+                msgCode: '',
+                msg: ''
+            });
+            // const username = request.payload.Username;
+            // const password = request.payload.Password;
+            // let user: IUser = await this.database
+            //     .userModel
+            //     .findOne({ username: username });
+            // if (!user) {
+            //     return reply({
+            //         status: HTTP_STATUS.OK,
+            //         token: Faker.random.alphaNumeric(250)
+            //     });
+            // }
+            // if (!user.validatePassword(password)) {
+            //     return reply(Boom.unauthorized("Password is invalid."));
+            // }
+            // let userPg = await UserService.findByCode(username);
+            // reply({
+            //     token: this.generateToken(user),
+            //     info: userPg
+            // });
+        });
+    }
+    /**
+   * User login
+   */
+    requestOTP(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return reply({
+                status: 1,
+                data: {
+                    Status: true
+                },
+                msg: index_2.MsgCodeResponses.USER_OTP_SUCCESS,
+                msgCode: index_2.MsgCodeResponses.USER_OTP_SUCCESS
+            });
+        });
+    }
+    testUser(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return db_1.db
+                .query(`select * from reporttolist(${request.params.userid}, lquery_in('${request.params.query}'))`, { replacements: { email: 42 } })
+                .spread((output, records) => {
+                return records.rows;
             });
         });
     }
     /**
     * Authentication
     */
-    loginAuthen(request, reply) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const email = request.payload.Email;
-            const password = request.payload.Password;
-            let user = yield this.database
-                .userModel
-                .findOne({ email: email });
-            if (!user) {
-                return reply(Boom.unauthorized("User does not exists."));
-            }
-            if (!user.validatePassword(password)) {
-                return reply(Boom.unauthorized("Password is invalid."));
-            }
-            reply({
-                token: this.generateToken(user),
-            });
-        });
-    }
-    getByUsername(request, reply) {
+    refreshToken(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const username = request.params.username;
-                const user = yield user_service_1.UserService.findByCode(username);
-                if (user !== null) {
-                    reply({
-                        status: HTTP_STATUS.OK,
-                        data: user
-                    }).code(HTTP_STATUS.OK);
-                }
-                else {
-                    throw {
-                        code: code_errors_1.ManulifeErrors.EX_USERNAME_NOT_FOUND,
-                        msg: 'UserName not found'
-                    };
-                }
+                let res = {
+                    status: 1,
+                    data: {
+                        access_token: "9d22ef67c5ff1e6d6f7c06ca75267220951970d9",
+                        token_type: "Bearer",
+                        expires_in: 599,
+                        refresh_token: "6e918eee79c9bf0d49e687ca7ff1848bc64d1f4f",
+                        scope: "user_info:read"
+                    },
+                    msgCode: '',
+                    msg: ''
+                };
+                reply(res).code(HTTP_STATUS.OK);
             }
             catch (ex) {
                 let res = {};
                 if (ex.code) {
                     res = {
-                        status: 400,
+                        status: 1,
                         url: request.url.path,
                         error: ex
                     };
                 }
                 else {
                     res = {
-                        status: 400,
+                        status: 1,
                         url: request.url.path,
                         error: {
                             code: code_errors_1.ManulifeErrors.EX_GENERAL,
@@ -334,7 +420,72 @@ class UserController {
                         response: res
                     },
                 });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
+                reply(res);
+            }
+        });
+    }
+    profile(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const username = request.params.username;
+                // const user = <any>await UserService.findByCode(username);
+                console.log(request.params.hihi);
+                let fakerUser = {
+                    FullName: faker.name.firstName(),
+                    Phone: '+841693248887',
+                    Email: faker.internet.email(),
+                    Credit: 10,
+                    Gender: 'male',
+                    Address: faker.address.city,
+                    Code: '234234'
+                };
+                reply({
+                    status: 1,
+                    data: fakerUser
+                });
+                // if (user !== null) {
+                //     reply({
+                //         status: HTTP_STATUS.OK,
+                //         data: user
+                //     }).code(HTTP_STATUS.OK);
+                // } else {
+                //     throw {
+                //         code: Ex.EX_USERNAME_NOT_FOUND,
+                //         msg: 'UserName not found'
+                //     };
+                // }
+            }
+            catch (ex) {
+                let res = {};
+                if (ex.code) {
+                    res = {
+                        status: 0,
+                        url: request.url.path,
+                        error: ex
+                    };
+                }
+                else {
+                    res = {
+                        status: 0,
+                        url: request.url.path,
+                        error: {
+                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
+                            msg: 'Exception occurred find username'
+                        }
+                    };
+                }
+                index_1.LogUser.create({
+                    type: 'findusername',
+                    dataInput: {
+                        params: request.params
+                    },
+                    msg: 'errors',
+                    meta: {
+                        exception: ex,
+                        response: res
+                    },
+                });
+                reply(res);
             }
         });
     }
@@ -344,54 +495,23 @@ class UserController {
     updateProfile(request, reply) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const dataInput = request.payload;
-                const user = yield user_service_1.UserService.findByCode(dataInput.UserName);
-                if (user !== null) {
-                    let userMongo = yield this.database.userModel
-                        .update({
-                        userId: user.Id,
-                    }, {
-                        fullName: dataInput.FullName,
-                        email: dataInput.Email
-                    });
-                    let userPg = yield user_service_1.UserService
-                        .updateProfile(user.Id, dataInput);
-                    reply({
-                        status: HTTP_STATUS.OK,
-                        data: userPg
-                    }).code(HTTP_STATUS.OK);
-                }
-                else {
-                    throw { code: code_errors_1.ManulifeErrors.EX_USERNAME_NOT_FOUND, msg: 'UserName not found' };
-                }
+                let fakerUser = {
+                    FullName: faker.name.firstName(),
+                    Phone: '+841693248887',
+                    Email: faker.internet.email(),
+                    Credit: 10,
+                    Gender: 'male',
+                    Address: faker.address.city,
+                    Code: '234234'
+                };
+                reply({
+                    status: 1,
+                    data: fakerUser,
+                    msg: 'Tìm thấy tài khoảng',
+                    msgcode: 'found'
+                }).code(HTTP_STATUS.OK);
             }
             catch (ex) {
-                console.log(ex);
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: { code: 'ex', msg: 'Exception occurred update profile user' }
-                    };
-                }
-                index_1.LogUser.create({
-                    type: 'updateprofile',
-                    dataInput: request.payload,
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
         });
     }
@@ -424,7 +544,7 @@ class UserController {
                         console.log(ex);
                     });
                     return reply({
-                        status: HTTP_STATUS.OK,
+                        status: 1,
                         data: {
                             token: this.generateToken(newUser),
                             info: newUserPg
@@ -437,34 +557,6 @@ class UserController {
                 }
             }
             catch (ex) {
-                let res = {};
-                if (ex.code) {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: ex
-                    };
-                }
-                else {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: {
-                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
-                            msg: 'Exception occurred create user'
-                        }
-                    };
-                }
-                index_1.LogUser.create({
-                    type: 'createuser',
-                    dataInput: request.payload,
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
         });
     }
@@ -493,7 +585,7 @@ class UserController {
                         throw ex;
                     });
                     return reply({
-                        status: HTTP_STATUS.OK,
+                        status: 1,
                         data: {
                             token: this.generateToken(newUser)
                         }
@@ -514,26 +606,128 @@ class UserController {
                     };
                 }
                 else {
-                    res = {
-                        status: 400,
-                        url: request.url.path,
-                        error: {
-                            code: code_errors_1.ManulifeErrors.EX_GENERAL,
-                            msg: 'Exception occurred create authorize'
-                        }
-                    };
                 }
-                index_1.LogUser.create({
-                    type: 'createauthorize',
-                    dataInput: request.payload,
-                    msg: 'errors',
-                    meta: {
-                        exception: ex,
-                        response: res
-                    },
-                });
-                reply(res).code(HTTP_STATUS.BAD_REQUEST);
             }
+        });
+    }
+    /**
+    *  Check SMS OTP
+    */
+    verifyOTP(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let res = {};
+            try {
+                if (request.payload.Code === '123456') {
+                    res = {
+                        statusCode: 1,
+                        data: {
+                            status: true
+                        },
+                        msg: '',
+                        msgCode: ''
+                    };
+                    reply(res);
+                }
+                else {
+                    res = {
+                        statusCode: 0,
+                        data: {
+                            status: true
+                        },
+                        msg: 'khong thanh cong',
+                        msgCode: 'khong thanh cong'
+                    };
+                    reply(res);
+                }
+            }
+            catch (ex) {
+            }
+        });
+    }
+    /**
+   *  Check SMS OTP
+   */
+    check(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let res = {
+                statusCode: 1,
+                data: {
+                    status: 1
+                },
+                msg: '',
+                msgCode: ''
+            };
+            if (request.params.phone === '841693248887' && request.params.username === 'm123456') {
+                res = {
+                    statusCode: 1,
+                    data: {
+                        status: 1
+                    },
+                    msg: index_2.MsgCodeResponses.USER_INACTIVE,
+                    msgCode: index_2.MsgCodeResponses.USER_INACTIVE
+                };
+            }
+            else if (request.params.phone === '841693248888' && request.params.username === 'm123455') {
+                res = {
+                    statusCode: 0,
+                    data: {
+                        status: 2
+                    },
+                    msg: index_2.MsgCodeResponses.USER_DONT_MATCH,
+                    msgCode: index_2.MsgCodeResponses.USER_DONT_MATCH
+                };
+            }
+            else if (request.params.phone === '841693248889' && request.params.username === 'd123456') {
+                res = {
+                    statusCode: 0,
+                    data: {
+                        status: 3
+                    },
+                    msg: index_2.MsgCodeResponses.USER_DEACTIVED,
+                    msgCode: index_2.MsgCodeResponses.USER_DEACTIVED
+                };
+            }
+            else if (request.params.phone === '841693248880' && request.params.username === 'a123456') {
+                res = {
+                    statusCode: 1,
+                    data: {
+                        status: 5
+                    },
+                    msg: index_2.MsgCodeResponses.USER_ACTIVED,
+                    msgCode: index_2.MsgCodeResponses.USER_ACTIVED
+                };
+            }
+            else {
+                res = {
+                    statusCode: 0,
+                    data: {
+                        status: 4
+                    },
+                    msg: index_2.MsgCodeResponses.USER_NOT_FOUND,
+                    msgCode: index_2.MsgCodeResponses.USER_NOT_FOUND
+                };
+            }
+            reply(res);
+        });
+    }
+    /**
+ *  Check SMS OTP
+ */
+    checkApp(request, reply) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let res = {
+                statusCode: 1,
+                data: {
+                    active: 0,
+                    description: "",
+                    link: "",
+                    mobile_type: request.params.type,
+                    version: "3.0",
+                },
+                msgCode: '',
+                msg: ''
+            };
+            reply(res);
         });
     }
 }

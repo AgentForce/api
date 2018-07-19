@@ -7,7 +7,9 @@ import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import * as HTTP_STATUS from 'http-status';
 import { LogUser } from "../../mongo/index";
-import { jwtValidator } from "./user-validator";
+import { jwtValidator, headerModel, headersChecksumModel } from "./user-validator";
+import { checkToken } from "../../common/authentication";
+import { MsgCodeResponses } from "../../common/index";
 export default function (server: Hapi.Server, serverConfigs: IServerConfigurations, database: IDatabase) {
 
     const userController = new UserController(serverConfigs, database);
@@ -24,16 +26,17 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
     });
 
 
+
     server.route({
         method: 'GET',
-        path: '/users/{username}',
+        path: '/users/profile/{username}',
         config: {
-            handler: userController.getByUsername,
-            auth: "jwt",
-            description: 'Get user by username.',
+            handler: userController.profile,
+            // auth: "jwt",
+            description: '#mockapi return info profile of a user',
             tags: ['api', 'users'],
             validate: {
-                // headers: UserValidator.jwtValidator,
+                headers: UserValidator.headerModel,
                 params: {
                     username: Joi.string().required()
                 }
@@ -47,18 +50,24 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                 {
                                     status: Joi
                                         .number()
-                                        .example(200),
+                                        .example(1),
                                     data: Joi
                                         .object(),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
                                 }
                             )
                         },
-                        '401': {
+                        401: {
                             'description': 'Please login.',
                             schema: Joi.object({
-                                "statusCode": 401,
-                                "error": "Unauthorized",
-                                "message": "Missing authentication"
+                                status: Joi
+                                    .number()
+                                    .example(0),
+                                data: Joi
+                                    .object(),
+                                msgcode: Joi.string(),
+                                msg: Joi.string()
                             })
                         }
                     },
@@ -71,50 +80,6 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
     });
 
 
-    /**
-     * demo sendmail
-     */
-    server.route({
-        method: 'POST',
-        path: '/users/resetpassword',
-        config: {
-            handler: userController.sendMail,
-            // auth: "jwt",
-            tags: ['api', 'users'],
-            description: 'send email(Just test, please dont try)',
-            validate: {
-                // headers: UserValidator.jwtValidator,
-                payload: {
-                    Email: Joi.string()
-                        .email()
-                        .required()
-                        .example('tunguyenq@gmail.com')
-                }
-            },
-            plugins: {
-                'hapi-swagger': {
-                    responses: {
-                        200: {
-                            description: '',
-                            schema: Joi.object(
-                                {
-                                    status: Joi
-                                        .number()
-                                        .example(200),
-                                    data: Joi
-                                        .object(),
-                                }
-                            )
-                        },
-                        '401': {
-                            'description': 'Please login.'
-                        }
-                    }
-                }
-            }
-        }
-    });
-
 
 
 
@@ -123,20 +88,22 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         path: '/users/profile',
         config: {
             handler: userController.updateProfile,
-            auth: "jwt",
+            // auth: "jwt",
             tags: ['api', 'users'],
             description: 'Update user profile.',
             validate: {
+
                 payload: UserValidator.updateProfileModel,
-                // headers: UserValidator.jwtValidator,
+                headers: headerModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        error: {
+                        statusCode: 0,
+                        data: {
                             code: 'ex_payload',
                             msg: 'payload dont valid',
-                            details: error
-                        }
+                        },
+                        msgCode: 'ex_payload',
+                        msg: 'payload dont valid',
                     };
                     LogUser.create({
                         type: 'updateprofile',
@@ -152,6 +119,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             },
             plugins: {
                 'hapi-swagger': {
+                    // deprecated: true,
                     responses: {
                         200: {
                             description: '',
@@ -161,12 +129,158 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                                         .number()
                                         .example(200),
                                     data: Joi
-                                        .object(),
+                                        .object({
+                                            token: Joi.string().required(),
+                                            refreshToken: Joi.string().required()
+                                        }),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
                                 }
                             )
                         },
                         '401': {
                             'description': 'User does not have authorization.'
+                        }
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
+    server.route({
+        method: 'POST',
+        path: '/users/otp/verify',
+        config: {
+            handler: userController.verifyOTP,
+            // auth: "jwt",
+            tags: ['api', 'users'],
+            description: 'Verify SMS OTP',
+            validate: {
+                payload: UserValidator.verifyOTPModel,
+                headers: headersChecksumModel,
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: 0,
+                        data: {
+                            code: 'ex_payload',
+                            msg: 'payload dont valid',
+                        },
+                        msgCode: 'ex_payload',
+                        msg: 'payload dont valid',
+                    };
+                    LogUser.create({
+                        type: 'updateprofile',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    // deprecated: true,
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    status: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object({
+                                            Status: Joi.boolean()
+                                        }),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
+                                }
+                            )
+                        },
+
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
+
+
+
+
+    server.route({
+        method: 'GET',
+        path: '/users/check/{phone}/{username}',
+        config: {
+            handler: userController.check,
+            // auth: "jwt",
+            tags: ['api', 'users'],
+            description: 'check user',
+            validate: {
+                headers: headersChecksumModel,
+                params: {
+                    phone: Joi.string()
+                        .default('841693248887')
+                        .required(),
+                    username: Joi.string()
+                        .default('m123456')
+                        .required()
+                },
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: 0,
+                        data: {
+                            code: 'ex_payload',
+                            msg: 'payload dont valid',
+                        },
+                        msgCode: 'ex_payload',
+                        msg: 'payload dont valid',
+                    };
+                    LogUser.create({
+                        type: 'updateprofile',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    // deprecated: true,
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .valid([200, 400])
+                                        .example(200),
+                                    data: Joi
+                                        .object({
+                                            status: Joi
+                                                .number()
+                                                .valid([1, 2, 3, 4, 5])
+                                                .example(1)
+                                                .description('1: chua active')
+                                        }),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
+                                }
+                            )
                         }
                     },
                     security: [{
@@ -191,12 +305,13 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
                 payload: UserValidator.createUserModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        error: {
+                        statusCode: 0,
+                        data: {
                             code: 'ex_payload',
                             msg: 'payload dont valid',
-                            details: error
-                        }
+                        },
+                        msgCode: 'ex_payload',
+                        msg: 'payload dont valid',
                     };
                     LogUser.create({
                         type: 'updateprofile',
@@ -212,68 +327,13 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             },
             plugins: {
                 'hapi-swagger': {
+                    deprecated: true,
                     responses: {
                         200: {
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
-                                        .number()
-                                        .example(200),
-                                    data: Joi
-                                        .object(),
-                                }
-                            )
-                        },
-                    },
-                    security: [{
-                        'jwt': []
-                    }]
-                }
-            }
-        }
-    });
-    /**
-     * create account for resource
-     */
-    server.route({
-        method: 'POST',
-        path: '/authen',
-        config: {
-            handler: userController.authorize,
-            tags: ['api', 'users'],
-            description: 'Create account for access resource',
-            validate: {
-                payload: UserValidator.ResourceModel,
-                failAction: (request, reply, source, error) => {
-                    let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        error: {
-                            code: 'ex_payload',
-                            msg: 'payload dont valid',
-                            details: error
-                        }
-                    };
-                    LogUser.create({
-                        type: 'updateprofile',
-                        dataInput: request.payload,
-                        msg: 'payload do not valid',
-                        meta: {
-                            exception: error,
-                            response: res
-                        },
-                    });
-                    return reply(res);
-                }
-            },
-            plugins: {
-                'hapi-swagger': {
-                    responses: {
-                        200: {
-                            description: '',
-                            schema: Joi.object(
-                                {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
                                         .example(200),
                                     data: Joi
@@ -294,27 +354,25 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
      * change password
      */
     server.route({
-        method: 'POST',
-        path: '/users/changepassword/{username}',
+        method: 'PUT',
+        path: '/users/changepassword',
         config: {
             handler: userController.changePassword,
             tags: ['api', 'users'],
-            auth: "jwt",
+            // auth: "jwt",
             description: 'Change password',
             validate: {
-                params: {
-                    username: Joi.string().required()
-                        .description('username')
-                },
+                headers: headerModel,
                 payload: UserValidator.changePassModel,
                 failAction: (request, reply, source, error) => {
                     let res = {
-                        status: HTTP_STATUS.BAD_REQUEST,
-                        error: {
+                        statusCode: 0,
+                        data: {
                             code: 'ex_payload',
                             msg: 'payload dont valid',
-                            details: error
-                        }
+                        },
+                        msgCode: 'ex_payload',
+                        msg: 'payload dont valid',
                     };
                     LogUser.create({
                         type: 'changepassword',
@@ -330,16 +388,189 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
             },
             plugins: {
                 'hapi-swagger': {
+                    // deprecated: true,
                     responses: {
                         200: {
                             description: '',
                             schema: Joi.object(
                                 {
-                                    status: Joi
+                                    statusCode: Joi
                                         .number()
                                         .example(200),
                                     data: Joi
+                                        .object({
+                                            status: Joi
+                                                .boolean()
+                                                .example(true)
+                                        }),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
+                                }
+                            )
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(400),
+                                    data: Joi
                                         .object(),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
+                                }
+                            )
+                        },
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
+
+    /**
+    * change password
+    */
+    server.route({
+        method: 'PUT',
+        path: '/users/setpassword',
+        config: {
+            handler: userController.setPassword,
+            tags: ['api', 'users'],
+            // auth: "jwt",
+            description: 'Set password',
+            validate: {
+                headers: headersChecksumModel,
+                payload: {
+                    Password: Joi.string()
+                        .regex(/^[0-9]*$/)
+                        .length(6).required(),
+                    UserName: Joi.string()
+                        .required()
+                },
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: 0,
+                        data: error,
+                        msgCode: MsgCodeResponses.INPUT_INVALID,
+                        msg: MsgCodeResponses.INPUT_INVALID
+                    };
+                    LogUser.create({
+                        type: 'changepassword',
+                        dataInput: request.payload,
+                        msg: 'payload do not valid',
+                        meta: {
+                            exception: error,
+                            response: res
+                        },
+                    });
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    // deprecated: true,
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(200),
+                                    data: Joi
+                                        .object({
+                                            status: Joi
+                                                .boolean()
+                                                .example(true)
+                                        }),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
+                                }
+                            )
+                        },
+                        400: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(400),
+                                    data: Joi
+                                        .object({
+
+                                        }),
+                                    msgcode: Joi.string(),
+                                    msg: Joi.string()
+                                }
+                            )
+                        },
+                    },
+                    security: [{
+                        'jwt': []
+                    }]
+                }
+            }
+        }
+    });
+
+
+    /**
+    * request otp
+    */
+    server.route({
+        method: 'POST',
+        path: '/users/opt/request',
+        config: {
+            handler: userController.requestOTP,
+            tags: ['api', 'users'],
+            // auth: "jwt",
+            description: 'Request to get OTP code',
+            validate: {
+                headers: headersChecksumModel,
+                payload: {
+                    Phone: Joi
+                        .string()
+                        .example('+841693248887')
+                        .required(),
+                    UserName: Joi
+                        .string()
+                        .required()
+                },
+                failAction: (request, reply, source, error) => {
+                    let res = {
+                        statusCode: 0,
+                        data: error,
+                        msgCode: MsgCodeResponses.INPUT_INVALID,
+                        msg: MsgCodeResponses.INPUT_INVALID
+                    };
+
+                    return reply(res);
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    // deprecated: true,
+                    responses: {
+                        200: {
+                            description: 'success',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(1),
+                                    data: Joi.object({
+                                        Status: Joi
+                                            .object({
+                                                status: Joi.boolean()
+                                            })
+                                    }),
+                                    msg: Joi.string().required(),
+                                    msgcode: Joi.string()
                                 }
                             )
                         },
@@ -359,44 +590,118 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         config: {
             handler: userController.loginUser,
             tags: ['users', 'api'],
-            description: 'Login a user.',
+            description: '#mockapi Login a user.',
+
             validate: {
-                payload: UserValidator.loginUserModel
+                payload: UserValidator.loginUserModel,
+                headers: headersChecksumModel
             },
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'User logged in.'
-                        }
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(1),
+                                    data: {
+                                        access_token: Joi.string(),
+                                        token_type: Joi.string(),
+                                        expires_in: Joi.number(),
+                                        refresh_token: Joi.string(),
+                                        scope: Joi.string()
+                                    },
+                                    msg: Joi.string().required(),
+                                    msgcode: Joi.string()
+                                }
+                            )
+                        },
                     },
                 }
             }
         }
     });
 
-    /**
-     * login authorize
-     */
+
     server.route({
         method: 'POST',
-        path: '/authen/login',
+        path: '/users/refreshtoken',
         config: {
-            handler: userController.loginAuthen,
+            handler: userController.refreshToken,
             tags: ['users', 'api'],
-            description: 'Authentication.',
+            description: 'refresh token, will return new token and new refresh token.',
+
             validate: {
-                payload: UserValidator.loginResourceModel
+                payload: {
+                    refreshToken: Joi.string()
+                },
+                headers: headersChecksumModel
             },
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'logged in.'
-                        }
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(1),
+                                    data: {
+                                        access_token: Joi.string(),
+                                        token_type: Joi.string(),
+                                        expires_in: Joi.number(),
+                                        refresh_token: Joi.string(),
+                                        scope: Joi.string()
+                                    },
+                                    msg: Joi.string().required(),
+                                    msgcode: Joi.string()
+                                }
+                            )
+                        },
                     },
                 }
             }
         }
     });
+
+    server.route({
+        method: 'GET',
+        path: '/app/check/{type}',
+        config: {
+            handler: userController.checkApp,
+            tags: ['app', 'api'],
+            description: 'check update app',
+            validate: {
+                params: {
+                    type: Joi.string().valid('ios', 'android').required()
+                },
+                headers: headersChecksumModel
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        200: {
+                            description: '',
+                            schema: Joi.object(
+                                {
+                                    statusCode: Joi
+                                        .number()
+                                        .example(1),
+                                    data: {
+
+                                    },
+                                    msg: Joi.string().required(),
+                                    msgcode: Joi.string()
+                                }
+                            )
+                        },
+                    },
+                }
+            }
+        }
+    });
+
 }

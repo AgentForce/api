@@ -48,12 +48,24 @@ function default_1(server, configs, database) {
             plugins: {
                 'hapi-swagger': {
                     responses: {
-                        '200': {
-                            'description': 'types founded.'
+                        200: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(200),
+                                data: Joi
+                                    .object(),
+                            })
                         },
-                        '404': {
-                            'description': 'types not found.'
-                        }
+                        404: {
+                            description: '',
+                            schema: Joi.object({
+                                status: Joi
+                                    .number()
+                                    .example(404),
+                            })
+                        },
                     }
                 }
             }
